@@ -1,10 +1,11 @@
-const CACHE_NAME = 'tophaus-fidelidade-v32'; // Incrementei a versão para forçar a atualização
+const CACHE_NAME = 'tophaus-fidelidade-v33'; // Incrementei a versão para forçar a atualização
 
 const urlsToCache = [
   './',
   './index.html',
   './manifest.json',
   './logo.jpg',
+  './app.js',         // <--- ESTA LINHA É OBRIGATÓRIA
   './core.js',
   './firebase.js',
   './auth.js',
