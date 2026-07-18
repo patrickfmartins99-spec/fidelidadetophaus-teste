@@ -1,149 +1,284 @@
 // totem.js
-// Módulo 6: Interface de Autoatendimento (Totem) e Lógica de Ecrã Fullscreen
+// Módulo 6: Interface de Autoatendimento (Totem) e Lógica de Ecrã Fullscreen (Alinhado ao index.html original)
 
 // ==========================================================================
-// ESTADO PARTILHADO DO TOTEM
+// CONTROLO DE ECRÃ E NAVEGAÇÃO DO TOTEM
 // ==========================================================================
-window.totemClienteTemp = null;
-window.timeoutTotem = null;
-
-// ==========================================================================
-// CONTROLO DE ECRÃ E NAVEGAÇÃO
-// ==========================================================================
-window.entrarModoTotemDaTelaLogin = () => { 
-    document.getElementById('tela-login').classList.add('hidden'); 
-    document.getElementById('app-dashboard').classList.add('hidden'); 
-    
-    // Tenta entrar em fullscreen (pode ser bloqueado pelo navegador se não houver clique prévio)
+window.entrarModoTotemDaTelaLogin = () => {
+    document.getElementById('tela-login').classList.add('hidden');
+    document.getElementById('app-dashboard').classList.add('hidden');
     if(document.documentElement.requestFullscreen) {
-        document.documentElement.requestFullscreen().catch(()=>{}); 
+        document.documentElement.requestFullscreen().catch(()=>{});
     }
-    
-    document.getElementById('tela-totem').classList.remove('hidden'); 
-    window.totemVoltarInicio(); 
+    document.getElementById('tela-totem').classList.remove('hidden');
+    window.totemVoltarInicio();
 };
 
-window.sairModoTotem = () => { 
+window.sairModoTotem = () => {
     if(document.fullscreenElement && document.exitFullscreen) {
-        document.exitFullscreen().catch(()=>{}); 
+        document.exitFullscreen().catch(()=>{});
     }
-    document.getElementById('tela-totem').classList.add('hidden'); 
-    clearTimeout(window.timeoutTotem); 
+    document.getElementById('tela-totem').classList.add('hidden');
+    clearTimeout(window.timerInatividade);
     
-    // Devolve o utilizador à vista correta consoante o seu estado de autenticação
-    if(window.usuarioLogado) {
+    if (window.usuarioLogado) { 
         document.getElementById('app-dashboard').classList.remove('hidden'); 
-    } else {
+        window.mostrarToast("Painel Liberado"); 
+    } else { 
         document.getElementById('tela-login').classList.remove('hidden'); 
+        document.getElementById('tela-login').classList.add('flex'); 
     }
 };
 
-window.totemVoltarInicio = () => { 
-    clearTimeout(window.timeoutTotem); 
+window.resetarTimerTotem = () => {
+    clearTimeout(window.timerInatividade);
+    if(document.getElementById('tela-totem').classList.contains('hidden')) return;
+    if(!document.getElementById('totem-tela-busca').classList.contains('hidden')) return;
+    window.timerInatividade = setTimeout(() => window.totemVoltarInicio(), 45000);
+};
+
+window.totemVoltarInicio = () => {
+    clearTimeout(window.timeoutTotemMsg); 
+    clearTimeout(window.timerInatividade);
     window.totemClienteTemp = null; 
-    window.isProcessing = false; // Liberta o Mutex partilhado com o clientes.js
+    window.isProcessing = false;
     
-    document.getElementById('totem-info').classList.add('hidden'); 
-    document.getElementById('totem-timer').classList.add('hidden'); 
-    document.getElementById('totem-busca').classList.remove('hidden'); 
+    const btnAvancar = document.getElementById('btn-totem-avancar');
+    if(btnAvancar) btnAvancar.disabled = false;
     
-    const inputCpf = document.getElementById('totem-cpf'); 
-    inputCpf.value = ''; 
-    inputCpf.disabled = false; 
-    inputCpf.focus(); 
+    ['totem-tela-cadastro', 'totem-tela-opcoes', 'totem-tela-mensagem', 'totem-bottom-bar'].forEach(id => {
+        const el = document.getElementById(id);
+        if(el) el.classList.add('hidden');
+    });
+    
+    document.getElementById('totem-tela-busca').classList.remove('hidden');
+    const inp = document.getElementById('totem-cpf'); 
+    if(inp) {
+        inp.value = ''; 
+        inp.disabled = false;
+        inp.blur();
+    }
 };
 
 // ==========================================================================
-// PROCESSAMENTO DA LEITURA DO CPF (Core do Totem)
+// PROCESSAMENTO DA LEITURA DO CPF E FLUXO DE TELAS
 // ==========================================================================
-window.totemProcessar = () => {
+window.totemProcessarCPF = () => {
     if(window.isProcessing) return;
-    const cpf = document.getElementById('totem-cpf').value.replace(/\D/g, '');
+    const cpfNum = document.getElementById('totem-cpf').value.replace(/\D/g, '');
+    if(!window.validarCPFReal(cpfNum)) return window.totemMostrarMensagem('erro_cpf');
     
-    if(!window.validarCPFReal(cpf)) { 
-        window.mostrarToast('CPF Inválido', 'erro'); 
-        return; 
-    }
-    
-    const c = window.clientesMap[cpf];
-    
-    if(!c) {
-        window.abrirModalAcao('user-plus', 'Não Encontrado', 'Por favor, dirija-se ao caixa para o seu primeiro registo e ganhe o seu ponto!', 
-        `<button onclick="totemVoltarInicio(); fecharModal('modal-acao')" class="w-full bg-slate-900 text-white font-bold py-4 rounded-xl">Entendi</button>`, 
-        'border-slate-900', 'text-slate-900', 'bg-slate-100');
-        return;
-    }
-    
-    if(window.jaRegistrouHoje(c) && !window.isModoSimulacao) { 
-        window.totemMostrarMsg('check-check', `Tudo Certo, ${c.nome.split(' ')[0]}!`, 'O seu almoço de hoje já está contabilizado.', c, 5000); 
-        return; 
-    }
+    if(window.operacoesAtivas && window.operacoesAtivas[cpfNum]) return window.mostrarToast('Aguarde, processando.', 'erro');
     
     window.isProcessing = true; 
+    if(window.operacoesAtivas) window.operacoesAtivas[cpfNum] = true; 
+    document.getElementById('btn-totem-avancar').disabled = true; 
     document.getElementById('totem-cpf').disabled = true;
+    if(document.activeElement) document.activeElement.blur(); 
     
-    // Regra de Negócio: Incrementa almoço
-    c.almocos = (c.almocos || 0) + 1;
-    if(!c.historico) c.historico = []; 
-    c.historico.push(new Date().toLocaleDateString('pt-BR') + ' às ' + new Date().toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'}));
-    c.ultimaVisitaTimestamp = Date.now();
-    
-    const noDb = window.isModoSimulacao ? `simulacao/clientes/${cpf}` : `clientes/${cpf}`;
-    
-    window.firebaseSet(window.firebaseRef(window.db, noDb), c).then(() => {
+    setTimeout(() => { 
         window.isProcessing = false; 
-        window.totemClienteTemp = c;
+        if(window.operacoesAtivas) window.operacoesAtivas[cpfNum] = false; 
+    }, 8000); 
+
+    const cliente = window.clientesMap[cpfNum];
+    
+    if(!cliente) {
+        document.getElementById('totem-tela-busca').classList.add('hidden');
+        document.getElementById('totem-form').reset();
+        document.getElementById('totem-cad-cpf').value = window.formatarCPF(cpfNum);
+        document.getElementById('totem-tela-cadastro').classList.remove('hidden');
+        setTimeout(() => {
+            const cadNome = document.getElementById('totem-cad-nome');
+            if(cadNome) cadNome.focus();
+        }, 300);
+        window.isProcessing = false; 
+        if(window.operacoesAtivas) window.operacoesAtivas[cpfNum] = false; 
+        window.resetarTimerTotem();
+    } else {
+        window.totemClienteTemp = cliente;
         
-        // Automação Pós-Almoço (Robô)
-        if(window.configuracoesAutomacao && window.configuracoesAutomacao.posAlmoco && window.dispararFilaRobo) {
-            window.dispararFilaRobo(cpf, 'pos_almoco');
-        }
-        
-        const faltam = 10 - ((c.almocos || 0) % 10);
-        if((c.almocos || 0) >= 10 && faltam === 10) {
-            window.totemMostrarMsg('star', `Parabéns, ${c.nome.split(' ')[0]}!`, 'Completou 10 almoços! O desconto de R$ 50,00 está liberado!', c, 15000, true);
+        if((cliente.almocos || 0) >= 10) {
+            document.getElementById('totem-tela-busca').classList.add('hidden');
+            document.getElementById('totem-tela-opcoes').classList.remove('hidden');
+            window.isProcessing = false; 
+            if(window.operacoesAtivas) window.operacoesAtivas[cpfNum] = false; 
+            window.resetarTimerTotem();
         } else {
-            window.totemMostrarMsg('check', `Registado, ${c.nome.split(' ')[0]}!`, 'Bom apetite e obrigado por escolher o Top Haus.', c, 8000);
+            if(window.jaRegistrouHoje(cliente)) { 
+                window.isProcessing = false; 
+                if(window.operacoesAtivas) window.operacoesAtivas[cpfNum] = false; 
+                return window.totemMostrarMensagem('ja_registrado'); 
+            }
+            window.isProcessing = false; 
+            if(window.operacoesAtivas) window.operacoesAtivas[cpfNum] = false; 
+            window.totemExecutarAcumulo();
         }
+    }
+};
+
+window.totemSalvarCadastro = (e) => {
+    e.preventDefault(); 
+    if(window.isProcessing) return;
+    
+    const cpf = document.getElementById('totem-cad-cpf').value.replace(/\D/g, '');
+    if(window.operacoesAtivas && window.operacoesAtivas[cpf]) return;
+    
+    const tel = document.getElementById('totem-cad-tel').value.replace(/\D/g, ''); 
+    if(!window.telefoneValido(tel)) return window.mostrarToast('Telefone inválido', 'erro');
+    const nasc = document.getElementById('totem-cad-nasc').value; 
+    if(!window.validarDataReal(nasc)) return window.mostrarToast('Data inválida', 'erro');
+
+    window.isProcessing = true; 
+    if(window.operacoesAtivas) window.operacoesAtivas[cpf] = true; 
+    const btnSalvar = document.getElementById('btn-totem-salvar');
+    if(btnSalvar) btnSalvar.disabled = true; 
+    if(document.activeElement) document.activeElement.blur(); 
+    
+    setTimeout(() => { 
+        window.isProcessing = false; 
+        if(window.operacoesAtivas) window.operacoesAtivas[cpf] = false; 
+        if(btnSalvar) btnSalvar.disabled = false; 
+    }, 8000); 
+
+    const nome = document.getElementById('totem-cad-nome').value.trim();
+    let niverF = nasc.includes('/') ? `${nasc.split('/')[2]}-${nasc.split('/')[1]}-${nasc.split('/')[0]}` : nasc;
+
+    const novoCliente = { 
+        cpf, nome, nascimento: niverF, telefone: tel, 
+        almocos: 1, premiosResgatados: 0, 
+        historico: [new Date().toLocaleDateString('pt-BR') + ' às ' + new Date().toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'})], 
+        origemCadastro: 'Totem', 
+        dataCadastro: new Date().toLocaleDateString('pt-BR'), 
+        ultimaVisitaTimestamp: Date.now() 
+    };
+    
+    window.firebaseSet(window.firebaseRef(window.db, window.PATH_CLIENTES + '/' + cpf), novoCliente).then(() => {
+        window.totemClienteTemp = novoCliente; 
+        window.isProcessing = false; 
+        if(window.operacoesAtivas) window.operacoesAtivas[cpf] = false;
+        
+        if(window.checarEAvisarAlmoco) window.checarEAvisarAlmoco(novoCliente);
+        
+        if(window.diasParaAniversario(novoCliente.nascimento) === 0) {
+            window.totemMostrarMensagem('aniversario_totem'); 
+        } else {
+            window.totemMostrarMensagem('cadastro_sucesso');
+        }
+    }).catch(() => { 
+        window.mostrarToast("Erro ao salvar.", "erro"); 
+        window.isProcessing = false; 
+        if(window.operacoesAtivas) window.operacoesAtivas[cpf] = false; 
+    });
+};
+
+window.totemExecutarAcumulo = () => {
+    if(window.isProcessing) return;
+    const cliente = window.totemClienteTemp; 
+    if(!cliente) return;
+    if(window.jaRegistrouHoje(cliente)) return window.totemMostrarMensagem('ja_registrado');
+    
+    window.isProcessing = true; 
+    if(window.operacoesAtivas) window.operacoesAtivas[cliente.cpf] = true; 
+    const b = document.getElementById('btn-totem-acumular'); 
+    if(b) b.disabled = true;
+    
+    setTimeout(() => { 
+        window.isProcessing = false; 
+        if(window.operacoesAtivas) window.operacoesAtivas[cliente.cpf] = false; 
+        if(b) b.disabled = false; 
+    }, 8000); 
+
+    cliente.almocos = (cliente.almocos || 0) + 1;
+    if(!cliente.historico) cliente.historico = [];
+    cliente.historico.push(new Date().toLocaleDateString('pt-BR') + ' às ' + new Date().toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'}));
+    cliente.ultimaVisitaTimestamp = Date.now(); 
+    if(window.limitarHistorico) cliente.historico = window.limitarHistorico(cliente.historico);
+
+    window.firebaseSet(window.firebaseRef(window.db, window.PATH_CLIENTES + '/' + cliente.cpf), cliente).then(() => {
+        window.isProcessing = false; 
+        if(window.operacoesAtivas) window.operacoesAtivas[cliente.cpf] = false; 
+        if(b) b.disabled = false;
+        const a = new Date().getFullYear();
+        
+        if(window.checarEAvisarAlmoco) window.checarEAvisarAlmoco(cliente);
+        
+        if (window.diasParaAniversario(cliente.nascimento) === 0 && cliente.aniversarioResgatadoAno !== a) {
+            window.totemMostrarMensagem('aniversario_totem');
+        } else if(cliente.almocos === 10) {
+            window.totemMostrarMensagem('meta_atingida'); 
+        } else {
+            window.totemMostrarMensagem('sucesso_acumulo');
+        }
+    }).catch(() => { 
+        window.isProcessing = false; 
+        if(window.operacoesAtivas) window.operacoesAtivas[cliente.cpf] = false; 
+        if(b) b.disabled = false; 
     });
 };
 
 // ==========================================================================
-// FUNÇÕES AUXILIARES DE UI DO TOTEM
+// FUNÇÕES AUXILIARES DE MENSAGENS E TEMPORIZAÇÃO DO TOTEM
 // ==========================================================================
-window.totemMostrarMsg = (icon, tit, txt, c, time, showResgate = false) => {
-    document.getElementById('totem-busca').classList.add('hidden');
-    document.getElementById('totem-info-icon').innerHTML = `<i data-lucide="${icon}" class="w-12 h-12"></i>`;
-    document.getElementById('totem-info-titulo').innerText = tit;
-    document.getElementById('totem-info-msg').innerHTML = txt;
+window.totemMostrarMensagem = (tipo) => {
+    clearTimeout(window.timerInatividade);
+    ['totem-tela-busca', 'totem-tela-cadastro', 'totem-tela-opcoes'].forEach(id => {
+        const el = document.getElementById(id);
+        if(el) el.classList.add('hidden');
+    });
     
-    const perc = ((c.almocos || 0) % 10) * 10;
-    const faltam = 10 - ((c.almocos || 0) % 10);
+    const ic = document.getElementById('totem-icone-msg');
+    const ti = document.getElementById('totem-titulo-msg');
+    const te = document.getElementById('totem-texto-msg');
+    const lb = document.getElementById('totem-loading-bar');
     
-    document.getElementById('totem-prog-txt').innerText = `${c.almocos || 0}/10`;
-    document.getElementById('totem-prog-faltam').innerText = ((c.almocos || 0) >= 10 && faltam === 10) ? 'R$ 50 Disponível!' : `Faltam ${faltam}`;
-    document.getElementById('totem-prog-bar').style.width = `${perc}%`;
-    
-    if(showResgate) document.getElementById('totem-botoes-resgate').classList.remove('hidden');
-    else document.getElementById('totem-botoes-resgate').classList.add('hidden');
+    if(lb) lb.classList.remove('animate-shrink'); 
+    let tempo = 10000;
+    const nomeC = window.totemClienteTemp && window.totemClienteTemp.nome ? window.escapeHTML(window.totemClienteTemp.nome.split(' ')[0]) : '';
 
-    document.getElementById('totem-info').classList.remove('hidden'); 
-    document.getElementById('totem-timer').classList.remove('hidden');
-    
-    if(window.lucide) window.lucide.createIcons();
-    
-    const bar = document.getElementById('totem-bar-anim'); 
-    bar.classList.remove('animate-shrink'); 
-    void bar.offsetWidth; // Força o reflow do CSS para reiniciar a animação
-    bar.style.animationDuration = `${time}ms`; 
-    bar.classList.add('animate-shrink');
-    
-    window.timeoutTotem = setTimeout(() => window.totemVoltarInicio(), time);
-};
+    if(tipo === 'erro_cpf') { 
+        if(ic) ic.innerHTML = `<i data-lucide="x" class="w-12 h-12"></i>`; 
+        if(ti) ti.innerText = "CPF Inválido"; 
+        if(te) te.innerText = "Por favor, digite 11 números."; 
+        tempo = 5000; 
+    } else if(tipo === 'ja_registrado') { 
+        if(ic) ic.innerHTML = `<i data-lucide="check-check" class="w-12 h-12"></i>`; 
+        if(ti) ti.innerText = `Tudo Certo, ${nomeC}!`; 
+        if(te) te.innerText = "Seu almoço de hoje já está contabilizado!"; 
+    } else if(tipo === 'aviso_caixa') { 
+        if(ic) ic.innerHTML = `<i data-lucide="info" class="w-12 h-12"></i>`; 
+        if(ti) ti.innerText = "Resgate Solicitado"; 
+        if(te) te.innerHTML = `Avise o operador de caixa para validar o seu desconto de <strong>R$ 50,00</strong>, <strong>${nomeC}</strong>!`;
+        tempo = 15000; 
+    } else if(tipo === 'sucesso_acumulo' || tipo === 'cadastro_sucesso') { 
+        if(ic) ic.innerHTML = `<i data-lucide="check" class="w-12 h-12"></i>`; 
+        if(ti) ti.innerText = `Registrado, ${nomeC}!`; 
+        if(te) te.innerHTML = `Você possui <strong>${window.totemClienteTemp.almocos||1}</strong> almoço(s) acumulado(s).`; 
+    } else if(tipo === 'meta_atingida') { 
+        if(ic) ic.innerHTML = `<i data-lucide="star" class="w-12 h-12"></i>`; 
+        if(ti) ti.innerText = `Parabéns, ${nomeC}!`; 
+        if(te) te.innerHTML = "Você acaba de completar 10 almoços. No próximo o desconto de <strong>R$ 50,00</strong> é seu!"; 
+        tempo = 15000; 
+    } else if(tipo === 'aniversario_totem') { 
+        if(ic) ic.innerHTML = `<i data-lucide="cake" class="w-12 h-12"></i>`; 
+        if(ti) ti.innerText = `Feliz Aniversário, ${nomeC}!`; 
+        if(te) te.innerHTML = `🎁 Hoje é seu aniversário e você tem <strong>R$ 50,00 de Desconto</strong> liberado!<br><br>Avise o caixa agora mesmo!`; 
+        tempo = 15000; 
+    }
 
-window.totemSolicitarResgate = () => { 
-    clearTimeout(window.timeoutTotem); 
-    document.getElementById('totem-botoes-resgate').classList.add('hidden'); 
-    document.getElementById('totem-info-msg').innerHTML = `Avise o operador de caixa para aplicar o seu desconto de <strong>R$ 50,00</strong>!`; 
-    window.timeoutTotem = setTimeout(() => window.totemVoltarInicio(), 10000); 
+    const tMsg = document.getElementById('totem-tela-mensagem');
+    const tBot = document.getElementById('totem-bottom-bar');
+    if(tMsg) tMsg.classList.remove('hidden'); 
+    if(tBot) tBot.classList.remove('hidden');
+    
+    if(window.lucide) window.lucide.createIcons(); 
+    
+    if(lb) {
+        void lb.offsetWidth; 
+        lb.style.animationDuration = `${tempo}ms`; 
+        lb.classList.add('animate-shrink');
+    }
+    
+    clearTimeout(window.timeoutTotemMsg); 
+    window.timeoutTotemMsg = setTimeout(() => window.totemVoltarInicio(), tempo);
 };
