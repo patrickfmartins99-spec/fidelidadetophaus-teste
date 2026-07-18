@@ -1,156 +1,188 @@
 // marketing.js
-// Módulo 5: Robô do WhatsApp, Campanhas e Automações de Marketing
+// Módulo 5: Robô do WhatsApp, Automações e Disparos em Massa (Alinhado ao index.html original)
 
 // ==========================================================================
-// TEMPLATES DE MENSAGENS E CONFIGURAÇÕES LOCAIS
+// CORE DO ROBÔ DE MARKETING: ENVIAR PARA A FILA FIREBASE
 // ==========================================================================
-const msgTemplates = {
-    sushi: "Olá *[Nome]*, hoje é Terça do Sushi no Top Haus! 🍣\nVenha aproveitar nosso buffet.",
-    casal: "Olá *[Nome]*, Quarta do Casal no Top Haus! 👩‍❤️‍👨\nTraga seu amor.",
-    chopp: "Olá *[Nome]*, Quinta do Chopp em dobro! 🍺\nTe esperamos para o happy hour.",
-    promocao: "Olá *[Nome]*, promoção especial hoje no Top Haus!",
-    aniversario: "Olá *[Nome]*, feliz mês do seu aniversário! 🎂 Venha comemorar conosco.",
-    inativo: "Olá *[Nome]*, faz tempo que não te vemos por aqui! Que tal um almoço hoje?"
-};
-
-// ==========================================================================
-// GESTÃO DE CAMPANHAS DE MARKETING
-// ==========================================================================
-window.aplicarModeloCampanha = () => {
-    const v = document.getElementById('mkt-modelo').value;
-    if(v && msgTemplates[v]) document.getElementById('mkt-texto').value = msgTemplates[v];
-    else document.getElementById('mkt-texto').value = '';
-};
-
-window.toggleRecorrencia = () => {
-    const r = document.getElementById('mkt-recorrencia').value;
-    document.getElementById('mkt-data-unica').classList.add('hidden');
-    document.getElementById('mkt-dia-semana').classList.add('hidden');
-    document.getElementById('mkt-dia-mes').classList.add('hidden');
+window.enviarParaFilaRobo = (cpf, telefone, textoMensagem) => {
+    if(!telefone || !textoMensagem) return;
+    const telLimpo = telefone.toString().replace(/\D/g, '');
+    if(telLimpo.length < 10) return; // Garante que é um celular válido
     
-    if(r === 'unica') document.getElementById('mkt-data-unica').classList.remove('hidden');
-    else if(r === 'semanal') document.getElementById('mkt-dia-semana').classList.remove('hidden');
-    else if(r === 'mensal') document.getElementById('mkt-dia-mes').classList.remove('hidden');
-};
-
-window.mudarAbaMkt = (aba) => {
-    document.getElementById('mkt-area-nova').classList.add('hidden');
-    document.getElementById('mkt-area-historico').classList.add('hidden');
-    
-    document.getElementById('tab-mkt-nova').classList.remove('border-slate-900', 'text-slate-900'); 
-    document.getElementById('tab-mkt-nova').classList.add('border-transparent', 'text-slate-500');
-    
-    document.getElementById('tab-mkt-historico').classList.remove('border-slate-900', 'text-slate-900'); 
-    document.getElementById('tab-mkt-historico').classList.add('border-transparent', 'text-slate-500');
-    
-    document.getElementById(`mkt-area-${aba}`).classList.remove('hidden');
-    document.getElementById(`tab-mkt-${aba}`).classList.remove('border-transparent', 'text-slate-500');
-    document.getElementById(`tab-mkt-${aba}`).classList.add('border-slate-900', 'text-slate-900');
-};
-
-window.calcularTamanhoPublico = (seg) => {
-    if(seg === 'todos') return window.clientesArray.length;
-    if(seg === 'vips') return window.clientesArray.filter(c => (c.premiosResgatados||0) > 0).length;
-    if(seg === '5_almocos') return window.clientesArray.filter(c => (c.almocos||0) >= 5).length;
-    if(seg === '10_almocos') return window.clientesArray.filter(c => (c.almocos||0) >= 10).length;
-    
-    // As funções matemáticas puras estão expostas no core.js / window
-    if(seg === 'inativos') return window.clientesArray.filter(c => window.diasDesdeVisita(c) > 15).length;
-    if(seg === 'aniversariantes') return window.clientesArray.filter(c => window.isNiverMes(c.nascimento)).length;
-    return 0;
-};
-
-window.salvarCampanha = () => {
-    const nome = document.getElementById('mkt-nome-campanha').value.trim();
-    const texto = document.getElementById('mkt-texto').value.trim();
-    const segmento = document.getElementById('mkt-segmento').value;
-    const rec = document.getElementById('mkt-recorrencia').value;
-    const hor = document.getElementById('mkt-horario').value;
-    
-    if(!nome || !texto) return window.mostrarToast('Preencha nome e texto', 'erro');
-    
-    let gatilho = rec;
-    if(rec === 'unica') gatilho = document.getElementById('mkt-data-unica').value;
-    if(rec === 'semanal') gatilho = `Semanal (Dia ${document.getElementById('mkt-dia-semana').value})`;
-    if(rec === 'mensal') gatilho = `Mensal (Dia ${document.getElementById('mkt-dia-mes').value})`;
-    
-    window.firebasePush(window.firebaseRef(window.db, 'historico_disparos'), {
-        nome, texto, segmento, recorrencia: rec, gatilho, horario: hor, timestamp: Date.now(), 
-        status: rec === 'imediata' ? 'Em Fila' : 'Agendado', 
-        destinatariosCount: window.calcularTamanhoPublico(segmento)
+    window.firebasePush(window.firebaseRef(window.db, 'fila_mensagens'), {
+        cpf: cpf,
+        telefone: telLimpo,
+        texto: textoMensagem,
+        timestamp: Date.now()
     }).then(() => {
-        if(window.logAuditoria) window.logAuditoria('Marketing', `Nova campanha agendada: ${nome}`);
-        window.mostrarToast('Campanha Agendada!');
-        document.getElementById('mkt-nome-campanha').value = ''; 
-        document.getElementById('mkt-texto').value = '';
-        window.mudarAbaMkt('historico');
+        console.log("Ordem despachada para o Robô Node.js");
     });
 };
 
-// ==========================================================================
-// DISPAROS E INTEGRAÇÃO COM O MOTOR DO ROBÔ (NODE.JS)
-// ==========================================================================
-window.abrirModalWhatsAppManual = (cpf) => {
-    window.fecharModal('modal-cliente');
-    
-    // O TotemClienteTemp resolve a tentativa de disparo para um cliente recém registado no Totem
-    const c = window.clientesMap[cpf] || window.totemClienteTemp; 
-    if(!c) return;
-    
-    window.abrirModalAcao('send', 'Disparo Manual', 
-        `Enviar mensagem via Robô para <strong>${window.escapeHTML(c.nome)}</strong>.`,
-        `<button onclick="dispararFilaRobo('${c.cpf}', 'lembrete'); fecharModal('modal-acao');" class="w-full bg-slate-900 text-white font-bold py-3 rounded-xl mb-2">Aviso "Faltam X Almoços"</button>
-         <button onclick="dispararFilaRobo('${c.cpf}', 'aniversario'); fecharModal('modal-acao');" class="w-full bg-pink-500 text-white font-bold py-3 rounded-xl mb-2">Felitações (Niver)</button>
-         <button onclick="fecharModal('modal-acao')" class="w-full text-slate-500 font-bold py-2 mt-2">Cancelar</button>`, 
-        'border-slate-900', 'text-slate-900', 'bg-slate-100'
-    );
+window.checarEAvisarAlmoco = (c) => {
+    const faltam = 10 - (c.almocos || 0);
+    if(faltam > 0 && faltam < 10) {
+        const msg = `Olá *${(c.nome||'').split(' ')[0]}*, seu almoço de hoje foi contabilizado no Top Haus! 🍽️\nVocê tem *${c.almocos} almoço(s)* acumulados.\nFaltam apenas *${faltam}* para você ganhar seus *R$ 50,00 de desconto*!`;
+        window.enviarParaFilaRobo(c.cpf, c.telefone, msg);
+    } else if (c.almocos === 10) {
+        const txtPremio = window.msgsMarketing.premio || "Parabéns [Nome]! Você completou 10 almoços. No próximo você ganha R$ 50 de desconto!";
+        const msg = txtPremio.replace(/\[Nome\]/g, (c.nome||'').split(' ')[0]).replace(/\[Acumulados\]/g, c.almocos);
+        window.enviarParaFilaRobo(c.cpf, c.telefone, msg);
+        window.firebaseSet(window.firebaseRef(window.db, window.PATH_CLIENTES+`/${c.cpf}/notificadoPremio`), true);
+    }
 };
 
-window.dispararFilaRobo = (cpf, tipo) => {
-    const c = window.clientesMap[cpf]; 
-    if(!c || !c.telefone) return;
+// ==========================================================================
+// CENTRAL GERENCIAL DE MARKETING (MODAL GLOBAL)
+// ==========================================================================
+window.abrirCentralMarketing = () => {
+    document.getElementById('mkt-msg-niver').value = window.msgsMarketing.aniversario || '';
+    document.getElementById('mkt-msg-premio').value = window.msgsMarketing.premio || '';
+    document.getElementById('mkt-msg-inativo').value = window.msgsMarketing.inativo || '';
     
-    let txt = '';
-    const faltam = 10 - ((c.almocos || 0) % 10);
+    window.renderizarMensagensCustomizadas();
     
-    if(tipo === 'pos_almoco' || tipo === 'lembrete') {
-        if(faltam > 0 && faltam < 10) txt = `Olá *${c.nome.split(' ')[0]}*, seu almoço foi contabilizado no Top Haus! 🍽️\nVocê tem *${c.almocos}* almoços acumulados. Faltam apenas *${faltam}* para ganhar R$ 50,00 de desconto!`;
-        else if((c.almocos || 0) >= 10 && faltam === 10) txt = `Parabéns *${c.nome.split(' ')[0]}*! 🎉\nVocê completou 10 almoços. Na sua próxima visita, você já tem R$ 50,00 de desconto garantido!`;
-        else return; 
-    } else if(tipo === 'aniversario') {
-        txt = msgTemplates.aniversario.replace(/\[Nome\]/g, c.nome.split(' ')[0]);
-    }
-    
-    if(txt) {
-        const filaNome = window.isModoSimulacao ? 'simulacao_fila_mensagens' : 'fila_mensagens';
-        window.firebasePush(window.firebaseRef(window.db, filaNome), { 
-            cpf: c.cpf, 
-            telefone: c.telefone.replace(/\D/g,''), 
-            texto: txt, 
-            timestamp: Date.now() 
+    const modal = document.getElementById('modal-marketing'); 
+    modal.classList.remove('hidden'); 
+    if(window.prenderFocoModal) window.prenderFocoModal(modal);
+};
+
+window.renderizarMensagensCustomizadas = () => {
+    // 1. Renderizar Agendamentos (Disparos em Massa)
+    const areaAg = document.getElementById('area-agendamentos'); 
+    if(areaAg) {
+        areaAg.innerHTML = '';
+        const listaAg = Array.isArray(window.msgsMarketing.agendadas) ? window.msgsMarketing.agendadas : Object.values(window.msgsMarketing.agendadas || {});
+        
+        listaAg.forEach((m, idx) => {
+            areaAg.innerHTML += `
+                <div class="bg-white border border-indigo-200 p-3 rounded-xl shadow-sm relative">
+                    <button onclick="removerAgendamento(${idx})" class="absolute top-2 right-2 text-red-400 hover:text-red-600"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                    <p class="font-bold text-sm text-indigo-900 mb-1 flex items-center gap-1"><i data-lucide="calendar" class="w-3 h-3"></i> ${m.data.split('-').reverse().join('/')} - ${window.escapeHTML(m.titulo)}</p>
+                    <p class="text-xs text-gray-600 text-left">${window.escapeHTML(m.texto)}</p>
+                </div>`;
         });
-        window.mostrarToast('Ordem enviada para a fila do Robô!');
     }
+
+    // 2. Renderizar Mensagens Customizadas (Botões Individuais)
+    const areaCs = document.getElementById('area-mensagens-custom'); 
+    if(areaCs) {
+        areaCs.innerHTML = '';
+        const listaCs = Array.isArray(window.msgsMarketing.personalizadas) ? window.msgsMarketing.personalizadas : Object.values(window.msgsMarketing.personalizadas || {});
+        
+        listaCs.forEach((m, idx) => {
+            areaCs.innerHTML += `
+                <div class="bg-white border border-gray-200 p-4 rounded-xl shadow-sm relative">
+                    <button onclick="removerMsgCustom(${idx})" class="absolute top-2 right-2 text-red-400 hover:text-red-600"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                    <input type="text" id="mkt-custom-titulo-${idx}" value="${window.escapeHTML(m.titulo)}" placeholder="Nome do Botão" class="font-bold text-sm mb-2 w-3/4 outline-none border-b border-gray-200 text-center">
+                    <textarea id="mkt-custom-texto-${idx}" rows="2" class="w-full bg-gray-50 border border-gray-100 rounded-lg p-2 text-sm outline-none text-center">${window.escapeHTML(m.texto)}</textarea>
+                </div>`;
+        });
+    }
+    
+    if(window.lucide) window.lucide.createIcons();
 };
 
-window.dispararVarreduraRobo = () => { 
-    window.firebasePush(window.firebaseRef(window.db, 'fila_mensagens'), { cmd_interno: 'force_cron', timestamp: Date.now() }); 
-    window.mostrarToast('Comando enviado ao Robô'); 
-    if(window.logAuditoria) window.logAuditoria('Robô', 'Varredura forçada solicitada no painel'); 
+window.adicionarAgendamento = () => {
+    const data = document.getElementById('mkt-agenda-data').value;
+    const titulo = document.getElementById('mkt-agenda-titulo').value;
+    const texto = document.getElementById('mkt-agenda-texto').value;
+    
+    if(!data || !titulo || !texto) return window.mostrarToast("Preencha todos os campos do agendamento!", "erro");
+    
+    if(!Array.isArray(window.msgsMarketing.agendadas)) window.msgsMarketing.agendadas = Object.values(window.msgsMarketing.agendadas||{}); 
+    window.msgsMarketing.agendadas.push({ data: data, titulo: titulo, texto: texto });
+    
+    document.getElementById('mkt-agenda-data').value = '';
+    document.getElementById('mkt-agenda-titulo').value = '';
+    document.getElementById('mkt-agenda-texto').value = '';
+    window.renderizarMensagensCustomizadas(); 
 };
 
-// ==========================================================================
-// CONFIGURAÇÕES DE AUTOMAÇÃO
-// ==========================================================================
-window.salvarAutomacoes = () => {
-    const conf = {
-        niver: document.getElementById('auto-niver').checked,
-        inativo: document.getElementById('auto-inativo').checked,
-        posAlmoco: document.getElementById('auto-pos-almoco').checked,
-        campanhas: document.getElementById('auto-campanhas').checked
-    };
-    window.firebaseSet(window.firebaseRef(window.db, 'config/automacoes'), conf).then(() => { 
-        if(window.logAuditoria) window.logAuditoria('Automação', 'Configurações de automação atualizadas'); 
-        window.mostrarToast('Configurações Salvas!'); 
+window.removerAgendamento = (idx) => { 
+    window.msgsMarketing.agendadas.splice(idx, 1); 
+    window.renderizarMensagensCustomizadas(); 
+};
+
+window.adicionarMsgCustom = () => { 
+    if(!Array.isArray(window.msgsMarketing.personalizadas)) window.msgsMarketing.personalizadas = Object.values(window.msgsMarketing.personalizadas||{}); 
+    window.msgsMarketing.personalizadas.push({ titulo: "", texto: "" }); 
+    window.renderizarMensagensCustomizadas(); 
+};
+
+window.removerMsgCustom = (idx) => { 
+    window.msgsMarketing.personalizadas.splice(idx, 1); 
+    window.renderizarMensagensCustomizadas(); 
+};
+
+window.salvarCentralMarketing = () => {
+    window.msgsMarketing.aniversario = document.getElementById('mkt-msg-niver').value;
+    window.msgsMarketing.premio = document.getElementById('mkt-msg-premio').value;
+    window.msgsMarketing.inativo = document.getElementById('mkt-msg-inativo').value;
+    
+    window.msgsMarketing.agendadas = Array.isArray(window.msgsMarketing.agendadas) ? window.msgsMarketing.agendadas : Object.values(window.msgsMarketing.agendadas||{});
+    
+    const lista = Array.isArray(window.msgsMarketing.personalizadas) ? window.msgsMarketing.personalizadas : Object.values(window.msgsMarketing.personalizadas||{});
+    lista.forEach((m, idx) => { 
+        m.titulo = document.getElementById(`mkt-custom-titulo-${idx}`).value; 
+        m.texto = document.getElementById(`mkt-custom-texto-${idx}`).value; 
     });
+    window.msgsMarketing.personalizadas = lista;
+    
+    window.firebaseSet(window.firebaseRef(window.db, window.PATH_MENSAGENS), window.msgsMarketing).then(() => { 
+        window.mostrarToast("Salvo e Integrado com o Robô!"); 
+        if(window.fecharModal) window.fecharModal('modal-marketing'); 
+    });
+};
+
+// ==========================================================================
+// DISPARO INDIVIDUAL NA TABELA (MODAL WHATSAPP)
+// ==========================================================================
+window.abrirModalWhatsApp = (cpf) => {
+    const cliente = window.clientesMap[cpf]; 
+    if(!cliente) return;
+    
+    document.getElementById('whats-cliente-nome').innerText = (cliente.nome || 'Cliente').split(' ')[0];
+    const area = document.getElementById('lista-opcoes-whats'); 
+    if(!area) return;
+    area.innerHTML = '';
+
+    const ehNiverSemana = window.diasParaAniversario(cliente.nascimento) >= 0 && window.diasParaAniversario(cliente.nascimento) <= 7;
+
+    if(ehNiverSemana) {
+        area.innerHTML += `<button onclick="dispararWhatsApp('${cpf}', 'aniversario')" class="flex items-center gap-3 p-3 rounded-xl border border-green-200 bg-green-50 hover:bg-green-100 w-full text-left"><div class="bg-red-500 text-white p-2 rounded-lg"><i data-lucide="cake" class="w-4 h-4"></i></div><div class="flex-1"><p class="text-sm font-bold text-gray-800">Forçar Aniversário</p><p class="text-xs text-gray-600">Disparar agora</p></div></button>`;
+    } 
+
+    const listaMkt = Array.isArray(window.msgsMarketing.personalizadas) ? window.msgsMarketing.personalizadas : Object.values(window.msgsMarketing.personalizadas || {});
+    listaMkt.forEach((m, idx) => { 
+        if(m.titulo) area.innerHTML += `<button onclick="dispararWhatsApp('${cpf}', 'custom', ${idx})" class="flex items-center gap-3 p-3 rounded-xl border border-indigo-200 bg-indigo-50 hover:bg-indigo-100 w-full text-left mt-2"><div class="bg-indigo-500 text-white p-2 rounded-lg"><i data-lucide="send" class="w-4 h-4"></i></div><div class="flex-1"><p class="text-sm font-bold text-gray-800">${window.escapeHTML(m.titulo)}</p></div></button>`; 
+    });
+
+    const modal = document.getElementById('modal-whatsapp'); 
+    modal.classList.remove('hidden'); 
+    if(window.prenderFocoModal) window.prenderFocoModal(modal); 
+    if(window.lucide) window.lucide.createIcons();
+};
+
+window.dispararWhatsApp = (cpf, tipo, idx = -1) => {
+    const cliente = window.clientesMap[cpf]; 
+    if(!cliente || !cliente.telefone) return window.mostrarToast("Sem telefone válido", "erro");
+    
+    let t = ""; 
+    
+    if (tipo === 'aniversario') { 
+        t = window.msgsMarketing.aniversario; 
+        window.firebaseSet(window.firebaseRef(window.db, window.PATH_CLIENTES+`/${cpf}/notificadoAniversarioAno`), new Date().getFullYear()); 
+    } else if (tipo === 'custom') { 
+        const l = Array.isArray(window.msgsMarketing.personalizadas) ? window.msgsMarketing.personalizadas : Object.values(window.msgsMarketing.personalizadas||{}); 
+        t = l[idx].texto; 
+    }
+
+    t = t.replace(/\[Nome\]/g, (cliente.nome||'').split(' ')[0]).replace(/\[Acumulados\]/g, (cliente.almocos||0));
+    
+    // Joga para a fila do Firebase e o Robô Node.js consome silenciosamente
+    window.enviarParaFilaRobo(cliente.cpf, cliente.telefone, t);
+    
+    window.mostrarToast("A ordem foi para a fila do Robô!");
+    if(window.fecharModal) window.fecharModal('modal-whatsapp'); 
 };
