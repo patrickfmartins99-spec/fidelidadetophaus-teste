@@ -70,3 +70,88 @@ window.fazerLogout = () => {
     if(window.logAuditoria) window.logAuditoria('Logout', 'Saída do sistema'); 
     window.firebaseSignOut(window.auth); 
 };
+
+// ==========================================================================
+// GESTÃO DE USUÁRIOS E ACESSOS (Admin)
+// ==========================================================================
+window.abrirGerenciadorUsuarios = () => {
+    // Trava de segurança garantindo que apenas administradores acessem
+    if(window.cargoLogado !== 'admin') return;
+    
+    const lista = document.getElementById('lista-usuarios-cadastrados');
+    if(!lista) return;
+    
+    lista.innerHTML = '<p class="text-center text-gray-400">Carregando...</p>';
+    
+    window.firebaseGet(window.firebaseRef(window.db, 'usuarios')).then(snap => {
+        lista.innerHTML = '';
+        if(snap.exists()) {
+            Object.entries(snap.val()).forEach(([user, data]) => {
+                lista.innerHTML += `
+                    <div class="flex justify-between items-center p-3 bg-gray-50 rounded border border-gray-100">
+                        <div>
+                            <span class="font-bold text-gray-800">${user}</span> 
+                            <span class="px-2 py-0.5 ml-2 bg-gray-200 text-gray-600 rounded text-[10px] font-black uppercase">${data.cargo}</span>
+                        </div>
+                        <div class="flex gap-2">
+                            <button type="button" onclick="alterarCargo('${user}', '${data.cargo}')" class="text-blue-600 hover:bg-blue-50 p-1.5 rounded transition" title="Mudar Cargo"><i data-lucide="edit" class="w-4 h-4"></i></button>
+                            <button type="button" onclick="removerAcesso('${user}')" class="text-red-600 hover:bg-red-50 p-1.5 rounded transition" title="Remover Acesso"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                        </div>
+                    </div>`;
+            });
+            if(window.lucide) window.lucide.createIcons();
+        }
+    });
+    
+    const modal = document.getElementById('modal-usuarios'); 
+    modal.classList.remove('hidden'); 
+    if(window.prenderFocoModal) window.prenderFocoModal(modal);
+};
+
+window.criarUsuario = (e) => {
+    e.preventDefault();
+    const user = document.getElementById('novo-user').value.trim().toLowerCase();
+    const pass = document.getElementById('novo-senha').value;
+    const cargo = document.getElementById('novo-cargo').value;
+    const email = `${user}@tophaus.com.br`;
+
+    // Utiliza authSecundario para criar o usuário sem deslogar a sessão do Admin atual
+    window.firebaseCreateUser(window.authSecundario, email, pass).then(() => {
+        window.firebaseSet(window.firebaseRef(window.db, `usuarios/${user}`), { cargo: cargo }).then(() => {
+            window.mostrarToast("Usuário de acesso criado!", "sucesso");
+            document.getElementById('novo-user').value = ''; 
+            document.getElementById('novo-senha').value = '';
+            window.abrirGerenciadorUsuarios();
+        });
+    }).catch(err => {
+        if(err.code === 'auth/email-already-in-use') return window.mostrarToast("Esse usuário já existe!", "erro");
+        if(err.code === 'auth/weak-password') return window.mostrarToast("A senha precisa ter 6 números/letras", "erro");
+        window.mostrarToast("Erro ao criar: " + err.message, "erro");
+    });
+};
+
+window.removerAcesso = (username) => {
+    if(username === 'admin') return window.mostrarToast("Você não pode remover o administrador principal.", "erro");
+    
+    if(confirm(`Tem certeza que deseja remover o acesso de "${username}"?\nA conta será deslogada imediatamente.`)) {
+        window.firebaseSet(window.firebaseRef(window.db, `usuarios/${username}`), null).then(() => {
+            window.mostrarToast("Acesso removido com sucesso!", "sucesso");
+            window.abrirGerenciadorUsuarios();
+        });
+    }
+};
+
+window.alterarCargo = (username, cargoAtual) => {
+    if(username === 'admin') return window.mostrarToast("Você não pode alterar o administrador.", "erro");
+    
+    const novoCargo = prompt(`Alterar cargo de "${username}".\nCargos válidos: caixa, gerente, admin\nCargo atual: ${cargoAtual}`, cargoAtual);
+    
+    if(novoCargo && ['caixa', 'gerente', 'admin'].includes(novoCargo.trim().toLowerCase())) {
+        window.firebaseSet(window.firebaseRef(window.db, `usuarios/${username}/cargo`), novoCargo.trim().toLowerCase()).then(() => {
+            window.mostrarToast("Cargo atualizado com sucesso!", "sucesso");
+            window.abrirGerenciadorUsuarios();
+        });
+    } else if (novoCargo) {
+        window.mostrarToast("Cargo inválido! Operação cancelada.", "erro");
+    }
+};
