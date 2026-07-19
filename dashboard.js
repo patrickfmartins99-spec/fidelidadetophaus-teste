@@ -333,3 +333,31 @@ window.simularInatividade = () => {
         if(window.fecharModal) window.fecharModal('modal-simulacao'); 
     });
 };
+
+// ==========================================================================
+// CONTROLES GLOBAIS DE AMBIENTE E DADOS
+// ==========================================================================
+window.ativarSimulacao = () => { 
+    localStorage.setItem('modoSimulacao', 'true'); 
+    window.location.reload(); 
+};
+
+window.desativarSimulacao = () => { 
+    localStorage.setItem('modoSimulacao', 'false'); 
+    window.location.reload(); 
+};
+
+window.resetarSistema = () => { 
+    // Adapta o alerta dependendo do ambiente em que o Admin está operando
+    const msgAlerta = window.isSimulationMode 
+        ? "Resetar SIMULAÇÃO? Digite APAGAR:" 
+        : "ALERTA! Digite APAGAR para excluir clientes REAIS:";
+
+    if(prompt(msgAlerta) === "APAGAR") {
+        window.firebaseSet(window.firebaseRef(window.db, window.PATH_CLIENTES), null).then(() => {
+            window.mostrarToast("Banco de Dados Resetado");
+        }); 
+    } else {
+        window.mostrarToast("Ação Cancelada", "erro");
+    }
+};
