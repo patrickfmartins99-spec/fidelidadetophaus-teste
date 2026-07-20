@@ -17,19 +17,14 @@ window.firebaseOnAuthStateChanged(window.auth, async (user) => {
         const snap = await window.firebaseGet(window.firebaseRef(window.db, `usuarios/${username}`));
         window.cargoLogado = snap.exists() ? snap.val().cargo : (username === 'admin' ? 'admin' : 'caixa');
         
-        // Atualização Visual
-        document.getElementById('tela-login').classList.add('hidden');
-        document.getElementById('app-dashboard').classList.remove('hidden');
-        document.getElementById('nome-usuario-logado').innerText = username.toUpperCase();
+        // CORREÇÃO: Delega a manipulação do DOM para a função centralizadora de interface
+        if(window.aplicarRegrasNaInterface) {
+            window.aplicarRegrasNaInterface(window.cargoLogado, username);
+        }
         
-        // Controlo de Acesso (Caixa vs Admin)
-        if(window.cargoLogado === 'caixa') {
-            document.getElementById('btn-aba-admin').classList.add('hidden');
-            if(window.alternarAba) window.alternarAba('caixa');
-        } else {
-            document.getElementById('btn-aba-admin').classList.remove('hidden');
-            if(window.alternarAba) window.alternarAba('admin');
-            if(window.abrirSubAba) window.abrirSubAba('dashboard');
+        // Preserva a navegação automática para a aba de Gestão se for Gerente ou Admin
+        if(window.cargoLogado !== 'caixa' && window.alternarAba) {
+            window.alternarAba('admin');
         }
         
         // Registo de Auditoria
@@ -43,6 +38,8 @@ window.firebaseOnAuthStateChanged(window.auth, async (user) => {
         // Evita sobrepor a tela do Totem com a tela de login
         if (document.getElementById('tela-totem') && document.getElementById('tela-totem').classList.contains('hidden')) {
             document.getElementById('tela-login').classList.remove('hidden');
+            // Restaura o layout flex para centralizar a caixa de login
+            document.getElementById('tela-login').classList.add('flex');
         }
     }
 });
