@@ -1,5 +1,5 @@
 // marketing.js
-// Módulo 5: Robô do WhatsApp, Automações e Disparos em Massa (Alinhado ao index.html original)
+// Módulo 5: Robô do WhatsApp, Automações e Disparos em Massa (Suporte a Campanhas Recorrentes)
 
 // ==========================================================================
 // CORE DO ROBÔ DE MARKETING: ENVIAR PARA A FILA FIREBASE
@@ -7,7 +7,7 @@
 window.enviarParaFilaRobo = (cpf, telefone, textoMensagem) => {
     if(!telefone || !textoMensagem) return;
     const telLimpo = telefone.toString().replace(/\D/g, '');
-    if(telLimpo.length < 10) return; // Garante que é um celular válido
+    if(telLimpo.length < 10) return; 
     
     window.firebasePush(window.firebaseRef(window.db, 'fila_mensagens'), {
         cpf: cpf,
@@ -33,9 +33,86 @@ window.checarEAvisarAlmoco = (c) => {
 };
 
 // ==========================================================================
+// INJEÇÃO VIRTUAL DA INTERFACE DE CAMPANHAS AVANÇADAS
+// ==========================================================================
+window.injetarUICampanhas = () => {
+    if(document.getElementById('mkt-novo-tipo')) return; // Garante injeção única
+    
+    const wrapperAntigo = document.getElementById('mkt-agenda-data').parentNode;
+    
+    const painel = document.createElement('div');
+    painel.className = "flex flex-col gap-3 mb-3 w-full bg-white p-4 rounded-xl border border-indigo-100 shadow-sm";
+    painel.innerHTML = `
+        <div class="flex gap-2">
+            <select id="mkt-novo-tipo" onchange="alternarTipoCampanha()" class="p-2 bg-gray-50 border border-indigo-200 rounded-lg text-sm font-bold w-1/3 outline-none focus:ring-2 focus:ring-indigo-500">
+                <option value="unica">Disparo Único</option>
+                <option value="recorrente">Campanha Recorrente</option>
+            </select>
+            <input type="text" id="mkt-novo-titulo" placeholder="Título Interno (Ex: Promoção Terça)" class="p-2 border border-indigo-200 rounded-lg text-sm w-2/3 outline-none focus:ring-2 focus:ring-indigo-500">
+        </div>
+        
+        <!-- PAINEL DE DISPARO ÚNICO -->
+        <div id="painel-mkt-unica" class="flex gap-2">
+            <input type="date" id="mkt-nova-data" class="p-2 border border-indigo-200 rounded-lg text-sm w-1/2 outline-none text-center">
+            <input type="time" id="mkt-novo-horario-unica" class="p-2 border border-indigo-200 rounded-lg text-sm w-1/2 outline-none text-center" value="09:00">
+        </div>
+
+        <!-- PAINEL DE DISPARO RECORRENTE -->
+        <div id="painel-mkt-recorrente" class="hidden flex-col gap-3 p-3 bg-indigo-50 rounded-lg border border-indigo-100">
+            <div class="flex gap-2">
+                <select id="mkt-nova-freq" onchange="alternarFreqCampanha()" class="p-2 border border-indigo-200 rounded-lg text-sm w-1/2 outline-none font-bold text-indigo-900">
+                    <option value="semanal">Semanal</option>
+                    <option value="mensal">Mensal</option>
+                    <option value="anual">Anual</option>
+                </select>
+                <input type="time" id="mkt-novo-horario-rec" class="p-2 border border-indigo-200 rounded-lg text-sm w-1/2 outline-none text-center font-bold" value="09:00">
+            </div>
+            
+            <div id="freq-semanal" class="flex flex-wrap gap-2 text-xs font-bold text-gray-700">
+                <label class="bg-white p-1.5 rounded border border-gray-200 cursor-pointer hover:bg-indigo-100"><input type="checkbox" value="1" class="chk-dia mr-1"> Seg</label>
+                <label class="bg-white p-1.5 rounded border border-gray-200 cursor-pointer hover:bg-indigo-100"><input type="checkbox" value="2" class="chk-dia mr-1"> Ter</label>
+                <label class="bg-white p-1.5 rounded border border-gray-200 cursor-pointer hover:bg-indigo-100"><input type="checkbox" value="3" class="chk-dia mr-1"> Qua</label>
+                <label class="bg-white p-1.5 rounded border border-gray-200 cursor-pointer hover:bg-indigo-100"><input type="checkbox" value="4" class="chk-dia mr-1"> Qui</label>
+                <label class="bg-white p-1.5 rounded border border-gray-200 cursor-pointer hover:bg-indigo-100"><input type="checkbox" value="5" class="chk-dia mr-1"> Sex</label>
+                <label class="bg-white p-1.5 rounded border border-gray-200 cursor-pointer hover:bg-indigo-100"><input type="checkbox" value="6" class="chk-dia mr-1"> Sáb</label>
+                <label class="bg-white p-1.5 rounded border border-gray-200 cursor-pointer hover:bg-indigo-100"><input type="checkbox" value="0" class="chk-dia mr-1 text-red-500"> Dom</label>
+            </div>
+            
+            <div id="freq-mensal" class="hidden gap-2 items-center text-sm font-bold text-indigo-900">
+                <span>Executar todo dia:</span>
+                <input type="number" id="mkt-dia-mes" min="1" max="31" class="p-1 border border-indigo-200 rounded w-16 text-center bg-white" placeholder="Ex: 5">
+            </div>
+            
+            <div id="freq-anual" class="hidden gap-2 items-center text-sm font-bold text-indigo-900">
+                <span>Todo ano em:</span>
+                <input type="text" id="mkt-dia-ano" class="p-1 border border-indigo-200 rounded w-20 text-center bg-white" placeholder="DD/MM" maxlength="5" oninput="this.value = this.value.replace(/[^0-9/]/g, '').replace(/^(\\d{2})(\\d)/, '$1/$2').substring(0,5)">
+            </div>
+        </div>
+    `;
+    
+    wrapperAntigo.style.display = 'none'; // Esconde os inputs legados sem quebrar o HTML nativo
+    wrapperAntigo.parentNode.insertBefore(painel, wrapperAntigo);
+};
+
+window.alternarTipoCampanha = () => {
+    const t = document.getElementById('mkt-novo-tipo').value;
+    document.getElementById('painel-mkt-unica').style.display = (t === 'unica') ? 'flex' : 'none';
+    document.getElementById('painel-mkt-recorrente').style.display = (t === 'recorrente') ? 'flex' : 'none';
+};
+
+window.alternarFreqCampanha = () => {
+    const f = document.getElementById('mkt-nova-freq').value;
+    document.getElementById('freq-semanal').style.display = (f === 'semanal') ? 'flex' : 'none';
+    document.getElementById('freq-mensal').style.display = (f === 'mensal') ? 'flex' : 'none';
+    document.getElementById('freq-anual').style.display = (f === 'anual') ? 'flex' : 'none';
+};
+
+// ==========================================================================
 // CENTRAL GERENCIAL DE MARKETING (MODAL GLOBAL)
 // ==========================================================================
 window.abrirCentralMarketing = () => {
+    window.injetarUICampanhas(); // Garante que a UI rica esteja carregada
+    
     document.getElementById('mkt-msg-niver').value = window.msgsMarketing.aniversario || '';
     document.getElementById('mkt-msg-premio').value = window.msgsMarketing.premio || '';
     document.getElementById('mkt-msg-inativo').value = window.msgsMarketing.inativo || '';
@@ -48,18 +125,61 @@ window.abrirCentralMarketing = () => {
 };
 
 window.renderizarMensagensCustomizadas = () => {
-    // 1. Renderizar Agendamentos (Disparos em Massa)
+    // 1. Renderizar Agendamentos e Recorrências
     const areaAg = document.getElementById('area-agendamentos'); 
     if(areaAg) {
         areaAg.innerHTML = '';
         const listaAg = Array.isArray(window.msgsMarketing.agendadas) ? window.msgsMarketing.agendadas : Object.values(window.msgsMarketing.agendadas || {});
         
         listaAg.forEach((m, idx) => {
+            // Retrocompatibilidade automática para campanhas criadas anteriormente
+            const tipoC = m.tipo || 'unica'; 
+            const statusC = m.status || 'ativa'; 
+            
+            let labelTipo = '';
+            let info = '';
+            
+            if (tipoC === 'unica') {
+                const dataFormatada = m.data ? m.data.split('-').reverse().join('/') : 'S/D';
+                const horarioFormatado = m.horario ? ` às ${m.horario}` : '';
+                labelTipo = `<span class="bg-gray-200 text-gray-800 px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider">Disparo Único</span>`;
+                info = `<i data-lucide="calendar" class="w-3.5 h-3.5"></i> Execução em: ${dataFormatada}${horarioFormatado}`;
+            } else {
+                const c = m.configRecorrencia || {};
+                const hor = c.horario ? ` às ${c.horario}` : '';
+                let det = '';
+                if(m.frequencia === 'semanal') {
+                    const diasMapa = {0:'Dom', 1:'Seg', 2:'Ter', 3:'Qua', 4:'Qui', 5:'Sex', 6:'Sáb'};
+                    const nmDias = (c.diasSemana||[]).map(d => diasMapa[d]).join(', ');
+                    det = `Toda Semana (${nmDias})`;
+                } else if(m.frequencia === 'mensal') {
+                    det = `Todo dia ${c.diaMes} do mês`;
+                } else if(m.frequencia === 'anual') {
+                    det = `Anualmente em ${c.diaAno}`;
+                }
+                labelTipo = `<span class="bg-indigo-600 text-white px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider shadow-sm">Recorrente: ${m.frequencia}</span>`;
+                info = `<i data-lucide="repeat" class="w-3.5 h-3.5"></i> ${det}${hor}`;
+            }
+            
+            const bgStatus = statusC === 'ativa' ? 'bg-green-100 text-green-800 border-green-300' : 
+                            (statusC === 'pausada' ? 'bg-amber-100 text-amber-800 border-amber-300' : 'bg-red-100 text-red-800 border-red-300');
+            
             areaAg.innerHTML += `
-                <div class="bg-white border border-indigo-200 p-3 rounded-xl shadow-sm relative">
-                    <button onclick="removerAgendamento(${idx})" class="absolute top-2 right-2 text-red-400 hover:text-red-600"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-                    <p class="font-bold text-sm text-indigo-900 mb-1 flex items-center gap-1"><i data-lucide="calendar" class="w-3 h-3"></i> ${m.data.split('-').reverse().join('/')} - ${window.escapeHTML(m.titulo)}</p>
-                    <p class="text-xs text-gray-600 text-left">${window.escapeHTML(m.texto)}</p>
+                <div class="bg-white border border-gray-200 p-4 rounded-xl shadow-sm relative mb-3">
+                    <button onclick="removerAgendamento(${idx})" class="absolute top-4 right-3 text-red-400 hover:text-red-600" title="Apagar Campanha"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                    
+                    <div class="flex flex-wrap items-center gap-2 mb-3 pr-6">
+                        ${labelTipo}
+                        <select onchange="alterarStatusCampanha(${idx}, this.value)" class="text-[10px] font-black px-2 py-1 rounded-lg border outline-none cursor-pointer uppercase shadow-sm transition ${bgStatus}">
+                            <option value="ativa" class="bg-white text-black" ${statusC === 'ativa' ? 'selected' : ''}>🟢 ATIVA</option>
+                            <option value="pausada" class="bg-white text-black" ${statusC === 'pausada' ? 'selected' : ''}>🟡 PAUSADA</option>
+                            <option value="encerrada" class="bg-white text-black" ${statusC === 'encerrada' ? 'selected' : ''}>🔴 ENCERRADA</option>
+                        </select>
+                    </div>
+                    
+                    <p class="font-bold text-sm text-gray-900 mb-2">${window.escapeHTML(m.titulo)}</p>
+                    <div class="text-xs text-indigo-700 mb-3 flex items-center gap-1 font-bold bg-indigo-50 p-2 rounded-lg border border-indigo-100 inline-flex">${info}</div>
+                    <p class="text-xs text-gray-600 text-left bg-gray-50 p-3 rounded-lg border border-gray-100 italic">"${window.escapeHTML(m.texto)}"</p>
                 </div>`;
         });
     }
@@ -72,7 +192,7 @@ window.renderizarMensagensCustomizadas = () => {
         
         listaCs.forEach((m, idx) => {
             areaCs.innerHTML += `
-                <div class="bg-white border border-gray-200 p-4 rounded-xl shadow-sm relative">
+                <div class="bg-white border border-gray-200 p-4 rounded-xl shadow-sm relative mb-3">
                     <button onclick="removerMsgCustom(${idx})" class="absolute top-2 right-2 text-red-400 hover:text-red-600"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                     <input type="text" id="mkt-custom-titulo-${idx}" value="${window.escapeHTML(m.titulo)}" placeholder="Nome do Botão" class="font-bold text-sm mb-2 w-3/4 outline-none border-b border-gray-200 text-center">
                     <textarea id="mkt-custom-texto-${idx}" rows="2" class="w-full bg-gray-50 border border-gray-100 rounded-lg p-2 text-sm outline-none text-center">${window.escapeHTML(m.texto)}</textarea>
@@ -84,19 +204,83 @@ window.renderizarMensagensCustomizadas = () => {
 };
 
 window.adicionarAgendamento = () => {
-    const data = document.getElementById('mkt-agenda-data').value;
-    const titulo = document.getElementById('mkt-agenda-titulo').value;
+    const uiAtiva = !!document.getElementById('mkt-novo-tipo');
+    let novaCampanha = {};
     const texto = document.getElementById('mkt-agenda-texto').value;
-    
-    if(!data || !titulo || !texto) return window.mostrarToast("Preencha todos os campos do agendamento!", "erro");
+
+    if (uiAtiva) {
+        const tipo = document.getElementById('mkt-novo-tipo').value;
+        const titulo = document.getElementById('mkt-novo-titulo').value;
+        
+        if(!titulo || !texto) return window.mostrarToast("Preencha título e texto da campanha!", "erro");
+        
+        // Estrutura Base Escalável
+        novaCampanha = {
+            titulo: titulo,
+            texto: texto,
+            tipo: tipo,
+            status: 'ativa'
+        };
+        
+        if (tipo === 'unica') {
+            const data = document.getElementById('mkt-nova-data').value;
+            const horario = document.getElementById('mkt-novo-horario-unica').value;
+            if(!data) return window.mostrarToast("Selecione uma data!", "erro");
+            
+            novaCampanha.data = data;
+            novaCampanha.horario = horario || "09:00";
+        } else {
+            const freq = document.getElementById('mkt-nova-freq').value;
+            const horario = document.getElementById('mkt-novo-horario-rec').value;
+            
+            novaCampanha.frequencia = freq;
+            novaCampanha.configRecorrencia = { horario: horario || "09:00" };
+            
+            if (freq === 'semanal') {
+                const chks = document.querySelectorAll('.chk-dia:checked');
+                if(chks.length === 0) return window.mostrarToast("Selecione ao menos um dia da semana!", "erro");
+                novaCampanha.configRecorrencia.diasSemana = Array.from(chks).map(c => parseInt(c.value));
+            } else if (freq === 'mensal') {
+                const diaM = document.getElementById('mkt-dia-mes').value;
+                if(!diaM || diaM < 1 || diaM > 31) return window.mostrarToast("Dia do mês inválido (1-31)!", "erro");
+                novaCampanha.configRecorrencia.diaMes = parseInt(diaM);
+            } else if (freq === 'anual') {
+                const diaA = document.getElementById('mkt-dia-ano').value;
+                if(!diaA || diaA.length !== 5) return window.mostrarToast("Data anual inválida (use DD/MM)!", "erro");
+                novaCampanha.configRecorrencia.diaAno = diaA;
+            }
+        }
+    } else {
+        // Fallback de retrocompatibilidade para o HTML original cego
+        const data = document.getElementById('mkt-agenda-data').value;
+        const titulo = document.getElementById('mkt-agenda-titulo').value;
+        if(!data || !titulo || !texto) return window.mostrarToast("Preencha todos os campos!", "erro");
+        novaCampanha = { data: data, titulo: titulo, texto: texto, tipo: 'unica', status: 'ativa' };
+    }
     
     if(!Array.isArray(window.msgsMarketing.agendadas)) window.msgsMarketing.agendadas = Object.values(window.msgsMarketing.agendadas||{}); 
-    window.msgsMarketing.agendadas.push({ data: data, titulo: titulo, texto: texto });
+    window.msgsMarketing.agendadas.push(novaCampanha);
     
-    document.getElementById('mkt-agenda-data').value = '';
-    document.getElementById('mkt-agenda-titulo').value = '';
+    // Limpeza de UI
     document.getElementById('mkt-agenda-texto').value = '';
+    if (uiAtiva) {
+        document.getElementById('mkt-novo-titulo').value = '';
+        document.querySelectorAll('.chk-dia').forEach(c => c.checked = false);
+    } else {
+        document.getElementById('mkt-agenda-data').value = '';
+        document.getElementById('mkt-agenda-titulo').value = '';
+    }
+    
     window.renderizarMensagensCustomizadas(); 
+};
+
+// Modificação de Status em Tempo Real
+window.alterarStatusCampanha = (idx, novoStatus) => {
+    if(Array.isArray(window.msgsMarketing.agendadas) && window.msgsMarketing.agendadas[idx]) {
+        window.msgsMarketing.agendadas[idx].status = novoStatus;
+        window.renderizarMensagensCustomizadas();
+        window.mostrarToast("Status alterado. Lembre-se de salvar as integrações!", "sucesso");
+    }
 };
 
 window.removerAgendamento = (idx) => { 
@@ -180,7 +364,6 @@ window.dispararWhatsApp = (cpf, tipo, idx = -1) => {
 
     t = t.replace(/\[Nome\]/g, (cliente.nome||'').split(' ')[0]).replace(/\[Acumulados\]/g, (cliente.almocos||0));
     
-    // Joga para a fila do Firebase e o Robô Node.js consome silenciosamente
     window.enviarParaFilaRobo(cliente.cpf, cliente.telefone, t);
     
     window.mostrarToast("A ordem foi para a fila do Robô!");
