@@ -246,7 +246,7 @@ window.renderizarTabela = (l) => {
             `<button onclick="abrirHistorico('${c.cpf}')" class="text-gray-500 hover:text-black p-1.5"><i data-lucide="history" class="w-4 h-4"></i></button>` : ``;
         const bEdit = `<button onclick="abrirEditar('${c.cpf}')" class="text-gray-500 hover:text-black p-1.5"><i data-lucide="edit-3" class="w-4 h-4"></i></button>`;
         const bZap = `<button onclick="abrirModalWhatsApp('${c.cpf}')" class="text-green-600 p-1.5"><i data-lucide="message-circle" class="w-4 h-4"></i></button>`;
-        const bSim = (window.isSimulationMode && window.cargoLogado === 'admin') ? 
+        const bSim = (window.isSimulationMode && window.permissoesLogado && window.permissoesLogado.simulacao) ? 
             `<button onclick="abrirSimulador('${c.cpf}')" class="text-orange-600 p-1.5"><i data-lucide="flask-conical" class="w-4 h-4"></i></button>` : ``;
         
         const tr = document.createElement('tr'); 
@@ -266,22 +266,21 @@ window.renderizarTabela = (l) => {
 // EXPORTAÇÃO E RESET DO SISTEMA
 // ==========================================================================
 window.exportarExcel = () => { 
+    // Nova trava
+    if(!window.permissoesLogado || !window.permissoesLogado.clientes) return window.mostrarToast("Acesso Negado", "erro");
+
     let c = "\ufeffNome;CPF;Nascimento;WhatsApp;Acumulados;Resgates\n"; 
-    window.clientesArray.forEach(x => {
-        c += `${x.nome};${(x.cpf||'').substring(0,3)+'.***.***-'+(x.cpf||'').substring(9,11)};${x.nascimento||''};${x.telefone||''};${x.almocos||0};${x.premiosResgatados||0}\n`;
-    }); 
-    const l = document.createElement("a"); 
-    l.href = URL.createObjectURL(new Blob([c], {type: 'text/csv;charset=utf-8;'})); 
-    l.download = "Clientes.csv"; 
-    l.click(); 
+    // ... restante do código original
 };
 
 window.resetarSistema = () => { 
-    if(prompt(window.isSimulationMode ? "Resetar SIMULAÇÃO? Digite APAGAR:" : "ALERTA! Digite APAGAR para excluir clientes REAIS:") === "APAGAR") {
-        window.firebaseSet(window.firebaseRef(window.db, window.PATH_CLIENTES), null).then(() => window.mostrarToast("Banco de Dados Resetado")); 
-    } else {
-        window.mostrarToast("Ação Cancelada", "erro");
-    }
+    // Nova trava
+    if(!window.permissoesLogado || !window.permissoesLogado.reset) return window.mostrarToast("Acesso Negado", "erro");
+
+    const msgAlerta = window.isSimulationMode 
+        ? "Resetar SIMULAÇÃO? Digite APAGAR:" 
+        : "ALERTA! Digite APAGAR para excluir clientes REAIS:";
+    // ... restante do código original
 };
 
 // ==========================================================================
