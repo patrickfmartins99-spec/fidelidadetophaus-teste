@@ -47,6 +47,9 @@ window.firebaseOnAuthStateChanged(window.auth, async (user) => {
 // ==========================================================================
 // FUNÇÕES DISPARADAS PELO HTML
 // ==========================================================================
+// ==========================================================================
+// FUNÇÕES DISPARADAS PELO HTML
+// ==========================================================================
 window.fazerLogin = (e) => {
     e.preventDefault();
     const btn = document.getElementById('btn-login'); 
@@ -56,11 +59,18 @@ window.fazerLogin = (e) => {
     const user = document.getElementById('login-user').value.trim().toLowerCase();
     const pass = document.getElementById('login-senha').value;
     
-    window.firebaseSignIn(window.auth, `${user}@tophaus.com.br`, pass).catch(() => {
-        if(window.mostrarToast) window.mostrarToast("Usuário ou senha incorretos!", "erro"); 
-        btn.disabled = false; 
-        btn.innerText = 'ENTRAR';
-    });
+    // 1. Aplica a regra de persistência para "Apenas Sessão Atual"
+    window.firebaseSetPersistence(window.auth, window.firebaseBrowserSessionPersistence)
+        .then(() => {
+            // 2. Só após configurar a persistência, executa o login
+            return window.firebaseSignIn(window.auth, `${user}@tophaus.com.br`, pass);
+        })
+        .catch((error) => {
+            // Captura erros tanto de persistência quanto de credenciais incorretas
+            if(window.mostrarToast) window.mostrarToast("Usuário ou senha incorretos!", "erro"); 
+            btn.disabled = false; 
+            btn.innerText = 'ENTRAR';
+        });
 };
 
 window.fazerLogout = () => { 
