@@ -155,3 +155,41 @@ window.alterarCargo = (username, cargoAtual) => {
         window.mostrarToast("Cargo inválido! Operação cancelada.", "erro");
     }
 };
+
+// ==========================================================================
+// CONTROLO DE ACESSOS E VISIBILIDADE DE INTERFACE
+// ==========================================================================
+window.aplicarRegrasNaInterface = (cargo, username) => {
+    // 1. Liberta o ecrã de login e exibe o painel
+    document.getElementById('tela-login').classList.add('hidden');
+    document.getElementById('tela-login').classList.remove('flex');
+    document.getElementById('app-dashboard').classList.remove('hidden');
+    document.getElementById('nome-usuario-logado').innerText = `(${cargo}) ${username}`;
+
+    // 2. Mapeia os botões restritos
+    const btnAdmin = document.getElementById('btn-aba-admin');
+    const btnSimulacao = document.getElementById('btn-ativar-simulacao');
+    const btnZerar = document.getElementById('btn-zerar-banco');
+    const btnAcessos = document.getElementById('btn-gerenciar-acessos');
+
+    // 3. Aplica as regras de visibilidade conforme o cargo
+    if (cargo === 'caixa') {
+        if(btnAdmin) btnAdmin.classList.add('hidden');
+        window.alternarAba('caixa');
+        
+    } else if (cargo === 'gerente') {
+        if(btnAdmin) btnAdmin.classList.remove('hidden');
+        if(btnSimulacao) btnSimulacao.classList.add('hidden');
+        if(btnZerar) btnZerar.classList.add('hidden');
+        if(btnAcessos) btnAcessos.classList.add('hidden');
+        
+    } else if (cargo === 'admin') {
+        if(btnAdmin) btnAdmin.classList.remove('hidden');
+        
+        // Remove a classe 'hidden' dos botões administrativos
+        if(btnSimulacao) btnSimulacao.classList.remove('hidden');
+        if(btnZerar) btnZerar.classList.remove('hidden');
+        if(btnAcessos) btnAcessos.classList.remove('hidden');
+    }
+};
+
