@@ -1,6 +1,6 @@
 /* ==========================================================
    TOP HAUS FIDELIDADE
-   STYLE.CSS - PREMIUM BRAND IDENTITY
+   STYLE.CSS - PREMIUM REFINEMENTS
    ========================================================== */
 
 @import url('https://fonts.cdnfonts.com/css/helvetica-neue-5');
@@ -15,8 +15,8 @@
     --c-yellow-hover: #e08f00;
 
     /* Superfícies Premium */
-    --c-bg: #F5F5F7; /* Fundo geral da aplicação */
-    --c-card: #FFFFFF; /* Fundo dos painéis */
+    --c-bg: #F5F5F7; 
+    --c-card: #FFFFFF;
     --c-border: rgba(0, 0, 0, 0.06);
 
     /* Tipografia */
@@ -49,15 +49,15 @@ body {
     background: transparent;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: rgba(0,0,0,0.1);
+    background: rgba(0,0,0,0.15);
     border-radius: 10px;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: rgba(0,0,0,0.2);
+    background: rgba(0,0,0,0.25);
 }
 
 /* ==========================================================
-   UTILITÁRIOS TAILWIND CUSTOMIZADOS (Integração sem template)
+   UTILITÁRIOS TAILWIND CUSTOMIZADOS
    ========================================================== */
 .bg-th-background { background-color: var(--c-bg); }
 .bg-th-black { background-color: var(--c-black); }
@@ -68,6 +68,7 @@ body {
 .bg-th-yellow { background-color: var(--c-yellow); }
 .text-th-yellow { color: var(--c-yellow); }
 .border-th-yellow { border-color: var(--c-yellow); }
+.bg-th-yellow-tint { background: linear-gradient(145deg, var(--c-card) 0%, rgba(252, 161, 0, 0.06) 100%); }
 
 /* ==========================================================
    COMPONENTES CORE
@@ -93,15 +94,29 @@ body {
     color: rgba(255, 255, 255, 0.5);
     transition: var(--transition-smooth);
     outline: none;
+    position: relative;
 }
-.th-nav-item:hover {
+.th-nav-item:hover:not(.active) {
     color: var(--c-white);
     background-color: rgba(255, 255, 255, 0.05);
 }
 .th-nav-item.active {
     background-color: var(--c-brown);
     color: var(--c-white);
-    box-shadow: 0 4px 12px rgba(141, 73, 37, 0.3);
+    box-shadow: 0 4px 15px rgba(141, 73, 37, 0.4);
+    transform: translateX(4px); /* Deslocamento suave do item ativo */
+}
+/* Filete indicador amarelo no item ativo */
+.th-nav-item.active::before {
+    content: '';
+    position: absolute;
+    left: -0.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 60%;
+    width: 4px;
+    background-color: var(--c-yellow);
+    border-radius: 0 4px 4px 0;
 }
 
 .th-nav-item-highlight {
@@ -121,9 +136,27 @@ body {
 }
 .th-nav-item-highlight:hover {
     background-color: rgba(252, 161, 0, 0.15);
+    transform: scale(0.98);
 }
 
-/* BOTÕES DE AÇÃO GERAIS */
+/* BOTÕES DE AÇÃO (Com Microinterações) */
+.th-btn-primary, .th-btn-secondary, .th-btn-outline {
+    position: relative;
+    overflow: hidden;
+    outline: none;
+}
+.th-btn-primary::after, .th-btn-secondary::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-color: rgba(255,255,255,0.15);
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+.th-btn-primary:active::after {
+    opacity: 1;
+}
+
 .th-btn-primary {
     background-color: var(--c-brown);
     color: var(--c-white);
@@ -134,7 +167,6 @@ body {
     justify-content: center;
     gap: 0.5rem;
     transition: var(--transition-smooth);
-    outline: none;
 }
 .th-btn-primary:hover:not(:disabled) {
     background-color: var(--c-brown-hover);
@@ -142,7 +174,11 @@ body {
     box-shadow: 0 4px 12px rgba(141, 73, 37, 0.3);
 }
 .th-btn-primary:active:not(:disabled) {
-    transform: translateY(0);
+    transform: scale(0.96) translateY(1px); /* Resposta tátil de clique */
+    box-shadow: 0 2px 4px rgba(141, 73, 37, 0.2);
+}
+.th-btn-primary:focus-visible {
+    box-shadow: 0 0 0 4px rgba(141, 73, 37, 0.3);
 }
 .th-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
 
@@ -157,11 +193,13 @@ body {
     justify-content: center;
     gap: 0.5rem;
     transition: var(--transition-smooth);
-    outline: none;
 }
 .th-btn-secondary:hover:not(:disabled) {
     background-color: rgba(0,0,0,0.03);
     border-color: rgba(0,0,0,0.2);
+}
+.th-btn-secondary:active:not(:disabled) {
+    transform: scale(0.96);
 }
 
 .th-btn-outline {
@@ -175,11 +213,13 @@ body {
     justify-content: center;
     gap: 0.5rem;
     transition: var(--transition-smooth);
-    outline: none;
 }
 .th-btn-outline:hover {
     background-color: var(--c-card);
     border-color: var(--c-black);
+}
+.th-btn-outline:active:not(:disabled) {
+    transform: scale(0.96);
 }
 
 .th-btn-logout {
@@ -202,6 +242,9 @@ body {
 .th-btn-logout:hover {
     background-color: rgba(255,255,255,0.1);
     color: var(--c-white);
+}
+.th-btn-logout:active {
+    transform: scale(0.96);
 }
 
 /* FORMULÁRIOS & INPUTS */
@@ -232,6 +275,7 @@ body {
 .th-input:focus {
     border-color: var(--c-brown);
     box-shadow: 0 0 0 3px rgba(141, 73, 37, 0.15);
+    transform: translateY(-1px);
 }
 
 input[type=number]::-webkit-inner-spin-button, 
@@ -251,7 +295,7 @@ input[type=number]::-webkit-outer-spin-button {
 
 /* KPIS HIERÁRQUICOS */
 .th-kpi-card {
-    background-color: var(--c-card);
+    background: linear-gradient(145deg, var(--c-card) 0%, #f9f9fb 100%);
     padding: 1.5rem;
     border-radius: 16px;
     box-shadow: var(--shadow-subtle);
@@ -264,7 +308,7 @@ input[type=number]::-webkit-outer-spin-button {
     border-color: rgba(0,0,0,0.15);
 }
 
-/* MODAIS */
+/* MODAIS SEGUROS E RESPONSIVOS */
 .th-modal-backdrop {
     position: fixed;
     inset: 0;
@@ -283,6 +327,8 @@ input[type=number]::-webkit-outer-spin-button {
     border-radius: 32px;
     padding: 2.5rem;
     width: 100%;
+    max-height: 90vh; /* Impede que o modal corte o topo/rodapé da tela */
+    overflow-y: auto; /* Rolagem interna automática */
     box-shadow: var(--shadow-modal);
     border: 1px solid var(--c-border);
     animation: scaleUpModal 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -313,5 +359,15 @@ input[type=number]::-webkit-outer-spin-button {
 /* ANIMAÇÕES GERAIS */
 @keyframes shrinkBar { from { width: 100%; } to { width: 0%; } }
 .animate-shrink { animation: shrinkBar linear forwards; }
+
 @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 .animate-fade-in { animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+/* Transição do Totem (Slide Fade Up) para telas dinâmicas não ocultas */
+#totem-dynamic-area > div:not(.hidden) {
+    animation: slideFadeUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes slideFadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
