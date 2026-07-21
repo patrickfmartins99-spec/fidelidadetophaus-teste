@@ -9,501 +9,561 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="./style.css">
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans min-h-screen relative overflow-x-hidden">
+<body class="font-sans min-h-screen relative overflow-x-hidden bg-th-background text-th-black">
 
     <div id="toast-container" class="fixed top-5 right-5 z-[9999] flex flex-col gap-2 pointer-events-none"></div>
 
-    <div id="tela-login" class="fixed inset-0 bg-black z-[200] flex flex-col items-center justify-center p-4 transition-all">
-        <div class="bg-black p-10 rounded-3xl w-full max-w-sm shadow-[0_0_40px_rgba(255,255,255,0.08)] text-center relative overflow-hidden border border-gray-800">
-            <img src="./logo.jpg" alt="Top Haus" class="h-28 w-auto mx-auto mb-2 rounded-xl shadow-sm">
-            <span class="text-white font-light text-xl tracking-widest uppercase block mb-8">Fidelidade</span>
+    <!-- TELA DE LOGIN -->
+    <div id="tela-login" class="fixed inset-0 bg-th-black z-[200] flex flex-col items-center justify-center p-4 transition-all">
+        <div class="bg-white p-12 rounded-[24px] w-full max-w-md shadow-2xl text-center relative overflow-hidden flex flex-col items-center">
+            <img src="./logo.jpg" alt="Top Haus Fidelidade" class="h-32 w-auto mb-4 object-contain">
+            <h1 class="text-th-black font-black text-2xl tracking-tight uppercase mb-1">Top Haus</h1>
+            <h2 class="text-th-brown font-bold text-xs tracking-widest uppercase mb-10">Fidelidade</h2>
             
-            <h2 class="text-sm font-bold text-gray-500 mb-6 uppercase tracking-widest">Acesso ao Sistema</h2>
-            
-            <form id="form-login" onsubmit="fazerLogin(event)" class="space-y-4 relative z-10">
-                <input type="text" id="login-user" required placeholder="Usuário (ex: caixa)" class="th-login-input">
-                <input type="password" id="login-senha" required placeholder="Senha" class="th-login-input">
-                <button type="submit" id="btn-login" class="th-login-btn">ENTRAR</button>
+            <form id="form-login" onsubmit="fazerLogin(event)" class="space-y-5 w-full">
+                <div class="text-left">
+                    <label class="block text-[11px] font-bold text-th-black/50 uppercase tracking-widest mb-2">Usuário de Acesso</label>
+                    <input type="text" id="login-user" required placeholder="Ex: caixa" class="th-input w-full">
+                </div>
+                <div class="text-left">
+                    <label class="block text-[11px] font-bold text-th-black/50 uppercase tracking-widest mb-2">Senha</label>
+                    <input type="password" id="login-senha" required placeholder="••••••••" class="th-input w-full">
+                </div>
+                <button type="submit" id="btn-login" class="th-btn-primary w-full py-4 mt-4 text-sm tracking-wider uppercase">Acessar Sistema</button>
             </form>
 
-            <div class="mt-8 pt-8 border-t border-gray-800 relative z-10">
-                <p class="text-xs text-gray-500 mb-3 font-bold uppercase">Acesso Rápido Frente de Loja</p>
-                <button onclick="entrarModoTotemDaTelaLogin()" class="w-full bg-gray-900 hover:bg-gray-800 text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 transition border border-gray-700">
-                    <i data-lucide="tablet" class="w-5 h-5"></i> ABRIR TOTEM
+            <div class="mt-10 w-full pt-8 border-t border-black/5">
+                <button onclick="entrarModoTotemDaTelaLogin()" class="th-btn-secondary w-full py-4 flex items-center justify-center gap-2">
+                    <i data-lucide="tablet" class="w-5 h-5"></i> 
+                    <span class="text-sm font-bold tracking-wider uppercase">Abrir Autoatendimento</span>
                 </button>
             </div>
         </div>
     </div>
 
-    <div id="banner-simulacao" class="hidden bg-orange-600 text-white font-bold py-2 px-6 shadow-md z-[99999] fixed top-0 left-0 w-full flex flex-col sm:flex-row justify-center items-center gap-3">
+    <!-- BANNER DE SIMULAÇÃO -->
+    <div id="banner-simulacao" class="hidden bg-th-yellow text-th-black font-black py-3 px-6 shadow-md z-[99999] fixed top-0 left-0 w-full flex flex-col sm:flex-row justify-center items-center gap-4">
         <div class="flex items-center gap-2">
             <i data-lucide="flask-conical" class="w-5 h-5"></i>
-            <span>AMBIENTE DE SIMULAÇÃO ATIVO - DADOS REAIS BLINDADOS</span>
+            <span class="tracking-widest uppercase text-xs">Modo de Simulação Ativo — Banco de Dados Blindado</span>
         </div>
-        <button onclick="desativarSimulacao()" class="bg-white text-orange-600 px-4 py-1.5 rounded-lg text-sm hover:bg-orange-50 transition shadow-sm font-black">
+        <button onclick="desativarSimulacao()" class="bg-th-black text-white px-5 py-2 rounded-lg text-xs hover:bg-black/80 transition shadow-sm font-bold uppercase tracking-wider">
             Sair e Voltar ao Normal
         </button>
     </div>
 
-    <div id="app-dashboard" class="hidden no-print">
+    <!-- APLICAÇÃO PRINCIPAL -->
+    <div id="app-dashboard" class="hidden no-print h-[100dvh] flex w-full overflow-hidden">
         
-        <header class="bg-black text-white shadow-md py-4 px-6 mb-6">
-            <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
-                <div class="flex items-center gap-4">
-                    <img src="./logo.jpg" alt="Top Haus" class="h-10 w-auto object-contain rounded">
-                    <span class="text-gray-400 font-light text-lg hidden sm:block">| Top Haus Fidelidade</span>
-                    <span id="nome-usuario-logado" class="text-xs bg-gray-800 text-gray-300 px-3 py-1 rounded-full font-bold uppercase tracking-wider ml-2 shadow-inner"></span>
+        <!-- SIDEBAR PREMIUM -->
+        <aside class="th-sidebar flex flex-col justify-between shrink-0">
+            <div>
+                <div class="p-8 flex flex-col items-center border-b border-white/5 mb-6">
+                    <img src="./logo.jpg" alt="Top Haus" class="h-20 w-auto rounded-xl shadow-lg mb-4 object-contain bg-white p-1">
+                    <h1 class="text-white tracking-widest uppercase text-sm font-black opacity-90">Top Haus</h1>
+                    <h2 class="text-th-brown tracking-widest uppercase text-[10px] font-bold">Fidelidade</h2>
                 </div>
-                <div class="flex gap-3">
-                    <button onclick="alternarAba('caixa')" id="btn-aba-caixa" class="aba-btn active bg-gray-800 border border-gray-600 px-4 py-2 rounded-lg font-bold flex items-center gap-2 transition">
-                        <i data-lucide="calculator" class="w-4 h-4"></i> Caixa
+
+                <nav class="px-6 space-y-2">
+                    <p class="text-[10px] font-bold text-white/30 uppercase tracking-widest px-4 mb-4">Navegação Principal</p>
+                    <button onclick="alternarAba('caixa')" id="btn-aba-caixa" class="th-nav-item active">
+                        <i data-lucide="calculator" class="w-5 h-5"></i> Caixa e Cadastros
                     </button>
-                    <button onclick="alternarAba('admin')" id="btn-aba-admin" class="aba-btn bg-black border border-gray-800 hover:bg-gray-800 px-4 py-2 rounded-lg font-bold flex items-center gap-2 transition hidden">
-                        <i data-lucide="shield" class="w-4 h-4"></i> Painel Gerencial
+                    <button onclick="alternarAba('admin')" id="btn-aba-admin" class="th-nav-item hidden">
+                        <i data-lucide="shield" class="w-5 h-5"></i> Gestão e Marketing
                     </button>
-                    <button onclick="entrarModoTotemDaTelaLogin()" class="bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-lg font-bold flex items-center gap-2 transition text-white shadow-md">
-                        <i data-lucide="tablet" class="w-4 h-4"></i> <span class="hidden sm:inline">Abrir Totem</span>
-                    </button>
-                    <div class="h-10 w-px bg-gray-700 mx-1"></div>
-                    <button onclick="fazerLogout()" title="Sair do Sistema" class="p-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition flex items-center justify-center">
-                        <i data-lucide="power" class="w-5 h-5"></i>
+                </nav>
+
+                <div class="px-6 mt-8">
+                    <p class="text-[10px] font-bold text-white/30 uppercase tracking-widest px-4 mb-4">Frente de Loja</p>
+                    <button onclick="entrarModoTotemDaTelaLogin()" class="th-nav-item-highlight">
+                        <i data-lucide="tablet" class="w-5 h-5"></i> Totem de Clientes
                     </button>
                 </div>
             </div>
-        </header>
 
-        <main class="max-w-7xl mx-auto px-4 pb-12">
-            
-            <section id="aba-caixa" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div class="lg:col-span-1 th-card flex flex-col justify-between">
-                    <div>
-                        <div class="flex items-center gap-2 mb-4 text-slate-900">
-                            <i data-lucide="check-square" class="w-6 h-6"></i>
-                            <h2 class="text-xl font-bold">Contabilizar Almoço</h2>
-                        </div>
-                        <p class="text-sm text-slate-500 mb-4 text-center">Insira o CPF do cliente para buscar o cadastro.</p>
-                        <div class="mb-4">
-                            <label class="block text-xs font-semibold text-slate-600 uppercase mb-1 text-center">CPF do Cliente</label>
-                            <input type="tel" inputmode="numeric" id="busca-cpf" placeholder="000.000.000-00" maxlength="14" oninput="mascaraCPF(this)" onkeydown="if(event.key==='Enter') buscarEContabilizar()" class="th-input px-4 py-3 font-mono text-lg text-center">
-                        </div>
+            <div class="p-6 border-t border-white/5">
+                <div class="flex items-center gap-4 mb-6 px-2">
+                    <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white font-bold">
+                        <i data-lucide="user" class="w-5 h-5 opacity-70"></i>
                     </div>
-                    <button id="btn-caixa-buscar" onclick="buscarEContabilizar()" class="th-btn-primary w-full py-3 px-4">
-                        <i data-lucide="search" class="w-5 h-5"></i> Buscar e Avançar (Enter)
-                    </button>
+                    <div class="flex flex-col">
+                        <span class="text-[10px] uppercase font-bold tracking-widest text-white/40">Operador</span>
+                        <span id="nome-usuario-logado" class="text-xs text-white font-bold uppercase truncate max-w-[140px]"></span>
+                    </div>
                 </div>
+                <button onclick="fazerLogout()" class="th-btn-logout" title="Sair de forma segura">
+                    <i data-lucide="power" class="w-4 h-4"></i> Encerrar Sessão
+                </button>
+            </div>
+        </aside>
 
-                <div class="lg:col-span-2 th-card">
-                    <div class="flex items-center gap-2 mb-4 text-slate-900">
-                        <i data-lucide="user-plus" class="w-6 h-6"></i>
-                        <h2 class="text-xl font-bold">Primeiro Cadastro</h2>
-                    </div>
-                    <form id="form-cadastro" onsubmit="cadastrarCliente(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-600 uppercase mb-1 text-center">CPF (Obrigatório)</label>
-                            <input type="tel" inputmode="numeric" id="cad-cpf" required placeholder="000.000.000-00" maxlength="14" oninput="mascaraCPF(this)" class="th-input px-4 py-2.5 font-mono">
+        <!-- ÁREA DE CONTEÚDO PRINCIPAL -->
+        <main class="flex-1 flex flex-col h-full overflow-hidden bg-th-background">
+            
+            <header class="h-24 px-12 flex items-center justify-between border-b border-black/5 bg-white shrink-0 z-10 shadow-sm">
+                <div>
+                    <h2 class="text-xl font-black tracking-tight text-th-black">Central de Operações</h2>
+                    <p class="text-xs font-semibold text-th-black/50 mt-1">Gerenciamento em tempo real</p>
+                </div>
+            </header>
+
+            <div class="flex-1 overflow-y-auto p-12 custom-scrollbar">
+                
+                <!-- ABA: CAIXA -->
+                <section id="aba-caixa" class="grid grid-cols-1 xl:grid-cols-3 gap-8 max-w-7xl mx-auto">
+                    
+                    <!-- Busca -->
+                    <div class="xl:col-span-1 th-panel flex flex-col">
+                        <div class="flex items-center gap-3 mb-8">
+                            <div class="w-10 h-10 rounded-xl bg-th-brown/10 flex items-center justify-center text-th-brown">
+                                <i data-lucide="check-square" class="w-5 h-5"></i>
+                            </div>
+                            <h2 class="text-lg font-black tracking-tight">Contabilizar Almoço</h2>
                         </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-600 uppercase mb-1 text-center">Nome Completo</label>
-                            <input type="text" id="cad-nome" required placeholder="Ex: Patrick Martins" class="th-input px-4 py-2.5">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-600 uppercase mb-1 text-center">Data de Nascimento (DD/MM/AAAA)</label>
-                            <input type="tel" inputmode="numeric" id="cad-nascimento" required placeholder="Ex: 30/04/1999" maxlength="10" oninput="mascaraData(this)" class="th-input px-4 py-2.5 font-mono">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-600 uppercase mb-1 text-center">Telefone / WhatsApp</label>
-                            <input type="tel" inputmode="numeric" id="cad-telefone" required placeholder="(00) 90000-0000" maxlength="15" oninput="mascaraTelefone(this)" class="th-input px-4 py-2.5">
-                        </div>
-                        <div class="sm:col-span-2 mt-2">
-                            <button type="submit" id="btn-caixa-salvar" class="th-btn-primary w-full sm:w-auto py-3 px-6">
-                                <i data-lucide="save" class="w-5 h-5"></i> Registrar Cliente (Enter)
+                        <div class="flex-1 flex flex-col justify-center">
+                            <label class="th-label text-center">CPF do Cliente</label>
+                            <input type="tel" inputmode="numeric" id="busca-cpf" placeholder="000.000.000-00" maxlength="14" oninput="mascaraCPF(this)" onkeydown="if(event.key==='Enter') buscarEContabilizar()" class="th-input text-center text-2xl py-4 font-mono mb-8">
+                            <button id="btn-caixa-buscar" onclick="buscarEContabilizar()" class="th-btn-primary w-full py-4 text-sm">
+                                <i data-lucide="search" class="w-5 h-5"></i> Buscar Cliente
                             </button>
                         </div>
-                    </form>
-                </div>
-            </section>
+                    </div>
 
-            <section id="aba-admin" class="hidden space-y-6">
-                <div class="flex flex-wrap gap-3 bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
-                    <div class="text-sm font-black text-gray-800 uppercase flex items-center gap-2 pr-4 border-r border-gray-200">
-                        <i data-lucide="settings-2" class="w-5 h-5 text-indigo-600"></i> Gestão
+                    <!-- Cadastro -->
+                    <div class="xl:col-span-2 th-panel">
+                        <div class="flex items-center gap-3 mb-8">
+                            <div class="w-10 h-10 rounded-xl bg-th-black/5 flex items-center justify-center text-th-black">
+                                <i data-lucide="user-plus" class="w-5 h-5"></i>
+                            </div>
+                            <h2 class="text-lg font-black tracking-tight">Primeiro Cadastro</h2>
+                        </div>
+                        <form id="form-cadastro" onsubmit="cadastrarCliente(event)" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="th-label text-center">CPF (Obrigatório)</label>
+                                <input type="tel" inputmode="numeric" id="cad-cpf" required placeholder="000.000.000-00" maxlength="14" oninput="mascaraCPF(this)" class="th-input text-center font-mono">
+                            </div>
+                            <div>
+                                <label class="th-label text-left">Nome Completo</label>
+                                <input type="text" id="cad-nome" required placeholder="Ex: Patrick Martins" class="th-input text-left">
+                            </div>
+                            <div>
+                                <label class="th-label text-center">Data de Nascimento</label>
+                                <input type="tel" inputmode="numeric" id="cad-nascimento" required placeholder="DD/MM/AAAA" maxlength="10" oninput="mascaraData(this)" class="th-input text-center font-mono">
+                            </div>
+                            <div>
+                                <label class="th-label text-center">WhatsApp</label>
+                                <input type="tel" inputmode="numeric" id="cad-telefone" required placeholder="(00) 90000-0000" maxlength="15" oninput="mascaraTelefone(this)" class="th-input text-center font-mono">
+                            </div>
+                            <div class="md:col-span-2 mt-4 flex justify-end">
+                                <button type="submit" id="btn-caixa-salvar" class="th-btn-primary py-4 px-8 text-sm">
+                                    <i data-lucide="save" class="w-5 h-5"></i> Finalizar Cadastro
+                                </button>
+                            </div>
+                        </form>
                     </div>
-                    <button id="btn-gerenciar-acessos" onclick="abrirGerenciadorUsuarios()" class="hidden bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-lg font-bold flex items-center gap-2 transition text-sm">
-                        <i data-lucide="users" class="w-4 h-4"></i> Senhas de Acesso
-                    </button>
-                    <button id="btn-ativar-simulacao" onclick="ativarSimulacao()" class="hidden bg-orange-100 text-orange-700 hover:bg-orange-200 px-4 py-2 rounded-lg font-bold flex items-center gap-2 transition text-sm">
-                        <i data-lucide="flask-conical" class="w-4 h-4"></i> Modo Simulação
-                    </button>
-                    <button id="btn-zerar-banco" onclick="resetarSistema()" class="hidden bg-red-50 text-red-600 hover:bg-red-100 px-4 py-2 rounded-lg font-bold flex items-center gap-2 transition text-sm">
-                        <i data-lucide="trash-2" class="w-4 h-4"></i> Resetar BD
-                    </button>
-                </div>
+                </section>
 
-                <div id="painel-notificacoes" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-2 empty:hidden"></div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div onclick="filtrarLista('todos')" class="th-stat-card">
-                        <p class="text-xs font-bold text-gray-500 uppercase">Total Clientes</p>
-                        <p id="card-total" class="text-2xl font-black text-black">0</p>
-                    </div>
-                    <div onclick="filtrarLista('premios')" class="th-stat-card relative overflow-hidden">
-                        <p class="text-xs font-bold text-gray-800 uppercase flex items-center justify-center gap-1"><i data-lucide="gift" class="w-4 h-4 text-gray-800"></i> Aguardando Resgate</p>
-                        <p id="card-premios" class="text-2xl font-black text-black">0</p>
-                    </div>
-                    <div onclick="filtrarLista('vips')" class="th-stat-card">
-                        <p class="text-xs font-bold text-gray-800 uppercase flex items-center justify-center gap-1"><i data-lucide="medal" class="w-4 h-4 text-gray-800"></i> Mais Fiéis (VIPs)</p>
-                        <p id="card-vips" class="text-2xl font-black text-black">0</p>
-                    </div>
-                    <div onclick="filtrarLista('niver_mes')" class="th-stat-card border-black relative overflow-hidden">
-                        <div class="absolute top-0 right-0 w-2 h-full bg-black"></div>
-                        <p class="text-xs font-bold text-gray-800 uppercase flex items-center justify-center gap-1"><i data-lucide="cake" class="w-4 h-4 text-gray-800"></i> Central Aniversários</p>
-                        <p id="card-niver-central" class="text-2xl font-black text-black">0</p>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+                <!-- ABA: ADMIN -->
+                <section id="aba-admin" class="hidden max-w-7xl mx-auto space-y-8">
                     
-                    <div id="sub-filtros-niver" class="hidden px-6 pt-6 pb-2">
-                        <div class="bg-gray-50 p-3 rounded-xl flex flex-wrap gap-4 items-center justify-center border border-gray-200">
-                            <span class="text-xs font-bold text-gray-600 uppercase"><i data-lucide="filter" class="w-4 h-4 inline"></i> Filtro de Aniversários:</span>
-                            <button id="btn-niver-mes" onclick="filtrarLista('niver_mes')" class="px-4 py-2 bg-black text-white rounded-lg text-xs font-bold transition shadow-sm">Todo o Mês Atual</button>
-                            <span class="text-sm font-semibold text-gray-400">OU PERÍODO:</span>
-                            <div class="flex items-center gap-2">
-                                <input type="date" id="filtro-data-inicio" class="px-3 py-1.5 border border-gray-300 rounded-lg text-sm text-gray-700 outline-none focus:border-black text-center">
-                                <span class="text-gray-400 text-sm">até</span>
-                                <input type="date" id="filtro-data-fim" class="px-3 py-1.5 border border-gray-300 rounded-lg text-sm text-gray-700 outline-none focus:border-black text-center">
-                                <button onclick="filtrarPorPeriodo()" class="px-4 py-2 bg-white border border-gray-300 hover:border-black text-black rounded-lg text-xs font-bold transition shadow-sm">Buscar</button>
+                    <!-- Ações Rápidas -->
+                    <div class="flex flex-wrap gap-4 items-center justify-end">
+                        <button id="btn-gerenciar-acessos" onclick="abrirGerenciadorUsuarios()" class="hidden th-btn-outline px-5 py-2.5 text-xs">
+                            <i data-lucide="users" class="w-4 h-4"></i> Senhas e Acessos
+                        </button>
+                        <button id="btn-ativar-simulacao" onclick="ativarSimulacao()" class="hidden th-btn-outline px-5 py-2.5 text-xs !border-th-yellow !text-th-yellow hover:!bg-th-yellow/10">
+                            <i data-lucide="flask-conical" class="w-4 h-4"></i> Modo Simulação
+                        </button>
+                        <button id="btn-zerar-banco" onclick="resetarSistema()" class="hidden bg-[#ef4444] text-white px-5 py-2.5 rounded-lg font-bold flex items-center gap-2 transition text-xs hover:bg-[#dc2626] shadow-sm">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i> Resetar BD
+                        </button>
+                    </div>
+
+                    <div id="painel-notificacoes" class="grid grid-cols-1 md:grid-cols-3 gap-4 empty:hidden"></div>
+
+                    <!-- KPIs -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div onclick="filtrarLista('premios')" class="th-kpi-card group border-th-yellow border-2 cursor-pointer relative overflow-hidden">
+                            <div class="absolute -right-4 -top-4 w-16 h-16 bg-th-yellow/10 rounded-full group-hover:scale-150 transition-transform"></div>
+                            <p class="text-[10px] font-black text-th-yellow uppercase tracking-widest mb-1 flex items-center gap-2"><i data-lucide="gift" class="w-4 h-4"></i> Prêmios a Resgatar</p>
+                            <p id="card-premios" class="text-4xl font-black text-th-black mt-2">0</p>
+                        </div>
+                        <div onclick="filtrarLista('todos')" class="th-kpi-card cursor-pointer">
+                            <p class="text-[10px] font-bold text-th-black/50 uppercase tracking-widest mb-1">Total Clientes</p>
+                            <p id="card-total" class="text-3xl font-black text-th-black mt-2">0</p>
+                        </div>
+                        <div onclick="filtrarLista('vips')" class="th-kpi-card cursor-pointer">
+                            <p class="text-[10px] font-bold text-th-black/50 uppercase tracking-widest mb-1 flex items-center gap-2"><i data-lucide="medal" class="w-4 h-4 text-th-brown"></i> Mais Fiéis (VIPs)</p>
+                            <p id="card-vips" class="text-3xl font-black text-th-black mt-2">0</p>
+                        </div>
+                        <div onclick="filtrarLista('niver_mes')" class="th-kpi-card cursor-pointer">
+                            <p class="text-[10px] font-bold text-th-black/50 uppercase tracking-widest mb-1 flex items-center gap-2"><i data-lucide="cake" class="w-4 h-4"></i> Aniversariantes</p>
+                            <p id="card-niver-central" class="text-3xl font-black text-th-black mt-2">0</p>
+                        </div>
+                    </div>
+
+                    <!-- Filtros Niver Oculto -->
+                    <div id="sub-filtros-niver" class="hidden">
+                        <div class="th-panel py-4 px-6 flex flex-wrap gap-6 items-center justify-between">
+                            <span class="text-xs font-bold text-th-black uppercase tracking-widest flex items-center gap-2"><i data-lucide="filter" class="w-4 h-4"></i> Filtro Específico:</span>
+                            <div class="flex items-center gap-4 flex-1 justify-end">
+                                <button id="btn-niver-mes" onclick="filtrarLista('niver_mes')" class="th-btn-secondary px-4 py-2 text-xs">Mês Atual</button>
+                                <span class="text-[10px] font-bold text-th-black/30 uppercase">ou</span>
+                                <div class="flex items-center gap-2">
+                                    <input type="date" id="filtro-data-inicio" class="th-input py-2 text-xs">
+                                    <span class="text-th-black/30 text-xs font-bold">até</span>
+                                    <input type="date" id="filtro-data-fim" class="th-input py-2 text-xs">
+                                    <button onclick="filtrarPorPeriodo()" class="th-btn-primary px-4 py-2 text-xs">Buscar</button>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="p-6 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                        <div>
-                            <h2 class="text-xl font-bold text-slate-700 flex items-center gap-2">Painel de Clientes</h2>
-                            <p class="text-xs text-slate-400 mt-0.5" id="filtro-atual-texto">Exibindo: Todos os clientes (Sincronizado na Nuvem)</p>
+                    <!-- Tabela e Listagem -->
+                    <div class="th-panel !p-0 overflow-hidden flex flex-col">
+                        <div class="p-8 border-b border-black/5 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+                            <div>
+                                <h3 class="text-lg font-black tracking-tight text-th-black">Base de Clientes</h3>
+                                <p class="text-xs font-semibold text-th-black/50 mt-1" id="filtro-atual-texto">Exibindo: Todos os clientes</p>
+                            </div>
+                            <div class="flex flex-col sm:flex-row w-full lg:w-auto gap-4">
+                                <div class="relative">
+                                    <i data-lucide="search" class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-th-black/40"></i>
+                                    <input type="text" id="busca-admin" oninput="filtrarPorTexto(this.value)" placeholder="Pesquisar Nome ou CPF" class="th-input pl-11 text-left w-full sm:w-72">
+                                </div>
+                                <button onclick="abrirCentralMarketing()" class="th-btn-primary px-5 text-xs whitespace-nowrap">
+                                    <i data-lucide="megaphone" class="w-4 h-4"></i> Ações de Marketing
+                                </button>
+                                <button onclick="exportarExcel()" class="th-btn-secondary px-5 text-xs whitespace-nowrap">
+                                    <i data-lucide="download" class="w-4 h-4"></i> Exportar
+                                </button>
+                            </div>
                         </div>
-                        <div class="flex flex-col sm:flex-row w-full sm:w-auto gap-3">
-                            <input type="text" id="busca-admin" oninput="filtrarPorTexto(this.value)" placeholder="Pesquisar Nome/CPF..." class="th-input px-4 py-2 text-sm sm:w-64">
-                            <button onclick="abrirCentralMarketing()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl font-bold flex items-center justify-center gap-2 transition text-sm shadow-sm">
-                                <i data-lucide="megaphone" class="w-4 h-4"></i> Marketing (Robô)
-                            </button>
-                            <button onclick="exportarExcel()" class="bg-gray-800 hover:bg-black text-white px-4 py-2 rounded-xl font-bold flex items-center justify-center gap-2 transition text-sm shadow-sm">
-                                <i data-lucide="download" class="w-4 h-4"></i> Exportar
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div class="overflow-x-auto">
-                        <table class="th-table">
-                            <thead>
-                                <tr class="th-table-head">
-                                    <th>Nome</th>
-                                    <th>CPF / Whats</th>
-                                    <th>Acumulados</th>
-                                    <th>Resgates</th>
-                                    <th>Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tabela-clientes" class="divide-y divide-slate-150 text-sm">
+                        
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="bg-[#F9F9FB] border-b border-black/5">
+                                        <th class="py-4 px-8 text-[10px] font-black uppercase tracking-widest text-th-black/60">Nome Completo</th>
+                                        <th class="py-4 px-8 text-[10px] font-black uppercase tracking-widest text-th-black/60 text-center">Documento / Contato</th>
+                                        <th class="py-4 px-8 text-[10px] font-black uppercase tracking-widest text-th-black/60 text-center">Acumulados</th>
+                                        <th class="py-4 px-8 text-[10px] font-black uppercase tracking-widest text-th-black/60 text-center">Resgates</th>
+                                        <th class="py-4 px-8 text-[10px] font-black uppercase tracking-widest text-th-black/60 text-right">Controles</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabela-clientes" class="divide-y divide-black/5 text-sm font-medium">
                                 </tbody>
-                        </table>
+                            </table>
+                        </div>
                     </div>
-                </div>
-            </section>
+                </section>
+
+            </div>
         </main>
-        
-        <div id="modal-alerta-aniversario" tabindex="-1" class="hidden th-modal-backdrop z-[60]">
-            <div class="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl text-center relative overflow-hidden border-t-8 border-black">
-                <div class="w-20 h-20 bg-gray-100 text-black rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce">
-                    <i data-lucide="cake" class="w-10 h-10"></i>
-                </div>
-                <h3 class="text-2xl font-black text-black mb-2">Tem Aniversariante!</h3>
-                <p class="text-gray-600 mb-6" id="texto-alerta-aniversario"></p>
-                <div class="flex flex-col gap-3">
-                    <button onclick="confirmarCortesiaAniversario()" class="th-btn-black w-full py-3 transform hover:scale-105 shadow-md">
-                        <i data-lucide="check-circle" class="w-5 h-5"></i> Confirmar Desconto (R$ 50,00)
-                    </button>
-                    <button onclick="continuarPosAniversario()" class="th-btn-secondary w-full py-3">
-                        Pular / Continuar no Caixa
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <div id="modal-whatsapp" tabindex="-1" class="hidden th-modal-backdrop z-50">
-            <div class="th-modal-box max-w-md border-t-4 border-green-500">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2"><i data-lucide="message-circle" class="w-5 h-5 text-green-500"></i> Enviar p/ Fila do Robô</h3>
-                    <button onclick="fecharModal('modal-whatsapp')" class="text-gray-400 hover:text-black"><i data-lucide="x" class="w-5 h-5"></i></button>
-                </div>
-                <p class="text-sm text-gray-500 mb-4 border-b border-gray-100 pb-2 text-center">Destinatário: <strong id="whats-cliente-nome" class="text-black text-base"></strong></p>
-                <div class="flex flex-col gap-3" id="lista-opcoes-whats"></div>
-            </div>
-        </div>
-
-        <div id="modal-marketing" tabindex="-1" class="hidden th-modal-backdrop z-[100]">
-            <div class="th-modal-box max-w-2xl max-h-[90vh] overflow-y-auto border-t-4 border-indigo-600">
-                <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-xl font-black text-gray-800 flex items-center gap-2"><i data-lucide="megaphone" class="w-6 h-6 text-indigo-600"></i> Central de Marketing</h3>
-                    <button onclick="fecharModal('modal-marketing')" class="text-gray-400 hover:text-black"><i data-lucide="x" class="w-6 h-6"></i></button>
-                </div>
-                <p class="text-sm text-gray-500 mb-4 bg-indigo-50 p-3 rounded-lg text-center"><strong>Dica:</strong> Use <strong>[Nome]</strong> para puxar o nome do cliente automaticamente e <strong>[Acumulados]</strong> para mostrar os almoços. O Robô Node.js fará o disparo de forma invisível.</p>
-
-                <div class="space-y-6">
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1 text-center">Aviso de Aniversário (Automático 7 dias antes)</label>
-                        <textarea id="mkt-msg-niver" rows="3" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black outline-none text-sm text-center"></textarea>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1 text-center">Prêmio Alcançado (Aviso do 10º Almoço)</label>
-                        <textarea id="mkt-msg-premio" rows="3" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black outline-none text-sm text-center"></textarea>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1 text-center">Recuperação de Inativos (No 16º Dia de Ausência)</label>
-                        <textarea id="mkt-msg-inativo" rows="3" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black outline-none text-sm text-center"></textarea>
-                    </div>
-
-                    <div class="pt-4 border-t border-gray-200 bg-indigo-50 p-4 rounded-xl">
-                        <div class="flex items-center gap-2 mb-3 text-indigo-900 justify-center">
-                            <i data-lucide="calendar-clock" class="w-5 h-5"></i>
-                            <h4 class="font-bold text-center">Agendar Disparo Automático (Massa)</h4>
-                        </div>
-                        <div class="flex gap-2 mb-2">
-                            <input type="date" id="mkt-agenda-data" class="p-2 border border-indigo-200 rounded-lg text-sm w-1/3 outline-none text-center">
-                            <input type="text" id="mkt-agenda-titulo" placeholder="Ex: Promoção Dia das Mães" class="p-2 border border-indigo-200 rounded-lg text-sm w-2/3 outline-none text-center">
-                        </div>
-                        <textarea id="mkt-agenda-texto" rows="2" placeholder="Digite a mensagem promocional. Use [Nome] para personalizar." class="w-full p-2 border border-indigo-200 rounded-lg text-sm mb-2 outline-none text-center"></textarea>
-                        <button onclick="adicionarAgendamento()" class="w-full bg-indigo-600 text-white px-3 py-2 rounded-lg font-bold hover:bg-indigo-700 transition text-sm mb-4">+ Agendar Disparo para Toda a Base</button>
-                        <div id="area-agendamentos" class="space-y-3"></div>
-                    </div>
-                    
-                    <div class="pt-4 border-t border-gray-200">
-                        <div class="flex justify-between items-center mb-3">
-                            <h4 class="font-bold text-gray-800">Botões Customizados (Envio Individual)</h4>
-                            <button onclick="adicionarMsgCustom()" class="text-xs bg-black text-white px-3 py-1.5 rounded-lg font-bold hover:bg-gray-800">+ Novo Botão</button>
-                        </div>
-                        <div id="area-mensagens-custom" class="space-y-4"></div>
-                    </div>
-                </div>
-
-                <div class="mt-8 flex justify-end gap-3 border-t border-gray-200 pt-4">
-                    <button onclick="fecharModal('modal-marketing')" class="th-btn-secondary px-5 py-2.5">Cancelar</button>
-                    <button onclick="salvarCentralMarketing()" class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold flex items-center gap-2"><i data-lucide="save" class="w-4 h-4"></i> Salvar e Integrar c/ Robô</button>
-                </div>
-            </div>
-        </div>
-
-        <div id="modal-editar" tabindex="-1" class="hidden th-modal-backdrop z-50">
-            <div class="th-modal-box max-w-md border-t-4 border-gray-800">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2"><i data-lucide="edit-3" class="w-5 h-5 text-gray-800"></i> Editar Cadastro</h3>
-                    <button type="button" onclick="fecharModal('modal-editar')" class="text-gray-400 hover:text-black"><i data-lucide="x" class="w-5 h-5"></i></button>
-                </div>
-                <form id="form-editar" onsubmit="salvarEdicao(event)" class="space-y-4">
-                    <input type="hidden" id="edit-cpf-raw">
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-500 uppercase mb-1 text-center">CPF (Não editável)</label>
-                        <input type="text" id="edit-cpf-display" disabled class="w-full px-4 py-2 bg-gray-100 border border-gray-200 rounded-xl text-gray-500 font-mono cursor-not-allowed text-center">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-600 uppercase mb-1 text-center">Nome Completo</label>
-                        <input type="text" id="edit-nome" required class="th-input px-4 py-2">
-                    </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-600 uppercase mb-1 text-center">Nascimento</label>
-                            <input type="tel" inputmode="numeric" id="edit-nascimento" required maxlength="10" oninput="mascaraData(this)" placeholder="DD/MM/AAAA" class="th-input px-4 py-2 font-mono">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-600 uppercase mb-1 text-center">WhatsApp</label>
-                            <input type="tel" inputmode="numeric" id="edit-telefone" required maxlength="15" oninput="mascaraTelefone(this)" class="th-input px-4 py-2">
-                        </div>
-                    </div>
-                    <div class="pt-2 flex gap-3">
-                        <button type="button" onclick="fecharModal('modal-editar')" class="th-btn-secondary flex-1 py-2.5">Cancelar</button>
-                        <button type="submit" class="th-btn-black flex-1 py-2.5"><i data-lucide="save" class="w-4 h-4"></i> Salvar</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <div id="modal-usuarios" tabindex="-1" class="hidden th-modal-backdrop z-[150]">
-            <div class="th-modal-box max-w-md border-t-4 border-indigo-600">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2"><i data-lucide="users" class="w-5 h-5 text-indigo-600"></i> Gestão de Acessos</h3>
-                    <button type="button" onclick="fecharModal('modal-usuarios')" class="text-gray-400 hover:text-black"><i data-lucide="x" class="w-5 h-5"></i></button>
-                </div>
-                
-                <form onsubmit="criarUsuario(event)" class="bg-indigo-50 p-4 rounded-xl border border-indigo-100 mb-6 space-y-3">
-                    <h4 class="text-sm font-black text-indigo-900 uppercase tracking-widest text-center mb-2">Criar Nova Senha</h4>
-                    <input type="text" id="novo-user" required placeholder="Nome de usuário (Ex: caixa2)" class="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg outline-none focus:border-indigo-500 text-sm font-bold text-center">
-                    <input type="password" id="novo-senha" required placeholder="Senha (Mínimo 6 dígitos)" minlength="6" class="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg outline-none focus:border-indigo-500 text-sm font-bold text-center">
-                    <select id="novo-cargo" class="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg outline-none focus:border-indigo-500 text-sm font-bold text-center text-gray-700">
-                        <option value="caixa">Permissão: CAIXA (Apenas Bipar/Cadastrar)</option>
-                        <option value="gerente">Permissão: GERENTE (Marketing e Edições)</option>
-                        <option value="admin">Permissão: ADMIN (Acesso Total)</option>
-                    </select>
-                    <button type="submit" class="w-full bg-indigo-600 text-white font-bold py-2 rounded-lg hover:bg-indigo-700 transition shadow-sm text-sm">CRIAR ACESSO</button>
-                </form>
-
-                <h4 class="text-sm font-black text-gray-800 uppercase mb-2 border-b border-gray-100 pb-1">Usuários Cadastrados</h4>
-                <div id="lista-usuarios-cadastrados" class="space-y-2 max-h-48 overflow-y-auto text-sm pr-1"></div>
-            </div>
-        </div>
-
-        <div id="modal-confirmacao" tabindex="-1" class="hidden th-modal-backdrop z-50">
-            <div class="th-modal-box max-w-md">
-                <h3 class="text-lg font-bold text-gray-800 mb-2 text-center">Contabilizar Refeição</h3>
-                <p class="text-gray-600 mb-6 text-center" id="texto-confirmacao">Deseja registrar +1 almoço?</p>
-                <div class="flex justify-end gap-3">
-                    <button onclick="fecharModal('modal-confirmacao')" class="th-btn-secondary px-4 py-2">Cancelar</button>
-                    <button id="btn-confirmar-almoco" class="th-btn-black px-5 py-2 disabled:opacity-50">Confirmar</button>
-                </div>
-            </div>
-        </div>
-
-        <div id="modal-trava" tabindex="-1" class="hidden th-modal-backdrop z-50">
-            <div class="th-modal-box max-w-md border-t-4 border-black">
-                <div class="flex items-center justify-center gap-2 mb-2 text-black">
-                    <i data-lucide="alert-triangle" class="w-6 h-6"></i>
-                    <h3 class="text-lg font-bold">Desconto Disponível!</h3>
-                </div>
-                <p class="text-gray-600 mb-6 text-sm text-center">Este cliente já possui 10 almoços acumulados. Você deseja <strong>Aplicar R$ 50 de Desconto agora</strong> ou ele deseja <strong>Acumular</strong> este para o futuro?</p>
-                <div class="flex flex-col gap-2">
-                    <button id="btn-trava-resgatar" class="th-btn-black w-full px-5 py-3 disabled:opacity-50"><i data-lucide="printer" class="w-4 h-4"></i> Resgatar e Imprimir Cupom</button>
-                    <button id="btn-trava-acumular" class="th-btn-secondary w-full px-5 py-3 disabled:opacity-50">Apenas Acumular (+1 pago)</button>
-                    <button onclick="fecharModal('modal-trava')" class="text-xs text-gray-400 mt-2 underline font-medium text-center block">Cancelar operação</button>
-                </div>
-            </div>
-        </div>
-
-        <div id="modal-historico" tabindex="-1" class="hidden th-modal-backdrop z-50">
-            <div class="th-modal-box max-w-lg border-t-4 border-gray-800">
-                <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2"><i data-lucide="history" class="w-5 h-5"></i> Histórico de Resgates</h3>
-                <div id="lista-historico" class="max-h-80 overflow-y-auto space-y-3 mb-6"></div>
-                <button onclick="fecharModal('modal-historico')" class="th-btn-secondary w-full py-2 px-4">Fechar</button>
-            </div>
-        </div>
-
-        <div id="modal-simulacao" tabindex="-1" class="hidden th-modal-backdrop z-[150]">
-            <div class="th-modal-box max-w-md border-t-4 border-orange-500">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2"><i data-lucide="flask-conical" class="w-5 h-5 text-orange-500"></i> Ajustes de Depuração</h3>
-                    <button type="button" onclick="fecharModal('modal-simulacao')" class="text-gray-400 hover:text-black"><i data-lucide="x" class="w-5 h-5"></i></button>
-                </div>
-                <p class="text-sm text-gray-500 mb-4 border-b border-gray-100 pb-2 text-center">Cliente: <strong id="sim-cliente-nome" class="text-black text-base"></strong></p>
-                
-                <div class="space-y-4">
-                    <div class="bg-gray-50 p-3 rounded-xl border border-gray-200 flex justify-between items-center">
-                        <div>
-                            <p class="text-sm font-bold text-gray-800">Saldo de Almoços</p>
-                            <p class="text-xs text-gray-500">Atual: <span id="sim-qtd-atual" class="font-bold"></span></p>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <input type="number" id="sim-input-almocos" class="w-16 px-2 py-1 border border-gray-300 rounded text-center font-bold" min="0">
-                            <button onclick="salvarSimulacaoAlmocos()" class="bg-black hover:bg-gray-800 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition">Salvar</button>
-                        </div>
-                    </div>
-
-                    <div class="bg-gray-50 p-3 rounded-xl border border-gray-200 text-center">
-                        <p class="text-sm font-bold text-gray-800 mb-1">Simulação de Data Festiva</p>
-                        <p class="text-xs text-gray-500 mb-3">Altera a data de nascimento para hoje e zera histórico de resgate no ano atual.</p>
-                        <button onclick="simularAniversarioHoje()" class="w-full bg-red-100 text-red-600 hover:bg-red-200 py-2.5 rounded-lg text-sm font-bold transition flex items-center justify-center gap-2">
-                            <i data-lucide="cake" class="w-4 h-4"></i> Fazer Aniversário Hoje
-                        </button>
-                    </div>
-
-                    <div class="bg-gray-50 p-3 rounded-xl border border-gray-200 text-center">
-                        <p class="text-sm font-bold text-gray-800 mb-1">Manipulação de Última Visita</p>
-                        <p class="text-xs text-gray-500 mb-3">Retrocede a última visita em 16 dias para testar alertas da regra de inatividade.</p>
-                        <button onclick="simularInatividade()" class="w-full bg-blue-100 text-blue-600 hover:bg-blue-200 py-2.5 rounded-lg text-sm font-bold transition flex items-center justify-center gap-2">
-                            <i data-lucide="calendar-clock" class="w-4 h-4"></i> Simular Ausência (16 dias)
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
     </div>
 
-    <div id="tela-totem" class="hidden fixed inset-0 bg-black z-[250] font-sans overflow-hidden">
-        <div class="w-full flex h-[100dvh]">
-            
-            <div class="w-2/5 bg-black border-r border-gray-800 flex flex-col items-center justify-center p-12 relative shadow-2xl z-10">
-                
-                <img src="./logo.jpg" alt="Top Haus" onclick="sairModoTotem()" class="h-40 w-auto object-contain mb-2 rounded-2xl shadow-[0_0_40px_rgba(255,255,255,0.05)] cursor-pointer" title="Área Secreta">
-                
-                <span class="text-white font-light text-3xl tracking-widest uppercase mb-12">Fidelidade</span>
+    <!-- MODAIS DO SISTEMA -->
 
-                <h3 class="text-3xl font-black text-amber-400 mb-6 tracking-wide uppercase flex items-center gap-3">
-                    <i data-lucide="star" class="w-8 h-8 fill-amber-400"></i> Avalie e Ganhe!
-                </h3>
-                
-                <div class="bg-white p-4 rounded-3xl mb-6 shadow-[0_0_40px_rgba(255,255,255,0.15)]">
-                    <img src="./qrcode.png" alt="QR Code" class="w-48 h-48 object-contain rounded-xl">
+    <div id="modal-alerta-aniversario" tabindex="-1" class="hidden th-modal-backdrop z-[60]">
+        <div class="th-modal-box max-w-sm text-center">
+            <div class="w-20 h-20 bg-th-yellow/10 text-th-yellow rounded-full flex items-center justify-center mx-auto mb-6">
+                <i data-lucide="cake" class="w-10 h-10"></i>
+            </div>
+            <h3 class="text-2xl font-black text-th-black mb-2 tracking-tight">Benefício Ativo!</h3>
+            <p class="text-th-black/60 mb-8 text-sm leading-relaxed" id="texto-alerta-aniversario"></p>
+            <div class="flex flex-col gap-3">
+                <button onclick="confirmarCortesiaAniversario()" class="th-btn-primary w-full py-4 text-sm bg-th-yellow text-th-black hover:bg-[#e08f00]">
+                    Confirmar Desconto Especial
+                </button>
+                <button onclick="continuarPosAniversario()" class="th-btn-secondary w-full py-4 text-sm border-transparent">
+                    Ignorar e Continuar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-whatsapp" tabindex="-1" class="hidden th-modal-backdrop z-50">
+        <div class="th-modal-box max-w-md">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-lg font-black tracking-tight flex items-center gap-2"><i data-lucide="message-circle" class="w-5 h-5 text-[#25D366]"></i> Enviar Mensagem</h3>
+                <button onclick="fecharModal('modal-whatsapp')" class="text-th-black/30 hover:text-th-black"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <p class="text-xs font-bold text-th-black/50 uppercase tracking-widest mb-6">Destinatário: <span id="whats-cliente-nome" class="text-th-black ml-1"></span></p>
+            <div class="flex flex-col gap-3" id="lista-opcoes-whats"></div>
+        </div>
+    </div>
+
+    <div id="modal-marketing" tabindex="-1" class="hidden th-modal-backdrop z-[100]">
+        <div class="th-modal-box max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between mb-8 border-b border-black/5 pb-6">
+                <h3 class="text-xl font-black tracking-tight flex items-center gap-3"><i data-lucide="megaphone" class="w-6 h-6 text-th-brown"></i> Central de Automação de Marketing</h3>
+                <button onclick="fecharModal('modal-marketing')" class="text-th-black/30 hover:text-th-black"><i data-lucide="x" class="w-6 h-6"></i></button>
+            </div>
+            <p class="text-xs text-th-black/60 mb-8 bg-th-background p-4 rounded-xl border border-black/5 leading-relaxed">
+                Utilize a tag <strong class="text-th-black">[Nome]</strong> para personalização automática e <strong class="text-th-black">[Acumulados]</strong> para exibir o saldo do cliente.
+            </p>
+
+            <div class="space-y-8">
+                <div>
+                    <label class="th-label text-left">Aviso de Aniversário (Enviado 7 dias antes)</label>
+                    <textarea id="mkt-msg-niver" rows="3" class="th-input text-left py-3"></textarea>
+                </div>
+                <div>
+                    <label class="th-label text-left">Prêmio Alcançado (Aviso do 10º Almoço)</label>
+                    <textarea id="mkt-msg-premio" rows="3" class="th-input text-left py-3"></textarea>
+                </div>
+                <div>
+                    <label class="th-label text-left">Recuperação de Inativos (No 16º Dia de Ausência)</label>
+                    <textarea id="mkt-msg-inativo" rows="3" class="th-input text-left py-3"></textarea>
+                </div>
+
+                <div class="pt-8 border-t border-black/5">
+                    <h4 class="text-sm font-black tracking-tight mb-4 flex items-center gap-2"><i data-lucide="calendar-clock" class="w-4 h-4 text-th-brown"></i> Agendamento de Disparo em Massa</h4>
+                    <div class="flex flex-col sm:flex-row gap-4 mb-4">
+                        <input type="date" id="mkt-agenda-data" class="th-input text-center sm:w-1/3">
+                        <input type="text" id="mkt-agenda-titulo" placeholder="Título. Ex: Especial Dia das Mães" class="th-input text-left sm:w-2/3">
+                    </div>
+                    <textarea id="mkt-agenda-texto" rows="2" placeholder="Conteúdo da mensagem..." class="th-input text-left py-3 mb-4"></textarea>
+                    <button onclick="adicionarAgendamento()" class="th-btn-secondary w-full py-3 text-xs mb-6 border-dashed border-2">Adicionar Novo Agendamento</button>
+                    <div id="area-agendamentos" class="space-y-3"></div>
                 </div>
                 
-                <p class="text-gray-300 text-xl text-center leading-relaxed px-4">
-                    Avalie nosso atendimento e ganhe um <strong class="text-white">bombom especial</strong>.
-                </p>
-                <p class="text-gray-500 text-sm mt-6 uppercase tracking-widest font-bold">Aponte a câmera do celular</p>
+                <div class="pt-8 border-t border-black/5">
+                    <div class="flex justify-between items-center mb-6">
+                        <h4 class="text-sm font-black tracking-tight">Atalhos Customizados de Mensagem</h4>
+                        <button onclick="adicionarMsgCustom()" class="th-btn-primary px-4 py-2 text-[10px]">Novo Atalho</button>
+                    </div>
+                    <div id="area-mensagens-custom" class="space-y-4"></div>
+                </div>
             </div>
 
-            <div class="w-3/5 flex flex-col items-center justify-center p-12 relative overflow-y-auto" id="totem-dynamic-area">
+            <div class="mt-10 flex justify-end gap-4 border-t border-black/5 pt-6">
+                <button onclick="fecharModal('modal-marketing')" class="th-btn-secondary px-8 py-3 text-sm border-transparent">Cancelar</button>
+                <button onclick="salvarCentralMarketing()" class="th-btn-primary px-8 py-3 text-sm">Salvar Alterações</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-editar" tabindex="-1" class="hidden th-modal-backdrop z-50">
+        <div class="th-modal-box max-w-md">
+            <div class="flex items-center justify-between mb-8">
+                <h3 class="text-lg font-black tracking-tight">Editar Cadastro</h3>
+                <button type="button" onclick="fecharModal('modal-editar')" class="text-th-black/30 hover:text-th-black"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <form id="form-editar" onsubmit="salvarEdicao(event)" class="space-y-6">
+                <input type="hidden" id="edit-cpf-raw">
+                <div>
+                    <label class="th-label text-center">CPF (Documento Identificador)</label>
+                    <input type="text" id="edit-cpf-display" disabled class="th-input bg-th-background text-th-black/40 text-center font-mono cursor-not-allowed">
+                </div>
+                <div>
+                    <label class="th-label text-left">Nome Completo</label>
+                    <input type="text" id="edit-nome" required class="th-input text-left">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="th-label text-center">Nascimento</label>
+                        <input type="tel" inputmode="numeric" id="edit-nascimento" required maxlength="10" oninput="mascaraData(this)" placeholder="DD/MM/AAAA" class="th-input text-center font-mono">
+                    </div>
+                    <div>
+                        <label class="th-label text-center">WhatsApp</label>
+                        <input type="tel" inputmode="numeric" id="edit-telefone" required maxlength="15" oninput="mascaraTelefone(this)" class="th-input text-center font-mono">
+                    </div>
+                </div>
+                <div class="pt-4 flex gap-4">
+                    <button type="button" onclick="fecharModal('modal-editar')" class="th-btn-secondary flex-1 py-3 text-sm border-transparent">Cancelar</button>
+                    <button type="submit" class="th-btn-primary flex-1 py-3 text-sm">Salvar Dados</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-usuarios" tabindex="-1" class="hidden th-modal-backdrop z-[150]">
+        <div class="th-modal-box max-w-md">
+            <div class="flex items-center justify-between mb-8">
+                <h3 class="text-lg font-black tracking-tight">Controle de Acessos</h3>
+                <button type="button" onclick="fecharModal('modal-usuarios')" class="text-th-black/30 hover:text-th-black"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            
+            <form onsubmit="criarUsuario(event)" class="bg-th-background p-6 rounded-2xl border border-black/5 mb-8 space-y-4">
+                <h4 class="text-xs font-bold text-th-black uppercase tracking-widest text-center mb-2">Criar Nova Credencial</h4>
+                <input type="text" id="novo-user" required placeholder="Nome de usuário" class="th-input text-left text-sm py-2">
+                <input type="password" id="novo-senha" required placeholder="Senha (Mínimo 6 dígitos)" minlength="6" class="th-input text-left text-sm py-2">
+                <select id="novo-cargo" class="th-input text-left text-sm py-2 appearance-none cursor-pointer">
+                    <option value="caixa">Perfil: CAIXA (Apenas Bipar/Cadastrar)</option>
+                    <option value="gerente">Perfil: GERENTE (Marketing e Edições)</option>
+                    <option value="admin">Perfil: ADMIN (Acesso Total)</option>
+                </select>
+                <button type="submit" class="th-btn-primary w-full py-3 text-xs mt-2">Criar Novo Acesso</button>
+            </form>
+
+            <h4 class="text-[10px] font-bold text-th-black/50 uppercase tracking-widest mb-4">Usuários Ativos</h4>
+            <div id="lista-usuarios-cadastrados" class="space-y-2 max-h-48 overflow-y-auto text-sm pr-2 custom-scrollbar"></div>
+        </div>
+    </div>
+
+    <div id="modal-confirmacao" tabindex="-1" class="hidden th-modal-backdrop z-50">
+        <div class="th-modal-box max-w-sm text-center">
+            <h3 class="text-xl font-black text-th-black mb-2 tracking-tight">Confirmação</h3>
+            <p class="text-th-black/60 mb-8 text-sm" id="texto-confirmacao">Deseja registrar +1 almoço para este cliente?</p>
+            <div class="flex gap-4">
+                <button onclick="fecharModal('modal-confirmacao')" class="th-btn-secondary flex-1 py-3 text-sm">Cancelar</button>
+                <button id="btn-confirmar-almoco" class="th-btn-primary flex-1 py-3 text-sm disabled:opacity-50">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-trava" tabindex="-1" class="hidden th-modal-backdrop z-50">
+        <div class="th-modal-box max-w-md text-center">
+            <div class="w-16 h-16 bg-th-yellow/10 text-th-yellow rounded-full flex items-center justify-center mx-auto mb-6">
+                <i data-lucide="award" class="w-8 h-8"></i>
+            </div>
+            <h3 class="text-xl font-black text-th-black mb-2 tracking-tight">Benefício Atingido!</h3>
+            <p class="text-th-black/60 mb-8 text-sm leading-relaxed">Este cliente alcançou 10 almoços. Como deseja prosseguir com o <strong class="text-th-black">Desconto de R$ 50</strong>?</p>
+            <div class="flex flex-col gap-3">
+                <button id="btn-trava-resgatar" class="th-btn-primary w-full py-4 text-sm bg-th-yellow text-th-black hover:bg-[#e08f00] disabled:opacity-50">
+                    Aplicar Desconto e Imprimir Cupom
+                </button>
+                <button id="btn-trava-acumular" class="th-btn-secondary w-full py-4 text-sm disabled:opacity-50">
+                    Guardar para depois (+1 pago hoje)
+                </button>
+                <button onclick="fecharModal('modal-trava')" class="text-xs text-th-black/40 mt-3 font-bold uppercase tracking-wider hover:text-th-black transition-colors">Cancelar Operação</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-historico" tabindex="-1" class="hidden th-modal-backdrop z-50">
+        <div class="th-modal-box max-w-lg">
+            <div class="flex items-center justify-between mb-8">
+                <h3 class="text-lg font-black tracking-tight">Histórico do Cliente</h3>
+                <button onclick="fecharModal('modal-historico')" class="text-th-black/30 hover:text-th-black"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <div id="lista-historico" class="max-h-80 overflow-y-auto space-y-3 mb-6 custom-scrollbar pr-2"></div>
+            <button onclick="fecharModal('modal-historico')" class="th-btn-secondary w-full py-3 text-sm">Fechar Histórico</button>
+        </div>
+    </div>
+
+    <div id="modal-simulacao" tabindex="-1" class="hidden th-modal-backdrop z-[150]">
+        <div class="th-modal-box max-w-md border-t-8 border-th-yellow">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-lg font-black tracking-tight text-th-black">Ajustes de Sistema</h3>
+                <button type="button" onclick="fecharModal('modal-simulacao')" class="text-th-black/30 hover:text-th-black"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <p class="text-xs font-bold text-th-black/50 uppercase tracking-widest mb-6">Cliente Alvo: <span id="sim-cliente-nome" class="text-th-black ml-1"></span></p>
+            
+            <div class="space-y-4">
+                <div class="bg-th-background p-4 rounded-xl border border-black/5 flex justify-between items-center">
+                    <div>
+                        <p class="text-sm font-bold text-th-black">Saldo Manipulado</p>
+                        <p class="text-[10px] text-th-black/50 uppercase font-bold tracking-widest">Atual: <span id="sim-qtd-atual" class="text-th-black"></span></p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <input type="number" id="sim-input-almocos" class="th-input w-20 py-2 text-center font-mono font-bold" min="0">
+                        <button onclick="salvarSimulacaoAlmocos()" class="th-btn-primary px-4 py-2 text-xs">Forçar</button>
+                    </div>
+                </div>
+
+                <div class="bg-th-background p-4 rounded-xl border border-black/5">
+                    <button onclick="simularAniversarioHoje()" class="w-full th-btn-secondary py-3 text-xs border-transparent hover:bg-black/5 flex items-center justify-center gap-2">
+                        <i data-lucide="cake" class="w-4 h-4 text-th-brown"></i> Disparar Aniversário Hoje
+                    </button>
+                </div>
+
+                <div class="bg-th-background p-4 rounded-xl border border-black/5">
+                    <button onclick="simularInatividade()" class="w-full th-btn-secondary py-3 text-xs border-transparent hover:bg-black/5 flex items-center justify-center gap-2">
+                        <i data-lucide="calendar-clock" class="w-4 h-4 text-th-brown"></i> Retroceder Visita (16 dias)
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TELA TOTEM (AUTOATENDIMENTO CLIENTE) -->
+    <div id="tela-totem" class="hidden fixed inset-0 bg-th-black z-[250] font-sans overflow-hidden">
+        <div class="w-full flex h-[100dvh]">
+            
+            <!-- Painel Institucional (Esquerda) -->
+            <div class="w-2/5 border-r border-white/10 flex flex-col items-center justify-center p-12 relative z-10 bg-gradient-to-b from-[#111111] to-th-black">
                 
-                <div id="totem-tela-busca" class="w-full max-w-lg text-center transition-all">
-                    <h1 class="text-5xl font-black text-white mb-4">Bem-vindo!</h1>
-                    <p class="text-gray-400 mb-10 text-2xl">Digite seu CPF para registrar seu almoço:</p>
-                    <input type="tel" inputmode="numeric" id="totem-cpf" placeholder="000.000.000-00" maxlength="14" oninput="mascaraCPF(this)" onkeydown="if(event.key==='Enter') totemProcessarCPF()" class="th-totem-input-main">
-                    <button id="btn-totem-avancar" onclick="totemProcessarCPF()" class="w-full th-totem-btn-primary">
-                        Avançar
+                <img src="./logo.jpg" alt="Top Haus" onclick="sairModoTotem()" class="h-40 w-auto object-contain mb-8 rounded-2xl shadow-[0_0_40px_rgba(255,255,255,0.05)] cursor-pointer bg-white p-2" title="Retornar ao Caixa">
+                
+                <h1 class="text-white font-black text-4xl tracking-tight uppercase mb-2">Top Haus</h1>
+                <h2 class="text-th-brown tracking-widest uppercase text-sm font-bold mb-16">Fidelidade</h2>
+
+                <h3 class="text-2xl font-black text-th-yellow mb-8 tracking-tight uppercase text-center leading-tight">
+                    Avalie nossa qualidade<br>e ganhe um brinde!
+                </h3>
+                
+                <div class="bg-white p-4 rounded-[24px] mb-8 shadow-2xl">
+                    <img src="./qrcode.png" alt="QR Code" class="w-48 h-48 object-contain">
+                </div>
+                
+                <p class="text-white/50 text-xs mt-2 uppercase tracking-widest font-bold">Aponte a câmera do celular</p>
+            </div>
+
+            <!-- Área Dinâmica de Interação (Direita) -->
+            <div class="w-3/5 flex flex-col items-center justify-center p-16 relative bg-th-black" id="totem-dynamic-area">
+                
+                <div id="totem-tela-busca" class="w-full max-w-xl text-center transition-all">
+                    <h1 class="text-6xl font-black text-white mb-6 tracking-tight">Bem-vindo(a)</h1>
+                    <p class="text-white/60 mb-12 text-2xl font-medium">Insira seu CPF para garantir seu benefício de hoje:</p>
+                    
+                    <input type="tel" inputmode="numeric" id="totem-cpf" placeholder="000.000.000-00" maxlength="14" oninput="mascaraCPF(this)" onkeydown="if(event.key==='Enter') totemProcessarCPF()" class="w-full bg-white text-th-black text-center text-5xl py-8 rounded-[24px] font-mono mb-10 outline-none focus:ring-4 focus:ring-th-yellow transition-all shadow-2xl">
+                    
+                    <button id="btn-totem-avancar" onclick="totemProcessarCPF()" class="w-full bg-th-yellow text-th-black font-black text-3xl py-8 rounded-[24px] hover:bg-[#e08f00] transition-colors shadow-[0_0_40px_rgba(252,161,0,0.2)]">
+                        Continuar
                     </button>
                 </div>
 
                 <div id="totem-tela-cadastro" class="hidden w-full max-w-2xl text-center transition-all">
-                    <h2 class="text-5xl font-black text-white mb-2">Primeira vez aqui?</h2>
-                    <p class="text-gray-400 text-2xl mb-10">Preencha rapidamente para participar do clube.</p>
+                    <h2 class="text-5xl font-black text-white mb-4 tracking-tight">Falta pouco!</h2>
+                    <p class="text-white/60 text-xl mb-12 font-medium">Preencha rapidamente para concluir sua participação.</p>
+                    
                     <form id="totem-form" onsubmit="totemSalvarCadastro(event)" class="w-full space-y-6">
-                        <input type="tel" inputmode="numeric" id="totem-cad-cpf" readonly class="th-totem-input-readonly">
-                        <input type="text" id="totem-cad-nome" required placeholder="Nome Completo" class="th-totem-input">
+                        <input type="tel" inputmode="numeric" id="totem-cad-cpf" readonly class="w-full bg-white/5 border-2 border-white/10 text-white/50 py-6 px-8 rounded-2xl font-mono text-2xl text-center cursor-not-allowed">
+                        <input type="text" id="totem-cad-nome" required placeholder="Seu Nome Completo" class="w-full bg-white text-th-black py-6 px-8 rounded-2xl text-2xl text-center font-bold outline-none focus:ring-4 focus:ring-th-yellow transition-all">
+                        
                         <div class="grid grid-cols-2 gap-6">
-                            <input type="tel" inputmode="numeric" id="totem-cad-nasc" required placeholder="Nasc. (Ex: 30/04/1999)" maxlength="10" oninput="mascaraData(this)" class="th-totem-input text-xl font-mono">
-                            <input type="tel" inputmode="numeric" id="totem-cad-tel" required placeholder="WhatsApp" maxlength="15" oninput="mascaraTelefone(this)" class="th-totem-input text-xl font-mono">
+                            <input type="tel" inputmode="numeric" id="totem-cad-nasc" required placeholder="Nascimento (Ex: 30/04/1999)" maxlength="10" oninput="mascaraData(this)" class="w-full bg-white text-th-black py-6 px-8 rounded-2xl text-xl font-mono text-center font-bold outline-none focus:ring-4 focus:ring-th-yellow transition-all">
+                            <input type="tel" inputmode="numeric" id="totem-cad-tel" required placeholder="WhatsApp" maxlength="15" oninput="mascaraTelefone(this)" class="w-full bg-white text-th-black py-6 px-8 rounded-2xl text-xl font-mono text-center font-bold outline-none focus:ring-4 focus:ring-th-yellow transition-all">
                         </div>
-                        <div class="flex gap-6 mt-8">
-                            <button type="button" onclick="totemVoltarInicio()" class="w-1/3 th-totem-btn-secondary">Voltar</button>
-                            <button type="submit" id="btn-totem-salvar" class="w-2/3 th-totem-btn-primary shadow-[0_0_30px_rgba(255,255,255,0.3)]">Salvar Dados</button>
+                        
+                        <div class="flex gap-6 mt-12">
+                            <button type="button" onclick="totemVoltarInicio()" class="w-1/3 bg-transparent border-2 border-white/20 text-white font-bold text-2xl rounded-2xl hover:bg-white/5 transition-colors">Voltar</button>
+                            <button type="submit" id="btn-totem-salvar" class="w-2/3 bg-th-yellow text-th-black font-black text-2xl rounded-2xl hover:bg-[#e08f00] transition-colors shadow-[0_0_30px_rgba(252,161,0,0.2)] py-6">Registrar Dados</button>
                         </div>
                     </form>
                 </div>
 
-                <div id="totem-tela-opcoes" class="hidden w-full max-w-lg text-center transition-all">
-                    <div class="w-32 h-32 bg-white text-black rounded-full flex items-center justify-center mx-auto mb-6">
-                        <i data-lucide="gift" class="w-16 h-16"></i>
+                <div id="totem-tela-opcoes" class="hidden w-full max-w-xl text-center transition-all">
+                    <div class="w-32 h-32 bg-th-yellow/20 text-th-yellow rounded-full flex items-center justify-center mx-auto mb-10">
+                        <i data-lucide="award" class="w-16 h-16"></i>
                     </div>
-                    <h2 class="text-5xl font-black text-white mb-4">Parabéns!</h2>
-                    <p class="text-gray-300 text-2xl mb-2">Você possui um benefício de</p>
-                    <strong class="text-amber-400 text-5xl font-black mb-10 block">R$ 50,00 de Desconto</strong>
+                    <h2 class="text-6xl font-black text-white mb-6 tracking-tight">Meus Parabéns!</h2>
+                    <p class="text-white/60 text-2xl mb-4 font-medium">Seu prêmio de fidelidade está liberado:</p>
+                    <strong class="text-th-yellow text-5xl font-black mb-16 block bg-th-yellow/10 py-6 rounded-[24px]">R$ 50,00 de Desconto</strong>
+                    
                     <div class="flex flex-col gap-6">
-                        <button id="btn-totem-resgatar" onclick="totemMostrarMensagem('aviso_caixa')" class="w-full th-totem-btn-primary py-8 shadow-[0_0_40px_rgba(255,255,255,0.3)]">
+                        <button id="btn-totem-resgatar" onclick="totemMostrarMensagem('aviso_caixa')" class="w-full bg-th-yellow text-th-black font-black text-3xl py-8 rounded-[24px] hover:bg-[#e08f00] transition-colors shadow-[0_0_40px_rgba(252,161,0,0.2)]">
                             Resgatar Agora
                         </button>
-                        <button id="btn-totem-acumular" onclick="totemExecutarAcumulo()" class="w-full th-totem-btn-secondary border border-gray-600 py-8">
-                            Continuar Acumulando
+                        <button id="btn-totem-acumular" onclick="totemExecutarAcumulo()" class="w-full bg-transparent border-2 border-white/20 text-white font-bold text-2xl py-8 rounded-[24px] hover:bg-white/5 transition-colors">
+                            Guardar para o Futuro
                         </button>
                     </div>
                 </div>
 
-                <div id="totem-tela-mensagem" class="hidden w-full max-w-xl text-center transition-all pb-12 pt-8">
-                    <div id="totem-icone-msg" class="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-8 shadow-[0_0_30px_rgba(255,255,255,0.3)] bg-white text-black"></div>
-                    <h2 id="totem-titulo-msg" class="text-5xl font-black text-white mb-6 leading-tight"></h2>
-                    <p id="totem-texto-msg" class="text-gray-300 text-3xl leading-relaxed"></p>
+                <div id="totem-tela-mensagem" class="hidden w-full max-w-2xl text-center transition-all">
+                    <div id="totem-icone-msg" class="w-32 h-32 rounded-full flex items-center justify-center mx-auto mb-10 bg-white/10 text-white"></div>
+                    <h2 id="totem-titulo-msg" class="text-6xl font-black text-white mb-8 tracking-tight leading-tight"></h2>
+                    <p id="totem-texto-msg" class="text-white/60 text-3xl font-medium leading-relaxed"></p>
                 </div>
                 
                 <div id="totem-bottom-bar" class="hidden absolute bottom-12 left-1/2 -translate-x-1/2 w-3/4 flex flex-col items-center">
-                    <button onclick="totemVoltarInicio()" class="mb-6 px-10 py-3 bg-gray-800 text-white text-lg font-bold rounded-2xl border border-gray-600 transition-all shadow-xl hover:bg-gray-700">Finalizar / Voltar</button>
-                    <div class="w-full bg-gray-900 h-3 rounded-full overflow-hidden border border-gray-800">
-                        <div id="totem-loading-bar" class="bg-white h-full w-full"></div>
+                    <button onclick="totemVoltarInicio()" class="mb-8 px-12 py-4 bg-transparent border-2 border-white/20 text-white text-xl font-bold rounded-full transition-colors hover:bg-white/10">Finalizar Atendimento</button>
+                    <div class="w-full bg-white/10 h-2 rounded-full overflow-hidden">
+                        <div id="totem-loading-bar" class="bg-th-yellow h-full w-full"></div>
                     </div>
                 </div>
 
