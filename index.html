@@ -14,35 +14,44 @@
     <!-- Container Global de Toasts -->
     <div id="toast-container" class="fixed top-6 right-6 z-[9999] flex flex-col gap-2 pointer-events-none"></div>
 
-    <!-- === PRODUTO 1: SISTEMA ADMINISTRATIVO === -->
+    <!-- BANNER DE SIMULAÇÃO (Repensado: Fino e discreto) -->
+    <div id="banner-simulacao" class="hidden bg-th-yellow text-th-black font-black px-4 shadow-sm z-[99999] fixed top-0 left-0 w-full flex justify-center items-center gap-6 h-[32px]">
+        <div class="flex items-center gap-2">
+            <i data-lucide="flask-conical" class="w-3 h-3"></i>
+            <span class="tracking-[0.15em] uppercase text-[10px]">Ambiente de Simulação Ativo</span>
+        </div>
+        <button onclick="desativarSimulacao()" class="bg-th-black text-white px-3 py-1 rounded-[4px] text-[9px] hover:bg-black/80 transition-colors uppercase tracking-wider h-5 flex items-center justify-center">
+            Sair da Simulação
+        </button>
+    </div>
 
     <!-- TELA DE LOGIN -->
     <div id="tela-login" class="fixed inset-0 bg-th-black z-[200] flex flex-col items-center justify-center p-4 transition-all duration-300">
-        <div class="th-login-card bg-white p-8 sm:p-10 w-full max-w-[440px] text-center relative overflow-hidden flex flex-col items-center th-shadow-modal rounded-[32px]">
+        <div class="th-login-card bg-white p-10 w-full max-w-[440px] text-center relative overflow-hidden flex flex-col items-center th-shadow-modal rounded-[32px]">
             <img src="./logo.jpg" alt="Top Haus" class="h-24 w-auto mb-2 object-contain select-none">
             <h1 class="text-th-black font-black text-[22px] tracking-tight uppercase leading-none">Top Haus</h1>
             <h2 class="text-th-brown font-bold text-[11px] tracking-[0.30em] uppercase mb-8 mt-1">Fidelidade</h2>
             
             <hr class="w-full border-t border-black/5 mb-8">
 
-            <form id="form-login" onsubmit="fazerLogin(event)" class="space-y-4 w-full">
+            <form id="form-login" onsubmit="fazerLogin(event)" class="space-y-5 w-full">
                 <div class="text-left group relative">
                     <label class="block text-[11px] font-bold text-[#b58b74] uppercase tracking-[0.10em] mb-1.5 transition-colors group-focus-within:text-th-brown">Usuário de Acesso</label>
-                    <input type="text" id="login-user" required placeholder="Identificação de acesso" class="th-input w-full h-[52px]" autofocus>
+                    <input type="text" id="login-user" required placeholder="Identificação de acesso" class="th-input w-full h-[56px]" autofocus>
                 </div>
-                <div class="text-left group relative pb-2">
+                <div class="text-left group relative">
                     <label class="block text-[11px] font-bold text-[#b58b74] uppercase tracking-[0.10em] mb-1.5 transition-colors group-focus-within:text-th-brown">Senha</label>
                     <div class="relative">
-                        <input type="password" id="login-senha" required placeholder="••••••••" class="th-input w-full h-[52px] pr-12">
+                        <input type="password" id="login-senha" required placeholder="••••••••" class="th-input w-full h-[56px] pr-12">
                         <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-black/30 hover:text-th-brown transition p-2 focus:outline-none" onclick="uiTogglePassword()">
                             <i data-lucide="eye" id="login-eye-icon" class="w-5 h-5"></i>
                         </button>
                     </div>
                 </div>
-                <button type="submit" id="btn-login" class="th-btn-primary w-full h-[52px] text-[13px] tracking-widest mt-2 uppercase">Acessar Sistema</button>
+                <button type="submit" id="btn-login" class="th-btn-primary w-full h-[56px] text-[13px] tracking-widest mt-4 uppercase">Acessar Sistema</button>
             </form>
 
-            <p class="text-xs text-black/40 mt-5 font-medium">Esqueceu o acesso? Fale com o administrador do sistema.</p>
+            <p class="text-xs text-black/40 mt-5 font-medium">Esqueceu o acesso? Fale com o administrador.</p>
 
             <hr class="w-full border-t border-black/5 my-6">
 
@@ -53,33 +62,23 @@
         </div>
     </div>
 
-    <!-- BANNER DE SIMULAÇÃO -->
-    <div id="banner-simulacao" class="hidden bg-th-yellow text-th-black font-black py-2 px-6 shadow-md z-[99999] fixed top-0 left-0 w-full flex-col sm:flex-row justify-center items-center gap-4">
-        <div class="flex items-center gap-2">
-            <i data-lucide="flask-conical" class="w-4 h-4"></i>
-            <span class="tracking-[0.15em] uppercase text-xs">Simulação Ativa — Dados Blindados</span>
-        </div>
-        <button onclick="desativarSimulacao()" class="bg-th-black text-white px-4 py-2 rounded-lg text-xs hover:bg-black/80 transition-colors font-bold uppercase tracking-wider">
-            Sair da Simulação
-        </button>
-    </div>
-
     <!-- DASHBOARD PRINCIPAL -->
-    <div id="app-dashboard" class="hidden no-print h-[100dvh] flex w-full overflow-hidden bg-th-bg">
+    <!-- As classes de animação (.dash-animate-*) são aplicadas via CSS quando .hidden é removido -->
+    <div id="app-dashboard" class="hidden no-print h-[100dvh] w-full flex overflow-hidden bg-th-bg transition-all dash-container">
         
         <!-- Sidebar Admin -->
-        <aside class="w-[260px] bg-th-black text-white flex flex-col justify-between shrink-0 border-r border-white/5 transition-all">
+        <aside class="w-[280px] bg-th-black text-white flex flex-col justify-between shrink-0 border-r border-white/5 dash-animate-sidebar relative z-20">
             <div>
                 <!-- Brand Zone -->
                 <div class="h-[176px] p-8 flex flex-col items-center justify-center border-b border-white/5">
                     <img src="./logo.jpg" alt="Top Haus" class="h-[72px] w-auto mb-2 object-contain select-none">
-                    <h1 class="text-white tracking-widest uppercase text-[14px] font-black opacity-95">Top Haus</h1>
+                    <h1 class="text-white tracking-widest uppercase text-[15px] font-black opacity-95">Top Haus</h1>
                     <h2 class="text-th-brown tracking-[0.25em] uppercase text-[10px] font-bold">Fidelidade</h2>
                 </div>
 
                 <!-- Nav Zone -->
-                <nav class="px-6 py-6 space-y-2 relative">
-                    <p class="text-[10px] font-bold text-white/30 uppercase tracking-[0.10em] mb-4">Navegação Principal</p>
+                <nav class="p-6 space-y-2 relative">
+                    <p class="text-[10px] font-bold text-white/30 uppercase tracking-[0.10em] mb-4 pl-2">Navegação Principal</p>
                     <button onclick="alternarAba('caixa')" id="btn-aba-caixa" class="th-nav-item active">
                         <i data-lucide="calculator" class="w-5 h-5 opacity-80"></i> Caixa e Atendimento
                     </button>
@@ -88,7 +87,7 @@
                     </button>
                     
                     <div class="pt-6 mt-4">
-                        <p class="text-[10px] font-bold text-white/30 uppercase tracking-[0.10em] mb-4">Frente de Loja</p>
+                        <p class="text-[10px] font-bold text-white/30 uppercase tracking-[0.10em] mb-4 pl-2">Frente de Loja</p>
                         <button onclick="entrarModoTotemDaTelaLogin()" class="th-nav-item-totem">
                             <i data-lucide="tablet" class="w-5 h-5"></i> Modo Quiosque
                         </button>
@@ -97,9 +96,9 @@
             </div>
 
             <!-- Operator Zone -->
-            <div class="p-6 border-t border-white/5">
-                <div class="flex items-center gap-3 mb-5">
-                    <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white font-bold shrink-0">
+            <div class="p-6 border-t border-white/5 bg-black/20">
+                <div class="flex items-center gap-4 mb-5 px-2">
+                    <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white font-bold shrink-0 shadow-inner">
                         <i data-lucide="user" class="w-5 h-5 opacity-50"></i>
                     </div>
                     <div class="flex flex-col flex-1 overflow-hidden">
@@ -108,85 +107,87 @@
                         <span id="cargo-pill" class="inline-block mt-1 text-[9px] font-bold uppercase px-2 py-0.5 rounded-full w-fit max-w-full truncate bg-white/10 text-white/60"></span>
                     </div>
                 </div>
-                <button onclick="fazerLogout()" class="w-full h-10 flex items-center justify-center gap-2 rounded-xl text-[12px] font-bold text-white/50 bg-white/5 hover:bg-white/10 hover:text-white/80 transition-colors">
-                    Encerrar Sessão
+                <button onclick="fazerLogout()" class="w-full h-11 flex items-center justify-center gap-2 rounded-xl text-[12px] font-bold text-white/50 bg-white/5 hover:bg-white/10 hover:text-white/80 transition-colors">
+                    <i data-lucide="power" class="w-4 h-4"></i> Encerrar Sessão
                 </button>
             </div>
         </aside>
 
         <!-- Main Content -->
-        <main class="flex-1 flex flex-col h-full overflow-hidden relative">
+        <main class="flex-1 flex flex-col h-full overflow-hidden relative dash-animate-main">
             
             <!-- Header Inteligente -->
-            <header class="h-[64px] px-10 flex items-center justify-between border-b border-th-border bg-white shrink-0 z-10 transition-colors">
+            <header class="h-[76px] px-12 flex items-center justify-between border-b border-th-border bg-white shrink-0 z-10 transition-colors shadow-sm dash-animate-header">
                 <div class="flex flex-col justify-center th-header-titles">
-                    <!-- Títulos populados via CSS reativo (:has selector) -->
-                    <h2 class="text-[22px] font-extrabold tracking-tight text-black leading-none th-dynamic-h2"></h2>
-                    <p class="text-[13px] font-medium text-black/50 mt-1 th-dynamic-p"></p>
+                    <!-- Títulos populados dinamicamente pelo CSS reativo (:has selector) -->
+                    <h2 class="text-[24px] font-extrabold tracking-tight text-black leading-none th-dynamic-h2"></h2>
+                    <p class="text-[13px] font-medium text-black/50 mt-1.5 th-dynamic-p"></p>
                 </div>
                 <div class="flex items-center">
-                    <!-- Engrenagem Admin -->
-                    <button class="th-admin-only hidden p-2 rounded-full hover:bg-black/5 text-black/50 hover:text-black transition-colors" onclick="uiToggleDrawer()">
-                        <i data-lucide="settings" class="w-5 h-5"></i>
+                    <button class="th-admin-only hidden p-2.5 rounded-full hover:bg-black/5 text-black/40 hover:text-black transition-colors" onclick="uiToggleDrawer()">
+                        <i data-lucide="settings" class="w-6 h-6"></i>
                     </button>
                 </div>
             </header>
 
-            <div class="flex-1 overflow-y-auto px-10 py-8 custom-scrollbar relative">
+            <div class="flex-1 overflow-y-auto px-12 py-10 custom-scrollbar relative bg-[#F9F9FB]">
                 
                 <!-- ABA 1: CAIXA -->
-                <section id="aba-caixa" class="max-w-[680px] mx-auto transition-opacity duration-300">
+                <section id="aba-caixa" class="max-w-[720px] mx-auto transition-opacity duration-300">
                     
-                    <div class="bg-white p-8 rounded-[20px] shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-th-border">
+                    <div class="bg-white p-10 rounded-[24px] shadow-subtle border border-th-border dash-animate-card">
                         <!-- Header do Card Caixa -->
-                        <div class="flex items-center gap-3 mb-6">
-                            <div class="w-10 h-10 rounded-full bg-th-brown/10 flex items-center justify-center text-th-brown">
-                                <i data-lucide="user-check" class="w-5 h-5"></i>
+                        <div class="flex items-center gap-4 mb-8">
+                            <div class="w-12 h-12 rounded-full bg-th-brown/10 flex items-center justify-center text-th-brown">
+                                <i data-lucide="user-check" class="w-6 h-6"></i>
                             </div>
-                            <h2 class="text-[18px] font-bold text-black tracking-tight">Registrar Visita</h2>
+                            <div>
+                                <h2 class="text-[20px] font-bold text-black tracking-tight leading-tight">Registrar Visita</h2>
+                                <p class="text-[13px] text-black/50">Localize o cliente pelo CPF</p>
+                            </div>
                         </div>
                         <hr class="border-t border-th-border mb-8">
 
                         <!-- Estado: Busca Inicial -->
-                        <div class="flex flex-col justify-center">
-                            <label class="block text-[11px] font-extrabold text-th-brown uppercase tracking-widest text-center mb-3">CPF do Cliente</label>
+                        <div class="flex flex-col justify-center max-w-[500px] mx-auto">
+                            <label class="block text-[12px] font-extrabold text-th-brown uppercase tracking-widest text-center mb-3">CPF do Cliente</label>
                             
                             <div class="relative mb-8">
-                                <input type="tel" inputmode="numeric" id="busca-cpf" placeholder="000.000.000-00" maxlength="14" oninput="mascaraCPF(this)" onkeydown="if(event.key==='Enter') buscarEContabilizar()" class="th-input w-full h-[64px] text-center text-[28px] font-mono tracking-wider transition-all duration-200">
+                                <input type="tel" inputmode="numeric" id="busca-cpf" placeholder="000.000.000-00" maxlength="14" oninput="mascaraCPF(this)" onkeydown="if(event.key==='Enter') buscarEContabilizar()" class="th-input w-full h-[72px] text-center text-[32px] font-mono tracking-wider transition-all duration-200 bg-[#F4F4F6] border-2 border-transparent">
                             </div>
                             
-                            <button id="btn-caixa-buscar" onclick="buscarEContabilizar()" class="th-btn-primary w-full h-[52px] text-[13px] uppercase disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-250">
-                                Buscar e Registrar
+                            <button id="btn-caixa-buscar" onclick="buscarEContabilizar()" class="th-btn-primary w-full h-[56px] text-[14px] uppercase disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-250 shadow-md">
+                                Buscar e Iniciar Atendimento
                             </button>
                         </div>
                         
-                        <!-- Estado Resultado Embutido: Cadastro (CPF Não Encontrado) -->
-                        <form id="form-cadastro" onsubmit="cadastrarCliente(event)" class="hidden mt-8 pt-8 border-t border-th-border animate-fade-in-up">
-                            <div class="flex flex-col items-center text-center mb-6">
-                                <div class="w-10 h-10 rounded-full bg-th-brown/10 flex items-center justify-center text-th-brown mb-3">
-                                    <i data-lucide="user-plus" class="w-5 h-5"></i>
+                        <!-- Estado Resultado Embutido: Cadastro (Injetado) -->
+                        <form id="form-cadastro" onsubmit="cadastrarCliente(event)" class="hidden mt-10 pt-10 border-t border-th-border animate-fade-in-up">
+                            <div class="flex flex-col items-center text-center mb-8">
+                                <div class="w-12 h-12 rounded-full bg-th-brown/10 flex items-center justify-center text-th-brown mb-3">
+                                    <i data-lucide="user-plus" class="w-6 h-6"></i>
                                 </div>
-                                <h3 class="text-[18px] font-bold text-black">Primeiro acesso?</h3>
-                                <p class="text-[14px] text-black/50">Este CPF não está cadastrado.</p>
+                                <h3 class="text-[20px] font-bold text-black">Primeiro acesso?</h3>
+                                <p class="text-[14px] text-black/50">Este documento não está em nossa base.</p>
                             </div>
-                            <div class="space-y-4">
-                                <input type="tel" id="cad-cpf" required placeholder="CPF" maxlength="14" oninput="mascaraCPF(this)" class="hidden"> <!-- Hidden pois usa o busca-cpf visualmente via JS ou espelhamento -->
+                            <div class="space-y-5 max-w-[500px] mx-auto">
+                                <input type="tel" id="cad-cpf" required placeholder="CPF" maxlength="14" oninput="mascaraCPF(this)" class="hidden">
                                 <div>
                                     <label class="th-label">Nome Completo</label>
-                                    <input type="text" id="cad-nome" required placeholder="Como o cliente gosta de ser chamado" class="th-input w-full h-[48px]">
+                                    <input type="text" id="cad-nome" required placeholder="Como o cliente prefere ser chamado" class="th-input w-full h-[52px]">
                                 </div>
-                                <div class="grid grid-cols-2 gap-4">
+                                <div class="grid grid-cols-2 gap-5">
                                     <div>
                                         <label class="th-label">WhatsApp</label>
-                                        <input type="tel" inputmode="numeric" id="cad-telefone" required placeholder="(00) 00000-0000" maxlength="15" oninput="mascaraTelefone(this)" class="th-input w-full h-[48px] text-center font-mono">
+                                        <input type="tel" inputmode="numeric" id="cad-telefone" required placeholder="(00) 00000-0000" maxlength="15" oninput="mascaraTelefone(this)" class="th-input w-full h-[52px] text-center font-mono">
                                     </div>
                                     <div>
                                         <label class="th-label">Nascimento <span class="text-black/30 font-normal normal-case">(Opcional)</span></label>
-                                        <input type="tel" inputmode="numeric" id="cad-nascimento" placeholder="DD/MM/AAAA" maxlength="10" oninput="mascaraData(this)" class="th-input w-full h-[48px] text-center font-mono">
+                                        <input type="tel" inputmode="numeric" id="cad-nascimento" placeholder="DD/MM/AAAA" maxlength="10" oninput="mascaraData(this)" class="th-input w-full h-[52px] text-center font-mono">
                                     </div>
                                 </div>
                             </div>
-                            <button type="submit" id="btn-caixa-salvar" class="th-btn-primary w-full h-[52px] text-[13px] uppercase mt-8 bg-th-brown">
+                            <button type="submit" id="btn-caixa-salvar" class="th-btn-primary w-full max-w-[500px] mx-auto block h-[56px] text-[14px] uppercase mt-10 shadow-md">
                                 Cadastrar e Registrar 1ª Visita
                             </button>
                         </form>
@@ -194,86 +195,86 @@
                 </section>
 
                 <!-- ABA 2: ADMIN / GESTÃO -->
-                <section id="aba-admin" class="hidden h-full flex flex-col space-y-6 animate-fade-in transition-opacity">
+                <section id="aba-admin" class="hidden h-full flex flex-col space-y-8 animate-fade-in transition-opacity">
                     
                     <!-- Barra de Ferramentas Fixa -->
-                    <div class="sticky top-0 bg-th-bg z-20 pb-4 pt-1 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 border-b border-black/5">
+                    <div class="sticky top-0 z-20 pb-4 pt-1 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 border-b border-black/5 bg-[#F9F9FB] dash-animate-stagger-1">
                         <div>
-                            <h3 class="text-[16px] font-bold text-black tracking-tight">Base de Clientes</h3>
-                            <p class="text-[12px] font-medium text-black/50 mt-0.5 transition-colors" id="filtro-atual-texto">Exibindo: Todos os clientes</p>
+                            <h3 class="text-[18px] font-bold text-black tracking-tight">Filtros e Controles</h3>
+                            <p class="text-[13px] font-medium text-black/50 mt-0.5 transition-colors" id="filtro-atual-texto">Exibindo: Todos os clientes</p>
                         </div>
                         <div class="flex items-center gap-4">
                             <!-- Busca expansível -->
                             <div class="relative group">
-                                <i data-lucide="search" class="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-black/40 group-focus-within:text-th-brown z-10 transition-colors"></i>
-                                <input type="text" id="busca-admin" oninput="filtrarPorTexto(this.value)" placeholder="Pesquisar por nome ou CPF" class="th-input h-10 pl-10 pr-4 text-[13px] w-10 sm:w-[280px] bg-transparent border-transparent focus:bg-white focus:border-th-brown focus:w-[280px] transition-all cursor-pointer focus:cursor-text rounded-full shadow-none focus:shadow-float">
+                                <i data-lucide="search" class="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-black/40 group-focus-within:text-th-brown z-10 transition-colors"></i>
+                                <input type="text" id="busca-admin" oninput="filtrarPorTexto(this.value)" placeholder="Pesquisar por nome ou CPF" class="th-input h-11 pl-12 pr-4 text-[13px] w-12 sm:w-[320px] bg-white border border-th-border focus:border-th-brown focus:w-[320px] transition-all cursor-pointer focus:cursor-text rounded-full shadow-subtle focus:shadow-float">
                             </div>
                             
-                            <button onclick="abrirCentralMarketing()" class="h-10 px-5 bg-th-brown text-white text-[12px] font-bold uppercase rounded-xl hover:bg-th-brown-hover hover:-translate-y-0.5 transition-all shadow-subtle flex items-center gap-2">
+                            <button onclick="abrirCentralMarketing()" class="h-11 px-6 bg-th-brown text-white text-[13px] font-bold uppercase rounded-full hover:bg-th-brown-hover hover:-translate-y-0.5 transition-all shadow-subtle flex items-center gap-2">
                                 <i data-lucide="megaphone" class="w-4 h-4"></i> Ações de Marketing
                             </button>
-                            <button onclick="exportarExcel()" class="h-10 px-5 border border-th-border bg-transparent text-black/60 text-[12px] font-bold rounded-xl hover:bg-white hover:text-black transition-colors flex items-center gap-2">
+                            <button onclick="exportarExcel()" class="h-11 px-5 border border-th-border bg-white text-black/60 text-[13px] font-bold rounded-full hover:bg-black/5 hover:text-black transition-colors flex items-center gap-2 shadow-subtle">
                                 <i data-lucide="download" class="w-4 h-4"></i> Exportar
                             </button>
                         </div>
                     </div>
 
-                    <div id="painel-notificacoes" class="empty:hidden w-full flex flex-col gap-2"></div>
+                    <div id="painel-notificacoes" class="empty:hidden w-full flex flex-col gap-2 dash-animate-stagger-2"></div>
 
                     <!-- KPIs -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 shrink-0">
-                        <div onclick="filtrarLista('premios')" class="th-kpi-card group !border-l-[3px] !border-l-th-yellow cursor-pointer bg-gradient-to-br from-white to-[rgba(252,161,0,0.04)] relative overflow-hidden">
-                            <p class="text-[10px] font-bold text-[#b87600] uppercase tracking-widest flex items-center gap-1.5"><i data-lucide="gift" class="w-3.5 h-3.5"></i> Prêmios a Resgatar</p>
-                            <p id="card-premios" class="text-[40px] font-black text-black mt-1 leading-none">0</p>
-                            <i data-lucide="filter" class="w-4 h-4 absolute top-6 right-6 text-black/10 opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                        <div onclick="filtrarLista('premios')" class="th-kpi-card dash-animate-stagger-2 group !border-l-[4px] !border-l-th-yellow cursor-pointer bg-gradient-to-br from-white to-[rgba(252,161,0,0.05)] relative overflow-hidden">
+                            <p class="text-[11px] font-extrabold text-[#b87600] uppercase tracking-widest flex items-center gap-1.5"><i data-lucide="gift" class="w-4 h-4"></i> Prêmios a Resgatar</p>
+                            <p id="card-premios" class="text-[44px] font-black text-black mt-2 leading-none">0</p>
+                            <i data-lucide="filter" class="w-5 h-5 absolute top-6 right-6 text-black/10 opacity-0 group-hover:opacity-100 transition-opacity"></i>
                         </div>
-                        <div onclick="filtrarLista('todos')" class="th-kpi-card group cursor-pointer hover:border-l-[3px] hover:border-l-th-brown">
-                            <p class="text-[10px] font-bold text-black/40 uppercase tracking-widest">Total Cadastrados</p>
-                            <p id="card-total" class="text-[32px] font-black text-black mt-1 leading-none">0</p>
-                            <i data-lucide="filter" class="w-4 h-4 absolute top-6 right-6 text-black/10 opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                        <div onclick="filtrarLista('todos')" class="th-kpi-card dash-animate-stagger-3 group cursor-pointer hover:border-l-[4px] hover:border-l-th-brown border-l-[4px] border-l-transparent">
+                            <p class="text-[11px] font-bold text-black/40 uppercase tracking-widest">Total Cadastrados</p>
+                            <p id="card-total" class="text-[36px] font-black text-black mt-2 leading-none">0</p>
+                            <i data-lucide="filter" class="w-5 h-5 absolute top-6 right-6 text-black/10 opacity-0 group-hover:opacity-100 transition-opacity"></i>
                         </div>
-                        <div onclick="filtrarLista('vips')" class="th-kpi-card group cursor-pointer hover:border-l-[3px] hover:border-l-th-brown">
-                            <p class="text-[10px] font-bold text-black/40 uppercase tracking-widest">Mais Fiéis (VIPs)</p>
-                            <p id="card-vips" class="text-[32px] font-black text-black mt-1 leading-none">0</p>
-                            <i data-lucide="filter" class="w-4 h-4 absolute top-6 right-6 text-black/10 opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                        <div onclick="filtrarLista('vips')" class="th-kpi-card dash-animate-stagger-4 group cursor-pointer hover:border-l-[4px] hover:border-l-th-brown border-l-[4px] border-l-transparent">
+                            <p class="text-[11px] font-bold text-black/40 uppercase tracking-widest">Mais Fiéis (VIPs)</p>
+                            <p id="card-vips" class="text-[36px] font-black text-black mt-2 leading-none">0</p>
+                            <i data-lucide="filter" class="w-5 h-5 absolute top-6 right-6 text-black/10 opacity-0 group-hover:opacity-100 transition-opacity"></i>
                         </div>
-                        <div onclick="filtrarLista('niver_mes')" class="th-kpi-card group cursor-pointer hover:border-l-[3px] hover:border-l-th-brown">
-                            <p class="text-[10px] font-bold text-black/40 uppercase tracking-widest">Aniversariantes</p>
-                            <p id="card-niver-central" class="text-[32px] font-black text-black mt-1 leading-none">0</p>
-                            <i data-lucide="filter" class="w-4 h-4 absolute top-6 right-6 text-black/10 opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                        <div onclick="filtrarLista('niver_mes')" class="th-kpi-card dash-animate-stagger-5 group cursor-pointer hover:border-l-[4px] hover:border-l-th-brown border-l-[4px] border-l-transparent">
+                            <p class="text-[11px] font-bold text-black/40 uppercase tracking-widest">Aniversariantes</p>
+                            <p id="card-niver-central" class="text-[36px] font-black text-black mt-2 leading-none">0</p>
+                            <i data-lucide="filter" class="w-5 h-5 absolute top-6 right-6 text-black/10 opacity-0 group-hover:opacity-100 transition-opacity"></i>
                         </div>
                     </div>
 
                     <!-- Filtro Oculto (Mês) -->
                     <div id="sub-filtros-niver" class="hidden animate-fade-in-up">
-                        <div class="bg-white px-6 py-4 rounded-[16px] border border-th-border flex items-center justify-between">
+                        <div class="bg-white px-8 py-5 rounded-[20px] shadow-subtle border border-th-border flex items-center justify-between">
                             <div class="flex items-center gap-4">
-                                <button id="btn-niver-mes" onclick="filtrarLista('niver_mes')" class="th-btn-secondary h-8 px-4 text-[11px] uppercase tracking-wider">Mês Atual</button>
-                                <span class="text-[11px] font-bold text-black/30 uppercase">ou defina</span>
-                                <input type="date" id="filtro-data-inicio" class="th-input !h-8 text-[12px] px-2 py-0 border-th-border w-32">
-                                <span class="text-[11px] font-bold text-black/30">até</span>
-                                <input type="date" id="filtro-data-fim" class="th-input !h-8 text-[12px] px-2 py-0 border-th-border w-32">
-                                <button onclick="filtrarPorPeriodo()" class="th-btn-primary h-8 px-4 text-[11px] uppercase tracking-wider">Buscar Data</button>
+                                <button id="btn-niver-mes" onclick="filtrarLista('niver_mes')" class="th-btn-secondary h-10 px-5 text-[12px] uppercase tracking-wider">Mês Atual</button>
+                                <span class="text-[12px] font-bold text-black/30 uppercase mx-2">ou defina</span>
+                                <input type="date" id="filtro-data-inicio" class="th-input !h-10 text-[13px] px-3 border-th-border w-36 bg-[#F4F4F6]">
+                                <span class="text-[12px] font-bold text-black/30">até</span>
+                                <input type="date" id="filtro-data-fim" class="th-input !h-10 text-[13px] px-3 border-th-border w-36 bg-[#F4F4F6]">
+                                <button onclick="filtrarPorPeriodo()" class="th-btn-primary h-10 px-5 text-[12px] uppercase tracking-wider">Buscar Data</button>
                             </div>
                         </div>
                     </div>
 
                     <!-- Tabela Premium -->
-                    <div class="bg-white rounded-[20px] shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-th-border overflow-hidden flex flex-col flex-1 min-h-[300px]">
+                    <div class="bg-white rounded-[24px] shadow-subtle border border-th-border overflow-hidden flex flex-col flex-1 min-h-[400px] dash-animate-stagger-6">
                         <div class="overflow-x-auto custom-scrollbar flex-1">
                             <table class="w-full text-left border-collapse whitespace-nowrap">
                                 <thead>
-                                    <tr class="bg-[#F4F4F6] h-[44px]">
-                                        <th class="px-6 text-[11px] font-bold uppercase tracking-widest text-black/50">Nome Completo</th>
-                                        <th class="px-6 text-[11px] font-bold uppercase tracking-widest text-black/50 text-center">CPF / WhatsApp</th>
-                                        <th class="px-6 text-[11px] font-bold uppercase tracking-widest text-black/50 text-center">Almoços</th>
-                                        <th class="px-6 text-[11px] font-bold uppercase tracking-widest text-black/50 text-center">Resgates</th>
-                                        <th class="px-6 text-[11px] font-bold uppercase tracking-widest text-black/50 text-center">Última Visita</th>
-                                        <th class="px-6 text-[11px] font-bold uppercase tracking-widest text-black/50 text-right">Ações</th>
+                                    <tr class="bg-[#F4F4F6] h-[52px]">
+                                        <th class="px-8 text-[11px] font-bold uppercase tracking-widest text-black/50">Nome Completo</th>
+                                        <th class="px-8 text-[11px] font-bold uppercase tracking-widest text-black/50 text-center">CPF / WhatsApp</th>
+                                        <th class="px-8 text-[11px] font-bold uppercase tracking-widest text-black/50 text-center">Almoços</th>
+                                        <th class="px-8 text-[11px] font-bold uppercase tracking-widest text-black/50 text-center">Resgates</th>
+                                        <th class="px-8 text-[11px] font-bold uppercase tracking-widest text-black/50 text-center">Última Visita</th>
+                                        <th class="px-8 text-[11px] font-bold uppercase tracking-widest text-black/50 text-right">Ações</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tabela-clientes" class="divide-y divide-th-border">
-                                    <!-- Injetado pelo app.js (Linhas formatadas via CSS reativo) -->
+                                    <!-- Injetado pelo app.js -->
                                 </tbody>
                             </table>
                         </div>
@@ -282,51 +283,54 @@
             </div>
             
             <!-- Overlay do Drawer -->
-            <div id="ui-drawer-overlay" class="fixed inset-0 bg-black/10 backdrop-blur-[2px] z-[90] hidden transition-opacity" onclick="uiToggleDrawer()"></div>
+            <div id="ui-drawer-overlay" class="fixed inset-0 bg-black/20 backdrop-blur-sm z-[90] hidden transition-opacity duration-300 opacity-0" onclick="uiToggleDrawer()"></div>
             
             <!-- Drawer de Configurações Administrativas -->
-            <div id="ui-drawer-settings" class="fixed top-0 right-0 h-full w-[320px] bg-white border-l border-th-border shadow-modal z-[100] transform translate-x-full transition-transform duration-300 flex flex-col">
-                <div class="h-[64px] px-8 flex items-center justify-between border-b border-th-border">
-                    <h3 class="text-[16px] font-bold text-black tracking-tight">Configurações</h3>
-                    <button class="text-black/30 hover:text-black transition-colors" onclick="uiToggleDrawer()">
-                        <i data-lucide="x" class="w-5 h-5"></i>
+            <div id="ui-drawer-settings" class="fixed top-0 right-0 h-full w-[360px] bg-white border-l border-th-border shadow-modal z-[100] transform translate-x-full transition-transform duration-300 flex flex-col">
+                <div class="h-[76px] px-8 flex items-center justify-between border-b border-th-border shrink-0 bg-white">
+                    <h3 class="text-[18px] font-bold text-black tracking-tight">Configurações</h3>
+                    <button class="text-black/30 hover:text-black transition-colors p-2 rounded-full hover:bg-black/5" onclick="uiToggleDrawer()">
+                        <i data-lucide="x" class="w-6 h-6"></i>
                     </button>
                 </div>
                 
-                <div class="p-8 space-y-8 flex-1 overflow-y-auto custom-scrollbar">
+                <div class="p-8 space-y-10 flex-1 overflow-y-auto custom-scrollbar">
                     
                     <!-- Acessos -->
                     <div>
-                        <p class="text-[11px] font-bold text-black/40 uppercase tracking-widest mb-4">Acessos</p>
-                        <button id="btn-gerenciar-acessos" onclick="abrirGerenciadorUsuarios(); uiToggleDrawer();" class="w-full text-left p-4 rounded-xl border border-th-border bg-th-bg hover:bg-black/5 transition-colors flex items-center justify-between group">
-                            <span class="text-[13px] font-bold text-black">Gerenciar Senhas</span>
-                            <i data-lucide="users" class="w-4 h-4 text-black/40 group-hover:text-black transition-colors"></i>
+                        <p class="text-[11px] font-bold text-black/40 uppercase tracking-widest mb-4">Segurança e Acessos</p>
+                        <button id="btn-gerenciar-acessos" onclick="abrirGerenciadorUsuarios(); uiToggleDrawer();" class="w-full text-left p-5 rounded-[16px] border border-th-border bg-th-bg hover:bg-black/5 transition-colors flex items-center justify-between group">
+                            <div>
+                                <span class="block text-[14px] font-bold text-black">Gerenciar Usuários</span>
+                                <span class="block text-[12px] text-black/50 mt-1">Crie senhas para caixas e gerentes.</span>
+                            </div>
+                            <i data-lucide="users" class="w-5 h-5 text-black/40 group-hover:text-black transition-colors"></i>
                         </button>
                     </div>
 
                     <!-- Simulação -->
                     <div>
                         <p class="text-[11px] font-bold text-black/40 uppercase tracking-widest mb-4">Ambiente de Teste</p>
-                        <button id="btn-ativar-simulacao" onclick="ativarSimulacao(); uiToggleDrawer();" class="w-full p-4 rounded-xl border border-th-yellow/30 bg-th-yellow/5 hover:bg-th-yellow/10 transition-colors flex flex-col gap-1 items-start text-left">
-                            <span class="text-[13px] font-bold text-th-yellow flex items-center gap-2">
-                                <i data-lucide="flask-conical" class="w-4 h-4"></i> Modo Simulação
+                        <button id="btn-ativar-simulacao" onclick="ativarSimulacao(); uiToggleDrawer();" class="w-full p-5 rounded-[16px] border border-th-yellow/30 bg-th-yellow/5 hover:bg-th-yellow/10 transition-colors flex flex-col gap-2 items-start text-left">
+                            <span class="text-[14px] font-bold text-th-yellow flex items-center gap-2">
+                                <i data-lucide="flask-conical" class="w-4 h-4"></i> Ativar Simulação
                             </span>
-                            <span class="text-[11px] text-black/50 leading-tight">Testar regras de negócio sem afetar dados reais.</span>
+                            <span class="text-[12px] text-black/60 leading-relaxed">Permite testar regras de negócio e forçar saldo de clientes sem afetar dados reais.</span>
                         </button>
                     </div>
 
                     <!-- Dados do Sistema -->
-                    <div class="border-t border-th-border pt-8">
-                        <p class="text-[11px] font-bold text-black/40 uppercase tracking-widest mb-4">Dados do Sistema</p>
+                    <div class="border-t border-th-border pt-10">
+                        <p class="text-[11px] font-bold text-black/40 uppercase tracking-widest mb-4">Zona de Perigo</p>
                         
-                        <button onclick="uiToggleResetWarning()" class="w-full h-[44px] rounded-xl border border-red-500 text-red-500 bg-transparent text-[13px] font-bold hover:bg-red-50 transition-colors">
+                        <button onclick="uiToggleResetWarning()" class="w-full h-[48px] rounded-[16px] border border-red-500 text-red-500 bg-transparent text-[13px] font-bold hover:bg-red-50 transition-colors">
                             Resetar Banco de Dados
                         </button>
                         
-                        <div id="ui-reset-accordion" class="hidden mt-4 bg-red-50 p-4 rounded-xl border border-red-100 flex flex-col gap-3">
-                            <p class="text-[11px] font-bold text-red-800 leading-tight">Ação irreversível. Todos os clientes e saldos serão excluídos permanentemente.</p>
-                            <input type="text" id="ui-reset-input" placeholder="Digite RESETAR" class="th-input w-full h-10 text-center text-xs text-red-900 border-red-200" oninput="document.getElementById('btn-zerar-banco').disabled = (this.value !== 'RESETAR')">
-                            <button id="btn-zerar-banco" onclick="resetarSistema(); uiToggleDrawer();" disabled class="w-full h-10 bg-red-600 text-white rounded-lg text-xs font-bold uppercase tracking-wider disabled:opacity-50 transition-opacity">
+                        <div id="ui-reset-accordion" class="hidden mt-4 bg-red-50 p-5 rounded-[16px] border border-red-100 flex flex-col gap-4 animate-fade-in-up">
+                            <p class="text-[12px] font-bold text-red-800 leading-relaxed text-center">Esta ação é irreversível. Todos os clientes e saldos serão excluídos permanentemente.</p>
+                            <input type="text" id="ui-reset-input" placeholder="Digite RESETAR" class="th-input w-full h-[44px] text-center text-[13px] font-bold text-red-900 border-red-200 bg-white" oninput="document.getElementById('btn-zerar-banco').disabled = (this.value !== 'RESETAR')">
+                            <button id="btn-zerar-banco" onclick="resetarSistema(); uiToggleDrawer();" disabled class="w-full h-[44px] bg-red-600 text-white rounded-[12px] text-[12px] font-bold uppercase tracking-wider disabled:opacity-50 transition-opacity">
                                 Confirmar Exclusão
                             </button>
                         </div>
@@ -340,350 +344,397 @@
 
     <!-- === MODAIS DO SISTEMA ADMINISTRATIVO === -->
 
+    <!-- Modal: Marketing (Redesenhado: Mais largo e organizado) -->
+    <div id="modal-marketing" tabindex="-1" class="hidden fixed inset-0 z-[300] bg-black/60 backdrop-blur-[4px] flex items-center justify-center p-4 transition-all">
+        <div class="th-modal-scale bg-white w-full max-w-[900px] max-h-[90vh] rounded-[24px] shadow-modal flex flex-col overflow-hidden">
+            <!-- Header -->
+            <div class="px-8 py-6 border-b border-th-border flex justify-between items-center bg-[#F9F9FB] shrink-0">
+                <h3 class="font-extrabold text-[20px] text-black tracking-tight flex items-center gap-3">
+                    <i data-lucide="megaphone" class="w-6 h-6 text-th-brown"></i> Automação de Marketing
+                </h3>
+                <button onclick="fecharModal('modal-marketing')" class="text-black/40 hover:text-black p-2 rounded-full hover:bg-black/5 transition-colors"><i data-lucide="x" class="w-6 h-6"></i></button>
+            </div>
+            
+            <!-- Body com Grid para reduzir rolagem -->
+            <div class="p-8 overflow-y-auto custom-scrollbar flex-1 bg-white">
+                <p class="text-[13px] text-black/60 mb-8 bg-th-bg p-4 rounded-[16px] border border-th-border">
+                    Dica: Utilize <strong class="text-black">[Nome]</strong> para personalizar e <strong class="text-black">[Acumulados]</strong> para mostrar o saldo.
+                </p>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+                    
+                    <!-- Coluna Esquerda: Mensagens Automáticas -->
+                    <div class="space-y-6">
+                        <h4 class="text-[14px] font-bold tracking-tight mb-2 border-b border-th-border pb-3">Gatilhos Automáticos</h4>
+                        <div>
+                            <label class="th-label">Aviso de Aniversário (7 dias antes)</label>
+                            <textarea id="mkt-msg-niver" rows="2" class="th-input w-full py-3 resize-none custom-scrollbar" placeholder="Ex: [Nome], venha comemorar..."></textarea>
+                        </div>
+                        <div>
+                            <label class="th-label">Prêmio Alcançado (10º Almoço)</label>
+                            <textarea id="mkt-msg-premio" rows="2" class="th-input w-full py-3 resize-none custom-scrollbar" placeholder="Ex: Parabéns, [Nome]!"></textarea>
+                        </div>
+                        <div>
+                            <label class="th-label">Recuperação (16 dias ausente)</label>
+                            <textarea id="mkt-msg-inativo" rows="2" class="th-input w-full py-3 resize-none custom-scrollbar" placeholder="Ex: Sentimos sua falta, [Nome]!"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Coluna Direita: Agendamentos e Atalhos -->
+                    <div class="space-y-8">
+                        <div>
+                            <h4 class="text-[14px] font-bold tracking-tight mb-4 border-b border-th-border pb-3 flex items-center gap-2">
+                                <i data-lucide="calendar-clock" class="w-4 h-4 text-th-brown"></i> Agendamentos
+                            </h4>
+                            <div class="flex flex-col gap-3 mb-4">
+                                <div class="flex gap-3">
+                                    <input type="date" id="mkt-agenda-data" class="th-input w-1/3 px-3">
+                                    <input type="text" id="mkt-agenda-titulo" placeholder="Título (Ex: Dia das Mães)" class="th-input w-2/3 px-3">
+                                </div>
+                                <textarea id="mkt-agenda-texto" rows="2" placeholder="Conteúdo da mensagem..." class="th-input w-full py-3 resize-none custom-scrollbar"></textarea>
+                            </div>
+                            <button onclick="adicionarAgendamento()" class="th-btn-secondary w-full h-[40px] text-[12px] border-dashed border-2">Adicionar Agendamento</button>
+                            <div id="area-agendamentos" class="mt-4 space-y-2 max-h-[150px] overflow-y-auto custom-scrollbar pr-2"></div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between items-center mb-4 border-b border-th-border pb-3">
+                                <h4 class="text-[14px] font-bold tracking-tight">Atalhos de Resposta</h4>
+                                <button onclick="adicionarMsgCustom()" class="text-[11px] font-bold text-th-brown hover:underline">Novo Atalho</button>
+                            </div>
+                            <div id="area-mensagens-custom" class="space-y-3 max-h-[150px] overflow-y-auto custom-scrollbar pr-2"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="px-8 py-5 flex justify-end gap-4 border-t border-th-border bg-[#F9F9FB] shrink-0">
+                <button onclick="fecharModal('modal-marketing')" class="th-btn-secondary px-8 h-[48px] text-[13px] border-transparent">Cancelar</button>
+                <button onclick="salvarCentralMarketing()" class="th-btn-primary px-8 h-[48px] text-[13px]">Salvar Configurações</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal: Confirmar Visita (Caixa) -->
-    <div id="modal-confirmacao" tabindex="-1" class="hidden fixed inset-0 z-[300] bg-black/55 backdrop-blur-[12px] flex items-center justify-center p-4 transition-all">
-        <div class="th-modal-scale bg-white w-full max-w-[440px] rounded-[24px] shadow-modal overflow-hidden p-6 relative">
+    <div id="modal-confirmacao" tabindex="-1" class="hidden fixed inset-0 z-[300] bg-black/60 backdrop-blur-[4px] flex items-center justify-center p-4 transition-all">
+        <div class="th-modal-scale bg-white w-full max-w-[440px] rounded-[24px] shadow-modal overflow-hidden p-8 relative">
             <button onclick="fecharModal('modal-confirmacao')" class="absolute top-6 right-6 text-black/30 hover:text-black transition-colors"><i data-lucide="x" class="w-5 h-5"></i></button>
             <h3 class="text-[20px] font-bold text-black tracking-tight mb-6">Confirmar Registro</h3>
             
-            <div class="bg-th-bg rounded-[16px] p-5 text-center mb-6 border border-th-border">
-                <p id="texto-confirmacao" class="text-[14px] text-black/60 hidden"></p> <!-- Oculto para usar interface rica, JS injeta aqui mas ignoramos visualmente via CSS -->
-                
-                <h4 class="text-[22px] font-extrabold text-black mb-4 truncate" id="ui-confirma-nome">Cliente</h4>
-                
-                <div class="flex items-center gap-2 mb-2">
-                    <div class="h-2 w-full bg-black/10 rounded-full overflow-hidden">
+            <div class="bg-[#F4F4F6] rounded-[20px] p-6 text-center mb-8 border border-th-border">
+                <p id="texto-confirmacao" class="hidden"></p> 
+                <h4 class="text-[24px] font-extrabold text-black mb-4 truncate" id="ui-confirma-nome">Cliente</h4>
+                <div class="flex items-center gap-2 mb-3">
+                    <div class="h-2.5 w-full bg-black/10 rounded-full overflow-hidden">
                         <div class="h-full bg-th-brown w-1/2 rounded-full transition-all"></div>
                     </div>
                 </div>
-                <p class="text-[13px] font-medium text-black/50">Você confirma o registro de mais um almoço hoje?</p>
+                <p class="text-[14px] font-medium text-black/50">Você confirma o registro de mais um almoço hoje?</p>
             </div>
 
-            <div class="flex gap-3">
-                <button onclick="fecharModal('modal-confirmacao')" class="th-btn-secondary flex-[0.4] h-[48px] text-[13px]">Cancelar</button>
-                <button id="btn-confirmar-almoco" class="th-btn-primary flex-[0.6] h-[48px] text-[13px] bg-th-brown">Confirmar Visita</button>
+            <div class="flex gap-4">
+                <button onclick="fecharModal('modal-confirmacao')" class="th-btn-secondary flex-[0.4] h-[52px] text-[14px]">Cancelar</button>
+                <button id="btn-confirmar-almoco" class="th-btn-primary flex-[0.6] h-[52px] text-[14px] bg-th-brown">Confirmar Visita</button>
             </div>
         </div>
     </div>
 
     <!-- Modal: Trava Benefício Disponível (Caixa) -->
-    <div id="modal-trava" tabindex="-1" class="hidden fixed inset-0 z-[300] bg-black/55 backdrop-blur-[12px] flex items-center justify-center p-4 transition-all">
-        <div class="th-modal-scale bg-white w-full max-w-[460px] rounded-[24px] shadow-modal border-t-8 border-t-th-yellow p-8 relative flex flex-col items-center text-center">
+    <div id="modal-trava" tabindex="-1" class="hidden fixed inset-0 z-[300] bg-black/60 backdrop-blur-[4px] flex items-center justify-center p-4 transition-all">
+        <div class="th-modal-scale bg-white w-full max-w-[480px] rounded-[24px] shadow-modal border-t-8 border-t-th-yellow p-10 relative flex flex-col items-center text-center">
             
-            <div class="w-[80px] h-[80px] bg-th-yellow/10 rounded-full flex items-center justify-center mb-4">
-                <i data-lucide="gift" class="w-8 h-8 text-th-yellow"></i>
+            <div class="w-[88px] h-[88px] bg-th-yellow/10 rounded-full flex items-center justify-center mb-5">
+                <i data-lucide="gift" class="w-10 h-10 text-th-yellow"></i>
             </div>
             
-            <h3 class="text-[20px] font-bold text-black tracking-tight mb-1">Benefício Disponível!</h3>
+            <h3 class="text-[22px] font-bold text-black tracking-tight mb-2">Benefício Disponível!</h3>
             <p class="text-[16px] font-medium text-black/50 mb-8 w-full truncate border-b border-th-border pb-6" id="ui-trava-nome">Cliente Especial</p>
             
-            <div class="w-full space-y-3 text-left">
+            <div class="w-full space-y-4 text-left">
                 <!-- Option 1 -->
-                <button id="btn-trava-resgatar" class="w-full p-5 rounded-[14px] border-l-4 border-l-th-brown border-y border-r border-th-border bg-white hover:-translate-y-0.5 hover:shadow-float transition-all group focus:bg-th-brown/5 focus:border-th-brown">
-                    <p class="text-[15px] font-bold text-black mb-1 flex items-center justify-between">
+                <button id="btn-trava-resgatar" class="w-full p-6 rounded-[16px] border-l-[4px] border-l-th-brown border border-th-border bg-white hover:-translate-y-1 hover:shadow-float transition-all group focus:bg-th-brown/5 focus:border-th-brown">
+                    <p class="text-[16px] font-bold text-black mb-1.5 flex items-center justify-between">
                         Aplicar desconto hoje
-                        <i data-lucide="check-circle-2" class="w-4 h-4 text-th-brown opacity-0 group-focus:opacity-100 transition-opacity"></i>
+                        <i data-lucide="check-circle-2" class="w-5 h-5 text-th-brown opacity-0 group-focus:opacity-100 transition-opacity"></i>
                     </p>
-                    <p class="text-[13px] font-medium text-black/50 leading-tight">O desconto de R$ 50,00 será aplicado na conta agora.</p>
+                    <p class="text-[14px] font-medium text-black/50 leading-tight">O desconto de R$ 50,00 será aplicado na conta agora.</p>
                 </button>
                 
                 <!-- Option 2 -->
-                <button id="btn-trava-acumular" class="w-full p-5 rounded-[14px] border-l-4 border-l-black/30 border-y border-r border-th-border bg-white hover:-translate-y-0.5 hover:shadow-float transition-all group focus:bg-th-brown/5 focus:border-th-brown">
-                    <p class="text-[15px] font-bold text-black mb-1 flex items-center justify-between">
+                <button id="btn-trava-acumular" class="w-full p-6 rounded-[16px] border-l-[4px] border-l-black/30 border border-th-border bg-white hover:-translate-y-1 hover:shadow-float transition-all group focus:bg-th-brown/5 focus:border-th-brown">
+                    <p class="text-[16px] font-bold text-black mb-1.5 flex items-center justify-between">
                         Guardar para outra visita
-                        <i data-lucide="check-circle-2" class="w-4 h-4 text-th-brown opacity-0 group-focus:opacity-100 transition-opacity"></i>
+                        <i data-lucide="check-circle-2" class="w-5 h-5 text-th-brown opacity-0 group-focus:opacity-100 transition-opacity"></i>
                     </p>
-                    <p class="text-[13px] font-medium text-black/50 leading-tight">O almoço de hoje é registrado. Sem prazo de validade.</p>
+                    <p class="text-[14px] font-medium text-black/50 leading-tight">O almoço de hoje é registrado. Sem prazo de validade.</p>
                 </button>
             </div>
             
-            <button onclick="fecharModal('modal-trava')" class="mt-6 text-[12px] font-bold text-black/40 hover:text-black uppercase tracking-wider transition-colors">Cancelar sem registrar</button>
+            <button onclick="fecharModal('modal-trava')" class="mt-8 text-[12px] font-bold text-black/40 hover:text-black uppercase tracking-wider transition-colors">Cancelar Operação</button>
         </div>
     </div>
 
-    <!-- Demais modais necessários para app.js manter funcionamento -->
-    <!-- Modal: Editar -->
-    <div id="modal-editar" tabindex="-1" class="hidden fixed inset-0 z-[300] bg-black/55 backdrop-blur-[12px] flex items-center justify-center p-4 transition-all">
-        <div class="th-modal-scale bg-white w-full max-w-[480px] rounded-[24px] shadow-modal p-8 relative">
+    <!-- Modais Preservados em UI -->
+    <div id="modal-editar" tabindex="-1" class="hidden fixed inset-0 z-[300] bg-black/60 backdrop-blur-[4px] flex items-center justify-center p-4">
+        <div class="th-modal-scale bg-white w-full max-w-[480px] rounded-[24px] shadow-modal p-10 relative">
             <div class="flex items-center justify-between mb-8">
                 <h3 class="text-[20px] font-bold text-black tracking-tight">Editar Cliente</h3>
                 <button type="button" onclick="fecharModal('modal-editar')" class="text-black/30 hover:text-black transition-colors"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
-            <form id="form-editar" onsubmit="salvarEdicao(event)" class="space-y-4">
+            <form id="form-editar" onsubmit="salvarEdicao(event)" class="space-y-6">
                 <input type="hidden" id="edit-cpf-raw">
                 <div class="relative">
-                    <label class="th-label absolute -top-2 left-3 bg-white px-1 !mb-0 z-10 text-[10px]">CPF</label>
+                    <label class="th-label absolute -top-2.5 left-4 bg-white px-2 !mb-0 z-10 text-[10px]">CPF</label>
                     <div class="relative">
                         <i data-lucide="lock" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-black/30"></i>
-                        <input type="text" id="edit-cpf-display" disabled class="th-input w-full pl-10 text-black/40 bg-th-bg cursor-not-allowed font-mono" title="CPF não pode ser alterado">
+                        <input type="text" id="edit-cpf-display" disabled class="th-input w-full h-[52px] pl-11 text-black/40 bg-th-bg cursor-not-allowed font-mono" title="CPF não pode ser alterado">
                     </div>
                 </div>
-                <div class="relative mt-5">
-                    <label class="th-label absolute -top-2 left-3 bg-white px-1 !mb-0 z-10 text-[10px]">Nome Completo</label>
-                    <input type="text" id="edit-nome" required class="th-input w-full">
+                <div class="relative">
+                    <label class="th-label absolute -top-2.5 left-4 bg-white px-2 !mb-0 z-10 text-[10px]">Nome Completo</label>
+                    <input type="text" id="edit-nome" required class="th-input w-full h-[52px]">
                 </div>
-                <div class="grid grid-cols-2 gap-4 mt-5">
+                <div class="grid grid-cols-2 gap-5">
                     <div class="relative">
-                        <label class="th-label absolute -top-2 left-3 bg-white px-1 !mb-0 z-10 text-[10px]">Nascimento</label>
-                        <input type="tel" inputmode="numeric" id="edit-nascimento" required maxlength="10" oninput="mascaraData(this)" placeholder="DD/MM/AAAA" class="th-input w-full text-center font-mono">
+                        <label class="th-label absolute -top-2.5 left-4 bg-white px-2 !mb-0 z-10 text-[10px]">Nascimento</label>
+                        <input type="tel" inputmode="numeric" id="edit-nascimento" required maxlength="10" oninput="mascaraData(this)" placeholder="DD/MM/AAAA" class="th-input w-full h-[52px] text-center font-mono">
                     </div>
                     <div class="relative">
-                        <label class="th-label absolute -top-2 left-3 bg-white px-1 !mb-0 z-10 text-[10px]">WhatsApp</label>
-                        <input type="tel" inputmode="numeric" id="edit-telefone" required maxlength="15" oninput="mascaraTelefone(this)" class="th-input w-full text-center font-mono">
+                        <label class="th-label absolute -top-2.5 left-4 bg-white px-2 !mb-0 z-10 text-[10px]">WhatsApp</label>
+                        <input type="tel" inputmode="numeric" id="edit-telefone" required maxlength="15" oninput="mascaraTelefone(this)" class="th-input w-full h-[52px] text-center font-mono">
                     </div>
                 </div>
-                <div class="pt-6 flex gap-3">
-                    <button type="button" onclick="fecharModal('modal-editar')" class="th-btn-secondary flex-[0.4] h-[48px] text-[13px]">Cancelar</button>
-                    <button type="submit" class="th-btn-primary flex-[0.6] h-[48px] text-[13px]">Salvar Alterações</button>
+                <div class="pt-6 flex gap-4">
+                    <button type="button" onclick="fecharModal('modal-editar')" class="th-btn-secondary flex-[0.4] h-[52px] text-[14px]">Cancelar</button>
+                    <button type="submit" class="th-btn-primary flex-[0.6] h-[52px] text-[14px]">Salvar Alterações</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Outros Modais Preservados (Usuarios, Mkt, Simulação) para compatibilidade -->
-    <!-- (Estruturados com o mesmo padrão premium mas mantendo IDs) -->
-    <div id="modal-usuarios" tabindex="-1" class="hidden fixed inset-0 z-[300] bg-black/55 backdrop-blur-[12px] flex items-center justify-center p-4">
+    <div id="modal-usuarios" tabindex="-1" class="hidden fixed inset-0 z-[300] bg-black/60 backdrop-blur-[4px] flex items-center justify-center p-4">
         <div class="th-modal-scale bg-white w-full max-w-[560px] rounded-[24px] p-0 overflow-hidden shadow-modal">
-            <div class="p-6 bg-th-bg border-b border-th-border">
+            <div class="p-8 bg-th-bg border-b border-th-border">
                 <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-[18px] font-bold text-black tracking-tight">Controle de Acessos</h3>
-                    <button type="button" onclick="fecharModal('modal-usuarios')" class="text-black/30 hover:text-black"><i data-lucide="x" class="w-5 h-5"></i></button>
+                    <h3 class="text-[20px] font-bold text-black tracking-tight">Controle de Acessos</h3>
+                    <button type="button" onclick="fecharModal('modal-usuarios')" class="text-black/30 hover:text-black"><i data-lucide="x" class="w-6 h-6"></i></button>
                 </div>
                 <form onsubmit="criarUsuario(event)" class="space-y-4">
                     <div class="flex gap-4">
-                        <input type="text" id="novo-user" required placeholder="Novo usuário" class="th-input flex-1">
-                        <input type="password" id="novo-senha" required placeholder="Senha (Min 6)" minlength="6" class="th-input flex-1">
+                        <input type="text" id="novo-user" required placeholder="Novo usuário" class="th-input flex-1 h-[52px]">
+                        <input type="password" id="novo-senha" required placeholder="Senha (Min 6)" minlength="6" class="th-input flex-1 h-[52px]">
                     </div>
-                    <select id="novo-cargo" class="th-input w-full cursor-pointer bg-white">
+                    <select id="novo-cargo" class="th-input w-full h-[52px] cursor-pointer bg-white">
                         <option value="caixa">Caixa (Apenas Registrar Visitas)</option>
                         <option value="gerente">Gerente (Marketing e Edições)</option>
                         <option value="admin">Administrador (Acesso Total)</option>
                     </select>
-                    <button type="submit" class="th-btn-primary w-full h-[48px] text-[13px] bg-black hover:bg-black/80">Criar Novo Acesso</button>
+                    <button type="submit" class="th-btn-primary w-full h-[52px] text-[14px] bg-black hover:bg-black/80 mt-2">Criar Novo Acesso</button>
                 </form>
             </div>
-            <div class="p-6">
-                <h4 class="text-[11px] font-bold text-black/40 uppercase tracking-widest mb-4">Usuários Ativos</h4>
-                <div id="lista-usuarios-cadastrados" class="space-y-2 max-h-[30vh] overflow-y-auto custom-scrollbar pr-2"></div>
+            <div class="p-8">
+                <h4 class="text-[12px] font-bold text-black/40 uppercase tracking-widest mb-5">Usuários Ativos</h4>
+                <div id="lista-usuarios-cadastrados" class="space-y-3 max-h-[30vh] overflow-y-auto custom-scrollbar pr-2"></div>
             </div>
         </div>
     </div>
 
-    <div id="modal-historico" tabindex="-1" class="hidden fixed inset-0 z-[300] bg-black/55 backdrop-blur-[12px] flex items-center justify-center p-4">
-        <div class="th-modal-scale bg-white w-full max-w-[520px] max-h-[80vh] rounded-[24px] shadow-modal flex flex-col overflow-hidden">
-            <div class="p-6 border-b border-th-border flex justify-between items-center shrink-0">
-                <h3 class="text-[18px] font-bold text-black">Histórico do Cliente</h3>
-                <button onclick="fecharModal('modal-historico')" class="text-black/30 hover:text-black"><i data-lucide="x" class="w-5 h-5"></i></button>
+    <div id="modal-historico" tabindex="-1" class="hidden fixed inset-0 z-[300] bg-black/60 backdrop-blur-[4px] flex items-center justify-center p-4">
+        <div class="th-modal-scale bg-white w-full max-w-[560px] max-h-[80vh] rounded-[24px] shadow-modal flex flex-col overflow-hidden">
+            <div class="p-8 border-b border-th-border flex justify-between items-center shrink-0 bg-white">
+                <h3 class="text-[20px] font-bold text-black tracking-tight">Histórico do Cliente</h3>
+                <button onclick="fecharModal('modal-historico')" class="text-black/30 hover:text-black"><i data-lucide="x" class="w-6 h-6"></i></button>
             </div>
-            <div class="p-6 overflow-y-auto custom-scrollbar bg-th-bg flex-1 relative">
-                <!-- Timeline injectada aqui -->
-                <div id="lista-historico" class="space-y-4 pl-4 border-l-2 border-th-border"></div>
+            <div class="p-8 overflow-y-auto custom-scrollbar bg-[#F9F9FB] flex-1 relative">
+                <div id="lista-historico" class="space-y-6 pl-5 border-l-2 border-black/10"></div>
             </div>
         </div>
     </div>
 
-    <!-- Modais adicionais simplificados em UI mas presentes -->
-    <div id="modal-whatsapp" tabindex="-1" class="hidden fixed inset-0 z-[300] bg-black/55 flex items-center justify-center p-4">
-        <div class="th-modal-scale bg-white w-full max-w-sm rounded-[24px] p-6 text-center">
-            <h3 class="font-bold text-[18px] mb-2"><i data-lucide="message-circle" class="inline w-5 h-5 text-green-500 mr-2"></i>Enviar WhatsApp</h3>
-            <p id="whats-cliente-nome" class="text-sm font-medium mb-4 text-black/60"></p>
-            <div id="lista-opcoes-whats" class="flex flex-col gap-2"></div>
-            <button onclick="fecharModal('modal-whatsapp')" class="mt-4 th-btn-secondary w-full h-10">Fechar</button>
+    <!-- Modais Simplificados -->
+    <div id="modal-whatsapp" tabindex="-1" class="hidden fixed inset-0 z-[300] bg-black/60 flex items-center justify-center p-4">
+        <div class="th-modal-scale bg-white w-full max-w-sm rounded-[24px] p-8 text-center">
+            <h3 class="font-extrabold text-[20px] mb-2"><i data-lucide="message-circle" class="inline w-6 h-6 text-green-500 mr-2"></i>Enviar WhatsApp</h3>
+            <p id="whats-cliente-nome" class="text-[14px] font-medium mb-6 text-black/60"></p>
+            <div id="lista-opcoes-whats" class="flex flex-col gap-3"></div>
+            <button onclick="fecharModal('modal-whatsapp')" class="mt-6 th-btn-secondary w-full h-[48px] text-[13px]">Fechar</button>
         </div>
     </div>
     
-    <div id="modal-alerta-aniversario" tabindex="-1" class="hidden fixed inset-0 z-[300] bg-black/55 flex items-center justify-center p-4">
-        <div class="th-modal-scale bg-white w-full max-w-sm rounded-[24px] p-6 text-center">
-            <i data-lucide="cake" class="w-12 h-12 text-th-yellow mx-auto mb-4"></i>
-            <h3 class="font-bold text-[20px] mb-2">Aniversário!</h3>
-            <p id="texto-alerta-aniversario" class="text-sm mb-6 text-black/60"></p>
-            <div class="flex flex-col gap-2">
-                <button onclick="confirmarCortesiaAniversario()" class="th-btn-primary bg-th-yellow text-black h-12">Confirmar Cortesia</button>
-                <button onclick="continuarPosAniversario()" class="th-btn-secondary h-12">Não utilizar agora</button>
+    <div id="modal-alerta-aniversario" tabindex="-1" class="hidden fixed inset-0 z-[300] bg-black/60 flex items-center justify-center p-4">
+        <div class="th-modal-scale bg-white w-full max-w-sm rounded-[24px] p-8 text-center border-t-8 border-t-th-yellow">
+            <i data-lucide="cake" class="w-14 h-14 text-th-yellow mx-auto mb-5"></i>
+            <h3 class="font-extrabold text-[24px] mb-2 tracking-tight">Aniversário!</h3>
+            <p id="texto-alerta-aniversario" class="text-[14px] mb-8 text-black/60"></p>
+            <div class="flex flex-col gap-3">
+                <button onclick="confirmarCortesiaAniversario()" class="th-btn-primary bg-th-yellow text-black h-[52px] text-[14px]">Confirmar Cortesia</button>
+                <button onclick="continuarPosAniversario()" class="th-btn-secondary h-[52px] text-[14px]">Não utilizar agora</button>
             </div>
         </div>
     </div>
 
-    <div id="modal-marketing" tabindex="-1" class="hidden fixed inset-0 z-[300] bg-black/55 flex items-center justify-center p-4">
-        <div class="th-modal-scale bg-white w-full max-w-2xl max-h-[90vh] rounded-[24px] p-6 overflow-y-auto custom-scrollbar flex flex-col gap-4">
-            <div class="flex justify-between"><h3 class="font-bold text-lg">Marketing</h3><button onclick="fecharModal('modal-marketing')"><i data-lucide="x"></i></button></div>
-            <textarea id="mkt-msg-niver" class="th-input"></textarea>
-            <textarea id="mkt-msg-premio" class="th-input"></textarea>
-            <textarea id="mkt-msg-inativo" class="th-input"></textarea>
-            <div class="flex gap-2"><input type="date" id="mkt-agenda-data" class="th-input w-1/3"><input type="text" id="mkt-agenda-titulo" class="th-input w-2/3"></div>
-            <textarea id="mkt-agenda-texto" class="th-input"></textarea>
-            <button onclick="adicionarAgendamento()" class="th-btn-secondary h-10">Agendar</button>
-            <div id="area-agendamentos"></div>
-            <button onclick="adicionarMsgCustom()" class="th-btn-secondary h-10 mt-4">Novo Atalho Rápido</button>
-            <div id="area-mensagens-custom"></div>
-            <button onclick="salvarCentralMarketing()" class="th-btn-primary h-12 mt-4">Salvar</button>
-        </div>
-    </div>
-
-    <div id="modal-simulacao" tabindex="-1" class="hidden fixed inset-0 z-[300] bg-black/55 flex items-center justify-center p-4">
-        <div class="th-modal-scale bg-white w-full max-w-sm rounded-[24px] p-6 text-center border-t-8 border-th-yellow">
-            <h3 class="font-bold text-lg mb-2">Simulação de Cliente</h3>
-            <p id="sim-cliente-nome" class="font-bold text-sm mb-4"></p>
-            <div class="bg-th-bg p-4 rounded-xl mb-4 text-left">
-                <span class="text-xs">Saldo Atual: <span id="sim-qtd-atual" class="font-bold"></span></span>
-                <div class="flex gap-2 mt-2">
-                    <input type="number" id="sim-input-almocos" class="th-input w-full text-center">
-                    <button onclick="salvarSimulacaoAlmocos()" class="th-btn-primary px-4">Forçar</button>
+    <div id="modal-simulacao" tabindex="-1" class="hidden fixed inset-0 z-[300] bg-black/60 flex items-center justify-center p-4">
+        <div class="th-modal-scale bg-white w-full max-w-[400px] rounded-[24px] p-8 text-center border-t-8 border-th-yellow">
+            <h3 class="font-extrabold text-[20px] mb-2 tracking-tight">Simulação de Cliente</h3>
+            <p id="sim-cliente-nome" class="font-bold text-[14px] mb-6 text-black/50"></p>
+            <div class="bg-[#F4F4F6] p-5 rounded-[16px] mb-5 text-left border border-th-border">
+                <span class="text-[12px] font-bold uppercase tracking-widest text-black/50">Saldo Atual: <span id="sim-qtd-atual" class="font-black text-black"></span></span>
+                <div class="flex gap-3 mt-3">
+                    <input type="number" id="sim-input-almocos" class="th-input w-full h-[44px] text-center font-mono">
+                    <button onclick="salvarSimulacaoAlmocos()" class="th-btn-primary px-5 h-[44px]">Forçar</button>
                 </div>
             </div>
-            <button onclick="simularAniversarioHoje()" class="th-btn-secondary w-full h-10 mb-2">Simular Aniversário</button>
-            <button onclick="simularInatividade()" class="th-btn-secondary w-full h-10 mb-4">Simular 16 Dias Ausente</button>
-            <button onclick="fecharModal('modal-simulacao')" class="text-sm text-black/50">Fechar</button>
+            <button onclick="simularAniversarioHoje()" class="th-btn-secondary w-full h-[48px] mb-3 text-[13px]">Simular Aniversário Hoje</button>
+            <button onclick="simularInatividade()" class="th-btn-secondary w-full h-[48px] mb-6 text-[13px]">Simular 16 Dias Ausente</button>
+            <button onclick="fecharModal('modal-simulacao')" class="text-[12px] font-bold text-black/40 hover:text-black uppercase tracking-wider">Fechar Painel</button>
         </div>
     </div>
 
 
-    <!-- === PRODUTO 2: TOTEM DE CLIENTES === -->
+    <!-- === PRODUTO 2: TOTEM DE CLIENTES (Design Premium Elevado) === -->
     
     <div id="tela-totem" class="hidden fixed inset-0 bg-[#0A0A0A] z-[250] font-sans overflow-hidden flex flex-col select-none touch-none">
         
+        <!-- SAÍDA SEGURA DO TOTEM (Canto Superior Esquerdo - Invisível) -->
+        <!-- Oculto para o cliente, ativado por 3 segundos de pressionamento -->
+        <div id="totem-secret-exit" class="fixed top-0 left-0 w-24 h-24 z-[9999]"></div>
+
         <!-- Barra Institucional -->
         <div class="h-[72px] bg-[#0A0A0A] border-b border-white/5 flex items-center justify-center shrink-0 relative z-20">
-            <div class="flex items-center gap-4">
-                <span class="text-[13px] font-extrabold text-white uppercase tracking-wider">Top Haus</span>
-                <!-- Eventos injetados via script inline para manter restrição JS externa e respeitar UI -->
-                <div class="relative w-[48px] h-[48px] flex items-center justify-center rounded-full" id="totem-logo-wrapper">
-                    <svg class="absolute inset-0 w-full h-full -rotate-90 pointer-events-none opacity-0 transition-opacity" id="totem-logo-ring" viewBox="0 0 48 48">
-                        <circle cx="24" cy="24" r="22" fill="none" stroke="var(--c-yellow)" stroke-width="4" stroke-dasharray="138" stroke-dashoffset="138" />
-                    </svg>
-                    <!-- Removido onclick="sairModoTotem()" da spec, controlado pelo pointerdown -->
-                    <img src="./logo.jpg" alt="Logo" class="h-8 w-auto object-contain cursor-pointer active:scale-95 transition-transform" draggable="false">
-                </div>
-                <span class="text-[11px] font-bold text-th-brown uppercase tracking-widest">Fidelidade</span>
+            <div class="flex items-center gap-5">
+                <span class="text-[14px] font-extrabold text-white uppercase tracking-wider">Top Haus</span>
+                <img src="./logo.jpg" alt="Logo" class="h-8 w-auto object-contain" draggable="false">
+                <span class="text-[12px] font-bold text-th-brown uppercase tracking-widest">Fidelidade</span>
             </div>
         </div>
 
         <!-- Área Dinâmica -->
-        <div class="flex-1 px-[80px] flex items-center justify-center relative overflow-hidden" id="totem-dynamic-area">
+        <div class="flex-1 w-full max-w-[1200px] mx-auto px-[40px] flex items-center justify-center relative overflow-hidden" id="totem-dynamic-area">
             
-            <!-- Idle Screen (Adicionado via UI design specs, gerencia tempo limite) -->
-            <div id="totem-tela-idle" class="absolute inset-0 flex flex-col items-center justify-center p-[80px] cursor-pointer transition-all duration-300 z-50 bg-[#0A0A0A]" onclick="uiTotemWakeUp()">
-                <img src="./logo.jpg" alt="Top Haus" class="h-[96px] w-auto mb-8 object-contain th-animate-breathe">
-                <h1 class="text-[36px] font-black text-white mb-2 tracking-tight">Toque para começar.</h1>
-                <p class="text-[20px] font-medium text-white/60 mb-[64px]">Registre seu CPF e acumule benefícios.</p>
+            <!-- Tela: Idle -->
+            <div id="totem-tela-idle" class="absolute inset-0 flex flex-col items-center justify-center p-[40px] cursor-pointer transition-all duration-300 z-50 bg-[#0A0A0A]" onclick="uiTotemWakeUp()">
+                <img src="./logo.jpg" alt="Top Haus" class="h-[120px] w-auto mb-10 object-contain th-animate-breathe">
+                <h1 class="text-[44px] font-black text-white mb-3 tracking-tight">Toque para começar.</h1>
+                <p class="text-[24px] font-medium text-white/60 mb-[80px]">Registre seu CPF e acumule benefícios.</p>
                 
-                <div class="w-[180px] h-[180px] bg-white rounded-[20px] shadow-[0_8px_32px_rgba(255,255,255,0.05)] p-4 flex items-center justify-center mb-6 th-animate-float">
+                <div class="w-[200px] h-[200px] bg-white rounded-[24px] shadow-[0_12px_40px_rgba(255,255,255,0.08)] p-5 flex items-center justify-center mb-8 th-animate-float">
                     <img src="./qrcode.png" alt="QR Code" class="w-full h-full object-contain">
                 </div>
-                <p class="text-[16px] font-bold text-th-yellow uppercase tracking-widest">Avalie nossa qualidade e ganhe um brinde!</p>
+                <p class="text-[18px] font-bold text-th-yellow uppercase tracking-widest">Avalie nossa qualidade e ganhe um brinde!</p>
             </div>
 
-            <!-- Tela 1: Busca / Identificação -->
-            <div id="totem-tela-busca" class="hidden w-full max-w-[500px] flex flex-col items-center th-totem-screen">
-                <h2 class="text-[56px] font-black text-white leading-none tracking-[-0.015em] mb-3 text-center">Bem-vindo(a)!</h2>
-                <p class="text-[22px] font-medium text-white/60 mb-10 text-center">Insira seu CPF para registrar seu almoço:</p>
+            <!-- Tela 1: Busca -->
+            <div id="totem-tela-busca" class="hidden w-full max-w-[600px] flex flex-col items-center th-totem-screen py-10">
+                <h2 class="text-[64px] font-black text-white leading-none tracking-[-0.015em] mb-4 text-center">Bem-vindo(a)!</h2>
+                <p class="text-[26px] font-medium text-white/60 mb-12 text-center">Insira seu CPF para registrar sua visita:</p>
                 
-                <!-- Display Visual (Substitui input para touch seguro) -->
-                <div id="totem-cpf-display" class="w-full h-[88px] bg-white rounded-[24px] flex items-center justify-center text-[44px] text-black/25 font-mono tracking-widest mb-[56px] shadow-[0_8px_32px_rgba(0,0,0,0.3)] transition-all">
+                <div id="totem-cpf-display" class="w-full h-[100px] bg-white rounded-[24px] flex items-center justify-center text-[52px] text-black/25 font-mono tracking-widest mb-[64px] shadow-[0_12px_40px_rgba(0,0,0,0.4)] transition-all">
                     000.000.000-00
                 </div>
                 
-                <!-- Input Real (Escondido, mas mantido funcional para app.js) -->
+                <!-- Input Real Oculto -->
                 <input type="tel" inputmode="numeric" id="totem-cpf" maxlength="14" oninput="mascaraCPF(this)" class="opacity-0 absolute -z-10 w-0 h-0 pointer-events-none" aria-hidden="true">
                 
-                <!-- Custom Keypad -->
-                <div class="grid grid-cols-3 gap-3 w-full" id="totem-keypad">
-                    <!-- Gerado via JS Inline UI para manter HTML limpo, ou hardcoded -->
+                <!-- Teclado Numérico Customizado (Área de toque estendida) -->
+                <div class="grid grid-cols-3 gap-4 w-full" id="totem-keypad">
                     <button class="totem-key">1</button><button class="totem-key">2</button><button class="totem-key">3</button>
                     <button class="totem-key">4</button><button class="totem-key">5</button><button class="totem-key">6</button>
                     <button class="totem-key">7</button><button class="totem-key">8</button><button class="totem-key">9</button>
-                    <button class="totem-key totem-key-backspace" data-action="backspace"><i data-lucide="delete" class="w-8 h-8 pointer-events-none text-red-400"></i></button>
+                    <button class="totem-key totem-key-backspace" data-action="backspace"><i data-lucide="delete" class="w-10 h-10 pointer-events-none text-red-400"></i></button>
                     <button class="totem-key">0</button>
-                    <button class="totem-key totem-key-check flex items-center justify-center opacity-35 pointer-events-none transition-all duration-300" id="btn-totem-avancar" onclick="totemProcessarCPF()">
-                        <i data-lucide="check" class="w-8 h-8 pointer-events-none text-black"></i>
+                    <button class="totem-key totem-key-check flex items-center justify-center opacity-30 pointer-events-none transition-all duration-300" id="btn-totem-avancar" onclick="totemProcessarCPF()">
+                        <i data-lucide="check" class="w-10 h-10 pointer-events-none text-black"></i>
                     </button>
                 </div>
-                <p class="text-[13px] font-medium text-white/30 mt-8 text-center">Seu CPF é usado apenas para acumular benefícios.</p>
+                <p class="text-[16px] font-medium text-white/30 mt-10 text-center">Seu documento é usado apenas para acumular benefícios.</p>
             </div>
 
             <!-- Tela 2: Cadastro Rápidos -->
-            <div id="totem-tela-cadastro" class="hidden w-full max-w-[600px] flex flex-col items-center th-totem-screen">
-                <span class="px-4 py-1.5 rounded-full bg-th-yellow/10 border border-th-yellow/20 text-th-yellow text-[14px] font-bold mb-4">Primeira vez por aqui?</span>
-                <h2 class="text-[44px] font-black text-white leading-none tracking-tight mb-3">Faça parte do clube!</h2>
-                <p class="text-[20px] font-medium text-white/60 mb-10">São só alguns segundos.</p>
+            <div id="totem-tela-cadastro" class="hidden w-full max-w-[700px] flex flex-col items-center th-totem-screen py-10">
+                <span class="px-5 py-2 rounded-full bg-th-yellow/10 border border-th-yellow/20 text-th-yellow text-[16px] font-bold mb-6 tracking-wide">Primeira vez por aqui?</span>
+                <h2 class="text-[56px] font-black text-white leading-none tracking-tight mb-4 text-center">Faça parte do clube!</h2>
+                <p class="text-[24px] font-medium text-white/60 mb-12 text-center">São só alguns segundos para começar a ganhar.</p>
                 
-                <form id="totem-form" onsubmit="totemSalvarCadastro(event)" class="w-full flex flex-col gap-4 mb-6">
-                    <input type="tel" id="totem-cad-cpf" readonly class="w-full h-[68px] bg-white/5 border border-white/10 text-white/50 text-[20px] font-mono text-center rounded-[16px] outline-none pointer-events-none">
+                <form id="totem-form" onsubmit="totemSalvarCadastro(event)" class="w-full flex flex-col gap-5 mb-8">
+                    <input type="tel" id="totem-cad-cpf" readonly class="w-full h-[76px] bg-white/5 border border-white/10 text-white/50 text-[24px] font-mono text-center rounded-[20px] outline-none pointer-events-none">
                     
-                    <input type="text" id="totem-cad-nome" required placeholder="Nome completo" class="th-totem-input w-full h-[68px]" style="animation-delay: 0ms;">
-                    <input type="tel" inputmode="numeric" id="totem-cad-tel" required placeholder="WhatsApp com DDD" maxlength="15" oninput="mascaraTelefone(this)" class="th-totem-input w-full h-[68px] font-mono" style="animation-delay: 100ms;">
+                    <input type="text" id="totem-cad-nome" required placeholder="Nome completo" class="th-totem-input w-full h-[76px] text-[24px]" style="animation-delay: 0ms;">
                     
-                    <div class="relative w-full">
-                        <input type="tel" inputmode="numeric" id="totem-cad-nasc" placeholder="Nascimento (Ex: 30/04/1990) - Opcional" maxlength="10" oninput="mascaraData(this)" class="th-totem-input w-full h-[68px] font-mono" style="animation-delay: 200ms;">
-                        <p class="text-[14px] text-white/40 font-medium text-center mt-3" style="animation: fadeInUp 0.3s 300ms both;">Para ofertas especiais no seu aniversário.</p>
+                    <div class="grid grid-cols-2 gap-5 w-full">
+                        <input type="tel" inputmode="numeric" id="totem-cad-tel" required placeholder="WhatsApp com DDD" maxlength="15" oninput="mascaraTelefone(this)" class="th-totem-input w-full h-[76px] text-[22px] font-mono" style="animation-delay: 100ms;">
+                        
+                        <div class="relative w-full flex flex-col">
+                            <input type="tel" inputmode="numeric" id="totem-cad-nasc" placeholder="Nascimento (DD/MM/AAAA)" maxlength="10" oninput="mascaraData(this)" class="th-totem-input w-full h-[76px] text-[22px] font-mono" style="animation-delay: 200ms;">
+                            <p class="text-[14px] text-white/40 font-medium text-center mt-3 absolute -bottom-7 w-full" style="animation: fadeInUp 0.3s 300ms both;">(Opcional) Para ofertas de aniversário.</p>
+                        </div>
                     </div>
 
-                    <div class="flex gap-4 mt-8">
-                        <button type="button" onclick="totemVoltarInicio()" class="flex-[0.3] h-[56px] rounded-[16px] bg-transparent border-2 border-white/20 text-white text-[20px] font-bold mt-3 active:scale-95 transition-transform">Voltar</button>
-                        <button type="submit" id="btn-totem-salvar" class="flex-[0.7] h-[68px] rounded-[24px] bg-th-yellow text-black text-[24px] font-extrabold shadow-glow-yellow active:scale-95 transition-transform">Cadastrar e Registrar</button>
+                    <div class="flex gap-5 mt-14">
+                        <button type="button" onclick="totemVoltarInicio()" class="flex-[0.3] h-[76px] rounded-[24px] bg-transparent border-[3px] border-white/20 text-white text-[24px] font-bold active:scale-95 transition-transform hover:bg-white/5">Voltar</button>
+                        <button type="submit" id="btn-totem-salvar" class="flex-[0.7] h-[76px] rounded-[24px] bg-th-yellow text-black text-[26px] font-extrabold shadow-glow-yellow active:scale-95 transition-transform hover:bg-th-yellow-hover">Cadastrar e Registrar</button>
                     </div>
                 </form>
-                
-                <p class="text-[13px] font-mono text-white/30" id="totem-cad-cpf-footer">CPF: 000.000.000-00</p>
             </div>
 
             <!-- Tela 3: Opções Prêmio -->
-            <div id="totem-tela-opcoes" class="hidden w-full max-w-[500px] flex flex-col items-center th-totem-screen">
-                <!-- Estrela Animada (Simulando o bounce do CSS) -->
-                <div class="w-[80px] h-[80px] rounded-full bg-th-yellow/20 flex items-center justify-center mb-6 th-animate-bounce-in">
-                    <i data-lucide="star" class="w-10 h-10 text-th-yellow fill-th-yellow"></i>
+            <div id="totem-tela-opcoes" class="hidden w-full max-w-[600px] flex flex-col items-center th-totem-screen py-10">
+                <div class="w-[100px] h-[100px] rounded-full bg-th-yellow/20 flex items-center justify-center mb-8 th-animate-bounce-in">
+                    <i data-lucide="star" class="w-12 h-12 text-th-yellow fill-th-yellow"></i>
                 </div>
                 
-                <h2 class="text-[48px] font-black text-white leading-none tracking-tight mb-2 text-center" id="ui-totem-opcoes-nome">Você tem um prêmio!</h2>
+                <h2 class="text-[56px] font-black text-white leading-none tracking-tight mb-3 text-center" id="ui-totem-opcoes-nome">Você tem um prêmio!</h2>
                 
-                <div class="w-full h-[140px] bg-th-yellow rounded-[24px] flex flex-col items-center justify-center my-10 shadow-glow-yellow">
-                    <span class="text-[52px] font-black text-black leading-none">R$ 50,00</span>
-                    <span class="text-[20px] font-medium text-black/70 mt-1">de desconto no seu almoço</span>
+                <div class="w-full h-[160px] bg-th-yellow rounded-[24px] flex flex-col items-center justify-center my-12 shadow-glow-yellow th-animate-scale-up">
+                    <span class="text-[64px] font-black text-black leading-none">R$ 50,00</span>
+                    <span class="text-[24px] font-bold text-black/70 mt-1">de desconto no almoço</span>
                 </div>
 
-                <div class="w-full space-y-[56px]">
-                    <div class="flex flex-col gap-2 w-full">
-                        <button id="btn-totem-resgatar" onclick="totemMostrarMensagem('aviso_caixa')" class="w-full h-[68px] bg-th-yellow text-black text-[24px] font-extrabold rounded-[24px] shadow-glow-yellow active:scale-95 transition-transform">
+                <div class="w-full space-y-[40px]">
+                    <div class="flex flex-col gap-3 w-full">
+                        <button id="btn-totem-resgatar" onclick="totemMostrarMensagem('aviso_caixa')" class="w-full h-[80px] bg-th-yellow text-black text-[26px] font-extrabold rounded-[24px] shadow-glow-yellow active:scale-95 transition-transform hover:bg-th-yellow-hover">
                             RESGATAR MEU DESCONTO
                         </button>
-                        <p class="text-[13px] font-medium text-white/50 text-center">Você avisará o garçom após confirmar.</p>
+                        <p class="text-[16px] font-medium text-white/50 text-center">Você avisará o atendente após confirmar.</p>
                     </div>
                     
-                    <div class="flex flex-col gap-2 w-full">
-                        <button id="btn-totem-acumular" onclick="totemExecutarAcumulo()" class="w-full h-[56px] bg-transparent border border-white/25 text-white text-[20px] font-bold rounded-[24px] active:scale-95 transition-transform">
+                    <div class="flex flex-col gap-3 w-full">
+                        <button id="btn-totem-acumular" onclick="totemExecutarAcumulo()" class="w-full h-[72px] bg-transparent border-2 border-white/25 text-white text-[22px] font-bold rounded-[24px] active:scale-95 transition-transform hover:bg-white/5">
                             Guardar para outra visita
                         </button>
-                        <p class="text-[13px] font-medium text-white/40 text-center">Sem prazo de validade. Use quando quiser.</p>
+                        <p class="text-[16px] font-medium text-white/40 text-center">Sem prazo de validade. Use no futuro.</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Tela 4: Mensagem de Feedback -->
-            <div id="totem-tela-mensagem" class="hidden w-full max-w-[600px] flex flex-col items-center th-totem-screen text-center">
-                <!-- Particles Container via CSS -->
+            <!-- Tela 4: Mensagem Sucesso (Com tamanho massivo para autoatendimento) -->
+            <div id="totem-tela-mensagem" class="hidden w-full max-w-[800px] flex flex-col items-center justify-center th-totem-screen text-center h-full">
+                <!-- Partículas -->
                 <div id="ui-confetti-container" class="absolute inset-0 pointer-events-none hidden"></div>
                 
-                <div id="totem-icone-msg" class="mb-8"></div>
-                <h2 id="totem-titulo-msg" class="text-[52px] font-black text-white leading-none tracking-tight mb-4"></h2>
-                <p id="totem-texto-msg" class="text-[22px] font-medium text-white/60"></p>
+                <!-- Ícone Injetado (O CSS forza o tamanho a ser enorme) -->
+                <div id="totem-icone-msg" class="mb-10 ui-massive-icon th-animate-bounce-in"></div>
                 
-                <!-- Área de Injeção de Progresso caso app.js não injete, o UI Script trata -->
-                <div id="ui-totem-progress-bar" class="mt-12 hidden w-full flex flex-col items-center gap-4">
-                    <p class="text-[12px] font-bold text-white/40 uppercase tracking-widest">Seus Almoços</p>
-                    <div class="flex items-center gap-2 justify-center" id="ui-circles-container">
-                        <!-- Círculos injetados via JS UI -->
-                    </div>
-                    <p class="text-[20px] font-medium text-white/60 mt-2" id="ui-progress-text"></p>
+                <!-- Títulos Injetados -->
+                <h2 id="totem-titulo-msg" class="text-[64px] font-black text-white leading-none tracking-tight mb-6 w-full"></h2>
+                <p id="totem-texto-msg" class="text-[28px] font-medium text-white/60 mb-16 max-w-[600px] leading-snug"></p>
+                
+                <!-- Barra Visual de Recompensa Customizada (Gerida pelo Script de UI no final) -->
+                <div id="ui-totem-progress-bar" class="hidden w-full flex flex-col items-center gap-6 p-8 rounded-[32px] bg-white/5 border border-white/10">
+                    <p class="text-[14px] font-extrabold text-white/40 uppercase tracking-[0.2em]">Seus Almoços Acumulados</p>
+                    <!-- Os círculos injetados aqui terão 60px de tamanho -->
+                    <div class="flex items-center gap-3 justify-center flex-wrap" id="ui-circles-container"></div>
+                    <p class="text-[22px] font-medium text-white/70 mt-4" id="ui-progress-text"></p>
                 </div>
             </div>
 
-            <!-- Bottom Bar -->
+            <!-- Bottom Bar (Timeout) -->
             <div id="totem-bottom-bar" class="hidden absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center z-50">
-                <button onclick="totemVoltarInicio()" class="h-[48px] px-8 rounded-full border border-white/20 bg-transparent text-white text-[18px] font-bold hover:bg-white/10 active:scale-95 transition-all mb-2">
-                    Fechar agora
+                <button onclick="totemVoltarInicio()" class="h-[56px] px-10 rounded-full border-2 border-white/20 bg-black/50 backdrop-blur-md text-white text-[20px] font-bold hover:bg-white/10 active:scale-95 transition-all mb-4">
+                    Finalizar Atendimento
                 </button>
-                <p class="text-[13px] font-medium text-white/40 mb-3">Fechando em 6 segundos</p>
-                <div class="w-[200px] h-[3px] bg-white/10 rounded-full overflow-hidden">
+                <p class="text-[14px] font-medium text-white/40 mb-3">Fechando automaticamente em alguns segundos...</p>
+                <div class="w-[300px] h-[4px] bg-white/10 rounded-full overflow-hidden">
                     <div id="totem-loading-bar" class="h-full w-full bg-th-yellow origin-left"></div>
                 </div>
             </div>
@@ -694,15 +745,13 @@
     <!-- ZONA DE IMPRESSÃO -->
     <div id="secao-impressao" class="print-area"></div>
 
-    <!-- Script Original Intacto (Requisito Absoluto) -->
+    <!-- SCRIPT ORIGINAL DA APLICAÇÃO (Regras de negócio intactas) -->
     <script type="module" src="./app.js"></script>
 
-    <!-- UI Controller: Isola microinterações estritas ao Totem e Drawer requeridas no redesign -->
+    <!-- UI SCRIPT: Microinterações exclusivas de interface -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // ==========================================
             // ADMIN: Drawer & Password Visibility
-            // ==========================================
             window.uiToggleDrawer = function() {
                 const drawer = document.getElementById('ui-drawer-settings');
                 const overlay = document.getElementById('ui-drawer-overlay');
@@ -710,23 +759,19 @@
                 
                 if (isClosed) {
                     overlay.classList.remove('hidden');
-                    // Pequeno delay para a transição do Tailwind aplicar
                     requestAnimationFrame(() => {
-                        overlay.classList.add('opacity-100');
+                        overlay.classList.remove('opacity-0');
                         drawer.classList.remove('translate-x-full');
-                        drawer.classList.add('translate-x-0');
                     });
                 } else {
-                    overlay.classList.remove('opacity-100');
-                    drawer.classList.remove('translate-x-0');
+                    overlay.classList.add('opacity-0');
                     drawer.classList.add('translate-x-full');
-                    setTimeout(() => overlay.classList.add('hidden'), 300); // aguarda a transição
+                    setTimeout(() => overlay.classList.add('hidden'), 300);
                 }
             };
 
             window.uiToggleResetWarning = function() {
-                const acc = document.getElementById('ui-reset-accordion');
-                acc.classList.toggle('hidden');
+                document.getElementById('ui-reset-accordion').classList.toggle('hidden');
             };
 
             window.uiTogglePassword = function() {
@@ -742,44 +787,33 @@
                 lucide.createIcons();
             };
 
-            // ==========================================
-            // TOTEM: Custom Interactions & Hardware mapping
-            // ==========================================
+            // TOTEM: Saída Oculta Segura (Gesto Top-Left)
+            const secretExit = document.getElementById('totem-secret-exit');
+            let exitTimer;
             
-            // 1. Long Press para Saída do Totem
-            const logoWrapper = document.getElementById('totem-logo-wrapper');
-            const logoRing = document.getElementById('totem-logo-ring');
-            let holdTimer;
-            let isHolding = false;
+            const triggerExit = () => {
+                if (typeof sairModoTotem === 'function') {
+                    sairModoTotem();
+                    uiTotemWakeUp(); // Garante que a tela de idle seja fechada se ativa
+                }
+            };
 
-            const startHold = (e) => {
+            secretExit.addEventListener('pointerdown', (e) => {
                 e.preventDefault();
-                isHolding = true;
-                logoRing.classList.remove('opacity-0');
-                logoRing.style.transition = 'stroke-dashoffset 3s linear';
-                logoRing.style.strokeDashoffset = '0'; // Começa animação de preenchimento
-                
-                holdTimer = setTimeout(() => {
-                    if(isHolding && typeof sairModoTotem === 'function') {
-                        sairModoTotem();
-                        resetHold();
-                    }
-                }, 3000);
-            };
+                exitTimer = setTimeout(triggerExit, 3000);
+            });
+            const cancelExit = () => clearTimeout(exitTimer);
+            secretExit.addEventListener('pointerup', cancelExit);
+            secretExit.addEventListener('pointerleave', cancelExit);
 
-            const resetHold = () => {
-                isHolding = false;
-                clearTimeout(holdTimer);
-                logoRing.style.transition = 'none';
-                logoRing.style.strokeDashoffset = '138';
-                logoRing.classList.add('opacity-0');
-            };
+            // TOTEM: Saída Segura (ESC Key)
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && !document.getElementById('tela-totem').classList.contains('hidden')) {
+                    triggerExit();
+                }
+            });
 
-            logoWrapper.addEventListener('pointerdown', startHold);
-            logoWrapper.addEventListener('pointerup', resetHold);
-            logoWrapper.addEventListener('pointerleave', resetHold);
-
-            // 2. Teclado Virtual (Keypad)
+            // TOTEM: Teclado Virtual (Keypad) Customizado
             const inputReal = document.getElementById('totem-cpf');
             const display = document.getElementById('totem-cpf-display');
             const btnAvancar = document.getElementById('btn-totem-avancar');
@@ -791,36 +825,30 @@
                 display.classList.toggle('text-black', inputReal.value.length > 0);
                 display.classList.toggle('text-black/25', inputReal.value.length === 0);
                 
-                // Animar dígito
                 display.style.transform = 'scale(1.02)';
                 setTimeout(() => display.style.transform = 'scale(1)', 120);
 
-                // Controlar Check Botão
                 if (inputReal.value.length === 14) {
-                    btnAvancar.classList.remove('opacity-35', 'pointer-events-none');
-                    btnAvancar.classList.add('bg-th-yellow', 'th-animate-pulse-once');
+                    btnAvancar.classList.remove('opacity-30', 'pointer-events-none');
+                    btnAvancar.classList.add('bg-th-yellow', 'th-animate-pulse-once', 'shadow-glow-yellow');
                     setTimeout(() => btnAvancar.classList.remove('th-animate-pulse-once'), 300);
                 } else {
-                    btnAvancar.classList.add('opacity-35', 'pointer-events-none');
-                    btnAvancar.classList.remove('bg-th-yellow');
+                    btnAvancar.classList.add('opacity-30', 'pointer-events-none');
+                    btnAvancar.classList.remove('bg-th-yellow', 'shadow-glow-yellow');
                 }
             };
 
             keys.forEach(key => {
                 key.addEventListener('pointerdown', (e) => {
                     e.preventDefault();
-                    // Feedback visual
                     key.style.backgroundColor = 'rgba(252,161,0,0.4)';
                     setTimeout(() => key.style.backgroundColor = '', 100);
-
-                    uiTotemResetIdle(); // reset idle
+                    uiTotemResetIdle();
 
                     const action = key.getAttribute('data-action');
                     if (action === 'backspace') {
                         inputReal.value = inputReal.value.slice(0, -1);
                         updateDisplay();
-                        
-                        // Long press backspace
                         backspaceInterval = setTimeout(() => {
                             inputReal.value = '';
                             updateDisplay();
@@ -833,28 +861,24 @@
                         }
                     }
                 });
-
                 key.addEventListener('pointerup', () => clearTimeout(backspaceInterval));
                 key.addEventListener('pointerleave', () => clearTimeout(backspaceInterval));
             });
 
-            // Sincroniza limpezas forçadas pelo app.js (MutationObserver no atributo ou interval leve)
             setInterval(() => {
-                if (inputReal.value === '' && display.innerText !== '000.000.000-00') {
-                    updateDisplay();
-                }
+                if (inputReal.value === '' && display.innerText !== '000.000.000-00') updateDisplay();
             }, 500);
 
-            // 3. Idle Screen Management (30s)
+            // TOTEM: Idle Management (30s)
             let idleTimer;
             const idleScreen = document.getElementById('totem-tela-idle');
-            const totemBusca = document.getElementById('totem-tela-busca');
             const telaTotem = document.getElementById('tela-totem');
+            const totemBusca = document.getElementById('totem-tela-busca');
             
             const showIdle = () => {
                 if (!telaTotem.classList.contains('hidden') && totemBusca && !totemBusca.classList.contains('hidden')) {
                     idleScreen.classList.remove('hidden');
-                    idleScreen.style.opacity = '1';
+                    requestAnimationFrame(() => idleScreen.style.opacity = '1');
                 }
             };
 
@@ -869,11 +893,43 @@
                 idleTimer = setTimeout(showIdle, 30000);
             };
 
-            // Hook global para resetar timer no totem
             telaTotem.addEventListener('pointerdown', uiTotemResetIdle);
-            
-            // Inicia ícones do Lucide
             lucide.createIcons();
+
+            // TOTEM: Detecção de UI Success (Injeção de Progresso Enorme Visual)
+            // Lê o texto original gerado pelo JS para construir um visual impressionante.
+            const msgObserver = new MutationObserver((mutations) => {
+                const msgScreen = document.getElementById('totem-tela-mensagem');
+                if (!msgScreen.classList.contains('hidden')) {
+                    const textoRaw = document.getElementById('totem-texto-msg').innerText;
+                    const container = document.getElementById('ui-totem-progress-bar');
+                    const circlesContainer = document.getElementById('ui-circles-container');
+                    const progressText = document.getElementById('ui-progress-text');
+                    
+                    // Procura o padrão "X de 10" criado pelas regras de negócio.
+                    const match = textoRaw.match(/(\d+)\sde\s10/);
+                    
+                    if (match && parseInt(match[1]) <= 10) {
+                        let acumulados = parseInt(match[1]);
+                        let html = '';
+                        for(let i=1; i<=10; i++) {
+                            if (i <= acumulados) {
+                                html += `<div class="w-14 h-14 rounded-full bg-th-yellow flex items-center justify-center shadow-glow-yellow animate-scale-up" style="animation-delay: ${i*50}ms"><svg class="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg></div>`;
+                            } else {
+                                html += `<div class="w-14 h-14 rounded-full bg-black/40 border-2 border-white/10 flex items-center justify-center text-white/30 font-bold text-xl">${i}</div>`;
+                            }
+                        }
+                        circlesContainer.innerHTML = html;
+                        progressText.innerHTML = acumulados === 10 ? 
+                            '<strong class="text-th-yellow">Meta alcançada!</strong>' : 
+                            `Faltam <strong class="text-white">${10 - acumulados} almoços</strong> para seu prêmio.`;
+                        container.classList.remove('hidden');
+                    } else {
+                        container.classList.add('hidden');
+                    }
+                }
+            });
+            msgObserver.observe(document.getElementById('totem-tela-mensagem'), { attributes: true, attributeFilter: ['class'] });
         });
     </script>
 </body>
