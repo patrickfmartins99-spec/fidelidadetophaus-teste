@@ -3,63 +3,45 @@
    STYLE.CSS - PREMIUM REFINEMENTS
    ========================================================== */
 
+@import url('https://fonts.cdnfonts.com/css/helvetica-now-display');
 @import url('https://fonts.cdnfonts.com/css/helvetica-neue-5');
 
 :root {
     /* Brand Palette - Rigorosamente Controlada */
-    --c-white: #FEFEFE;
-    --c-black: #000000;
-    --c-brown: #8D4925;
-    --c-brown-hover: #733b1e;
-    --c-yellow: #FCA100;
-    --c-yellow-hover: #e08f00;
-
-    /* Superfícies Premium */
-    --c-bg: #F5F5F7; 
-    --c-card: #FFFFFF;
-    --c-border: rgba(0, 0, 0, 0.06);
-
-    /* Tipografia */
-    --font-primary: 'Helvetica Now', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    --c-black: #0A0A0A; /* Preto quente do Totem e Sidebar */
+    --c-brown: #8D4925; /* Ação Primária Admin */
+    --c-brown-hover: #733B1E;
+    --c-yellow: #FCA100; /* Ação Primária Totem e Alertas */
+    --c-yellow-hover: #E08F00;
     
-    /* Sombras Elegantes */
-    --shadow-subtle: 0 4px 20px -4px rgba(0,0,0,0.03), 0 0 1px rgba(0,0,0,0.05);
-    --shadow-float: 0 12px 32px -8px rgba(0, 0, 0, 0.08), 0 0 1px rgba(0, 0, 0, 0.1);
-    --shadow-modal: 0 24px 64px -16px rgba(0, 0, 0, 0.2), 0 0 1px rgba(0, 0, 0, 0.1);
+    /* Superfícies */
+    --c-bg: #F4F4F6; /* Fundo Admin */
+    --c-card: #FFFFFF;
+    --c-border: rgba(0,0,0,0.06);
+    
+    /* Status (Preservados do padrão utilitário mas ajustados para a marca) */
+    --c-success: #16A34A;
+    --c-warning: #F59E0B;
+    --c-danger: #DC2626;
 
-    /* Transições */
-    --transition-smooth: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    /* Sombras Premium */
+    --shadow-subtle: 0 2px 8px rgba(0,0,0,0.04);
+    --shadow-float: 0 8px 24px rgba(0,0,0,0.08);
+    --shadow-modal: 0 20px 60px rgba(0,0,0,0.18);
+    --shadow-glow-yellow: 0 0 40px rgba(252,161,0,0.22);
 }
 
 /* ==========================================================
-   GLOBAL RESET & TYPOGRAPHY
+   RESET GLOBAL & TIPOGRAFIA
    ========================================================== */
 body {
-    font-family: var(--font-primary);
+    font-family: 'Helvetica Now', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
 
-/* Scrollbar Customizada Premium */
-.custom-scrollbar::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-}
-.custom-scrollbar::-webkit-scrollbar-track {
-    background: transparent;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb {
-    background: rgba(0,0,0,0.15);
-    border-radius: 10px;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: rgba(0,0,0,0.25);
-}
-
-/* ==========================================================
-   UTILITÁRIOS TAILWIND CUSTOMIZADOS
-   ========================================================== */
-.bg-th-background { background-color: var(--c-bg); }
+/* Utilitários Extras Mapeados para Tailwind CDN */
+.bg-th-bg { background-color: var(--c-bg); }
 .bg-th-black { background-color: var(--c-black); }
 .text-th-black { color: var(--c-black); }
 .bg-th-brown { background-color: var(--c-brown); }
@@ -68,282 +50,326 @@ body {
 .bg-th-yellow { background-color: var(--c-yellow); }
 .text-th-yellow { color: var(--c-yellow); }
 .border-th-yellow { border-color: var(--c-yellow); }
-.bg-th-yellow-tint { background: linear-gradient(145deg, var(--c-card) 0%, rgba(252, 161, 0, 0.06) 100%); }
+.border-th-border { border-color: var(--c-border); }
+.shadow-subtle { box-shadow: var(--shadow-subtle); }
+.shadow-float { box-shadow: var(--shadow-float); }
+.shadow-modal { box-shadow: var(--shadow-modal); }
+.shadow-glow-yellow { box-shadow: var(--shadow-glow-yellow); }
+
+/* Scrollbar Customizada */
+.custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 9999px; }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.25); }
 
 /* ==========================================================
-   COMPONENTES CORE
+   COMPONENTES ADMIN
    ========================================================== */
 
-/* SIDEBAR E NAVEGAÇÃO */
-.th-sidebar {
-    width: 280px;
-    background-color: var(--c-black);
-    color: var(--c-white);
-    border-right: 1px solid rgba(255,255,255,0.05);
-}
+/* Header Reativo via CSS (:has) */
+body:has(#aba-caixa:not(.hidden)) .th-dynamic-h2::after { content: "Registro de Visitas"; }
+body:has(#aba-caixa:not(.hidden)) .th-dynamic-p::after { content: "Data de hoje"; } /* Simplificado via CSS puramente visual */
 
+body:has(#aba-admin:not(.hidden)) .th-dynamic-h2::after { content: "Base de Clientes"; }
+body:has(#aba-admin:not(.hidden)) .th-dynamic-p::after { content: "Gerenciamento em tempo real"; }
+body:has(#aba-admin:not(.hidden)) .th-admin-only { display: block; }
+
+/* Navegação Sidebar */
 .th-nav-item {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    width: 100%;
-    padding: 0.875rem 1rem;
+    gap: 16px;
+    height: 48px;
+    padding: 0 16px;
     border-radius: 12px;
-    font-size: 0.875rem;
-    font-weight: 700;
-    color: rgba(255, 255, 255, 0.5);
-    transition: var(--transition-smooth);
-    outline: none;
+    font-size: 14px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.5);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     position: relative;
 }
 .th-nav-item:hover:not(.active) {
-    color: var(--c-white);
-    background-color: rgba(255, 255, 255, 0.05);
+    background-color: rgba(255,255,255,0.05);
+    color: rgba(255,255,255,0.8);
 }
 .th-nav-item.active {
     background-color: var(--c-brown);
-    color: var(--c-white);
-    box-shadow: 0 4px 15px rgba(141, 73, 37, 0.4);
-    transform: translateX(4px); /* Deslocamento suave do item ativo */
+    color: #FFFFFF;
+    box-shadow: 0 4px 15px rgba(141,73,37,0.4);
+    transform: translateX(4px);
 }
-/* Filete indicador amarelo no item ativo */
 .th-nav-item.active::before {
     content: '';
     position: absolute;
-    left: -0.5rem;
+    left: -24px;
     top: 50%;
-    transform: translateY(-50%);
-    height: 60%;
+    transform: translateY(-50%) scaleY(0);
+    height: 32px;
     width: 4px;
     background-color: var(--c-yellow);
     border-radius: 0 4px 4px 0;
+    animation: scale-y-in 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    transform-origin: top;
 }
 
-.th-nav-item-highlight {
+.th-nav-item-totem {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    width: 100%;
-    padding: 0.875rem 1rem;
+    gap: 16px;
+    height: 48px;
+    padding: 0 16px;
     border-radius: 12px;
-    font-size: 0.875rem;
+    font-size: 14px;
     font-weight: 700;
+    background-color: rgba(252,161,0,0.06);
     color: var(--c-yellow);
-    background-color: rgba(252, 161, 0, 0.05);
-    border: 1px solid rgba(252, 161, 0, 0.1);
-    transition: var(--transition-smooth);
-    outline: none;
+    border: 1px solid rgba(252,161,0,0.15);
+    transition: all 0.2s;
 }
-.th-nav-item-highlight:hover {
-    background-color: rgba(252, 161, 0, 0.15);
-    transform: scale(0.98);
+.th-nav-item-totem:hover {
+    background-color: rgba(252,161,0,0.14);
 }
 
-/* BOTÕES DE AÇÃO (Com Microinterações) */
-.th-btn-primary, .th-btn-secondary, .th-btn-outline {
-    position: relative;
-    overflow: hidden;
+/* Inputs & Forms (Admin) */
+.th-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--c-black);
+    opacity: 0.5;
+    text-transform: uppercase;
+    letter-spacing: 0.10em;
+    margin-bottom: 8px;
+}
+.th-input {
+    background-color: var(--c-bg);
+    border: 1px solid transparent;
+    border-radius: 12px;
+    padding: 0 16px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--c-black);
     outline: none;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.th-btn-primary::after, .th-btn-secondary::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-color: rgba(255,255,255,0.15);
-    opacity: 0;
-    transition: opacity 0.2s;
+.th-input::placeholder { color: rgba(0,0,0,0.3); font-weight: 400; }
+.th-input:hover { border-color: rgba(0,0,0,0.1); }
+.th-input:focus {
+    background-color: var(--c-card);
+    border-color: var(--c-brown);
+    box-shadow: 0 0 0 4px rgba(141,73,37,0.1);
+    transform: translateY(-1px);
 }
-.th-btn-primary:active::after {
-    opacity: 1;
+/* Focus State do CPF Central */
+#busca-cpf:focus {
+    box-shadow: 0 8px 24px rgba(141,73,37,0.12);
 }
 
+/* Botões Globais */
 .th-btn-primary {
     background-color: var(--c-brown);
-    color: var(--c-white);
+    color: #FFFFFF;
     font-weight: 800;
     border-radius: 12px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
-    transition: var(--transition-smooth);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    outline: none;
 }
 .th-btn-primary:hover:not(:disabled) {
     background-color: var(--c-brown-hover);
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(141, 73, 37, 0.3);
+    box-shadow: 0 4px 12px rgba(141,73,37,0.3);
 }
 .th-btn-primary:active:not(:disabled) {
-    transform: scale(0.96) translateY(1px); /* Resposta tátil de clique */
-    box-shadow: 0 2px 4px rgba(141, 73, 37, 0.2);
+    transform: scale(0.97) translateY(1px);
 }
-.th-btn-primary:focus-visible {
-    box-shadow: 0 0 0 4px rgba(141, 73, 37, 0.3);
-}
-.th-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
 
 .th-btn-secondary {
     background-color: transparent;
-    color: var(--c-black);
-    font-weight: 800;
+    color: rgba(0,0,0,0.7);
+    font-weight: 700;
     border-radius: 12px;
     border: 1px solid rgba(0,0,0,0.1);
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
-    transition: var(--transition-smooth);
+    transition: all 0.2s;
 }
 .th-btn-secondary:hover:not(:disabled) {
     background-color: rgba(0,0,0,0.03);
+    color: var(--c-black);
     border-color: rgba(0,0,0,0.2);
 }
-.th-btn-secondary:active:not(:disabled) {
-    transform: scale(0.96);
-}
 
-.th-btn-outline {
-    background-color: transparent;
-    color: var(--c-black);
-    font-weight: 800;
-    border-radius: 10px;
-    border: 1px solid rgba(0,0,0,0.1);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    transition: var(--transition-smooth);
-}
-.th-btn-outline:hover {
-    background-color: var(--c-card);
-    border-color: var(--c-black);
-}
-.th-btn-outline:active:not(:disabled) {
-    transform: scale(0.96);
-}
-
-.th-btn-logout {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    padding: 0.75rem 1rem;
-    border-radius: 10px;
-    font-size: 0.75rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: rgba(255, 255, 255, 0.5);
-    background-color: rgba(255,255,255,0.05);
-    transition: var(--transition-smooth);
-    outline: none;
-}
-.th-btn-logout:hover {
-    background-color: rgba(255,255,255,0.1);
-    color: var(--c-white);
-}
-.th-btn-logout:active {
-    transform: scale(0.96);
-}
-
-/* FORMULÁRIOS & INPUTS */
-.th-label {
-    display: block;
-    font-size: 0.65rem;
-    font-weight: 800;
-    color: rgba(0,0,0,0.4);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    margin-bottom: 0.5rem;
-}
-
-.th-input {
-    background-color: #FFFFFF;
-    border: 1px solid rgba(0,0,0,0.1);
-    border-radius: 12px;
-    padding: 0.875rem 1.25rem;
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: var(--c-black);
-    outline: none;
-    transition: var(--transition-smooth);
-    width: 100%;
-}
-.th-input::placeholder { color: rgba(0,0,0,0.25); font-weight: 500; }
-.th-input:hover { border-color: rgba(0,0,0,0.2); }
-.th-input:focus {
-    border-color: var(--c-brown);
-    box-shadow: 0 0 0 3px rgba(141, 73, 37, 0.15);
-    transform: translateY(-1px);
-}
-
-input[type=number]::-webkit-inner-spin-button, 
-input[type=number]::-webkit-outer-spin-button { 
-    -webkit-appearance: none; 
-    margin: 0; 
-}
-
-/* CARDS E PAINÉIS */
-.th-panel {
-    background-color: var(--c-card);
-    border-radius: 24px;
-    box-shadow: var(--shadow-subtle);
-    border: 1px solid var(--c-border);
-    padding: 2.5rem;
-}
-
-/* KPIS HIERÁRQUICOS */
+/* KPIs (Admin) */
 .th-kpi-card {
-    background: linear-gradient(145deg, var(--c-card) 0%, #f9f9fb 100%);
-    padding: 1.5rem;
+    background-color: #FFFFFF;
+    padding: 24px;
     border-radius: 16px;
-    box-shadow: var(--shadow-subtle);
     border: 1px solid var(--c-border);
-    transition: var(--transition-smooth);
+    box-shadow: var(--shadow-subtle);
+    transition: all 0.15s ease-out;
 }
 .th-kpi-card:hover {
     transform: translateY(-2px);
     box-shadow: var(--shadow-float);
-    border-color: rgba(0,0,0,0.15);
+}
+.th-kpi-card:active {
+    transform: scale(0.98);
 }
 
-/* MODAIS SEGUROS E RESPONSIVOS */
-.th-modal-backdrop {
-    position: fixed;
-    inset: 0;
-    background-color: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+/* Tabela */
+#tabela-clientes tr {
+    height: 64px;
+    transition: background-color 0.15s, border-left 0.15s;
+    border-left: 3px solid transparent;
+}
+#tabela-clientes tr:hover {
+    background-color: rgba(252,161,0,0.03);
+    border-left: 3px solid var(--c-yellow);
+}
+#tabela-clientes td { padding: 0 24px; }
+
+/* Modais Comportamento */
+.th-modal-scale {
+    animation: scale-up-modal 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+/* ==========================================================
+   COMPONENTES TOTEM (UI Overlay)
+   ========================================================== */
+
+/* Controle do display flexível por classe (gerenciado via app.js com toggle .hidden) */
+.th-totem-screen {
+    animation: slide-in-totem 0.35s 0.1s both cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Input customizado do Totem */
+.th-totem-input {
+    background-color: #FFFFFF;
+    color: var(--c-black);
+    border-radius: 16px;
+    padding: 0 32px;
+    font-size: 20px;
+    text-align: center;
+    font-weight: 700;
+    outline: none;
+    border: 4px solid transparent;
+    transition: all 0.2s;
+    animation: fade-in-up 0.2s both;
+}
+.th-totem-input:focus {
+    border-color: var(--c-yellow);
+    transform: scale(1.02);
+}
+
+/* Teclado Numérico */
+.totem-key {
+    height: 72px;
+    border-radius: 12px;
+    background-color: #1A1A1A;
+    color: #FFFFFF;
+    font-size: 28px;
+    font-weight: 700;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 1rem;
-    animation: fadeInModal 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    transition: background-color 0.1s;
+    user-select: none;
+    touch-action: manipulation; /* Otimização Touch */
+}
+.totem-key-backspace {
+    background-color: #2A1515;
 }
 
-.th-modal-box {
-    background-color: var(--c-card);
-    border-radius: 32px;
-    padding: 2.5rem;
-    width: 100%;
-    max-height: 90vh; /* Impede que o modal corte o topo/rodapé da tela */
-    overflow-y: auto; /* Rolagem interna automática */
-    box-shadow: var(--shadow-modal);
-    border: 1px solid var(--c-border);
-    animation: scaleUpModal 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+/* Barra de Progresso Loading Animada (Totem) */
+#totem-loading-bar {
+    animation: shrink-progress 6s linear forwards;
 }
 
-@keyframes fadeInModal {
+/* Banner Simulação Contenção */
+body:has(#tela-totem:not(.hidden)) #banner-simulacao { 
+    display: none !important; 
+}
+
+/* ==========================================================
+   ANIMAÇÕES & KEYFRAMES (Semânticas e Performance-focus)
+   ========================================================== */
+
+@keyframes scale-y-in {
+    from { transform: translateY(-50%) scaleY(0); }
+    to { transform: translateY(-50%) scaleY(1); }
+}
+
+@keyframes fade-in-up {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in-up {
+    animation: fade-in-up 0.3s ease-out forwards;
+}
+
+@keyframes fade-in {
     from { opacity: 0; }
     to { opacity: 1; }
 }
-@keyframes scaleUpModal {
-    from { opacity: 0; transform: scale(0.96) translateY(8px); }
-    to { opacity: 1; transform: scale(1) translateY(0); }
+.animate-fade-in { animation: fade-in 0.25s ease-out forwards; }
+
+@keyframes slide-in-totem {
+    from { opacity: 0; transform: translateX(30px); }
+    to { opacity: 1; transform: translateX(0); }
 }
 
-/* IMPRESSÃO */
+@keyframes scale-up-modal {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes pulse-once {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.06); }
+    100% { transform: scale(1); }
+}
+.th-animate-pulse-once {
+    animation: pulse-once 0.25s ease-in-out;
+}
+
+@keyframes bounce-in {
+    0% { transform: scale(0); }
+    60% { transform: scale(1.10); }
+    100% { transform: scale(1); }
+}
+.th-animate-bounce-in {
+    animation: bounce-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes breathe {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.03); }
+}
+.th-animate-breathe {
+    animation: breathe 3s ease-in-out infinite;
+}
+
+@keyframes float-anim {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+}
+.th-animate-float {
+    animation: float-anim 2s ease-in-out infinite;
+}
+
+@keyframes shrink-progress {
+    from { transform: scaleX(1); }
+    to { transform: scaleX(0); }
+}
+
+/* ==========================================================
+   IMPRESSÃO
+   ========================================================== */
 @media screen { 
     .print-area { display: none !important; } 
 }
@@ -352,22 +378,4 @@ input[type=number]::-webkit-outer-spin-button {
     body { background: white !important; padding: 0; margin: 0; font-family: 'Courier New', Courier, monospace; color: #000 !important; }
     .no-print { display: none !important; }
     .print-area { display: block !important; width: 72mm; margin: 0 auto; padding: 0; font-size: 13px; font-weight: bold !important; color: #000 !important; }
-    .linha-tracejada { border-top: 2px dashed #000 !important; margin: 6px 0; }
-    strong { font-weight: 900 !important; }
-}
-
-/* ANIMAÇÕES GERAIS */
-@keyframes shrinkBar { from { width: 100%; } to { width: 0%; } }
-.animate-shrink { animation: shrinkBar linear forwards; }
-
-@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
-.animate-fade-in { animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-
-/* Transição do Totem (Slide Fade Up) para telas dinâmicas não ocultas */
-#totem-dynamic-area > div:not(.hidden) {
-    animation: slideFadeUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-@keyframes slideFadeUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
 }
