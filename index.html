@@ -57,17 +57,17 @@
             <h2 class="text-sm font-bold text-gray-500 mb-6 uppercase tracking-widest">Acesso ao Sistema</h2>
             
             <form id="form-login" onsubmit="fazerLogin(event)" class="space-y-4 relative z-10">
-                <input type="text" id="login-user" required placeholder="Usuário (ex: caixa)" class="w-full px-4 py-3 bg-gray-900 border border-gray-800 rounded-xl focus:ring-2 focus:ring-white outline-none text-center font-bold text-white placeholder-gray-600">
-                <input type="password" id="login-senha" required placeholder="Senha" class="w-full px-4 py-3 bg-gray-900 border border-gray-800 rounded-xl focus:ring-2 focus:ring-white outline-none text-center font-bold text-white placeholder-gray-600">
+                <input type="text" id="login-user" required placeholder="Digite seu usuário (ex: caixa)" class="w-full px-4 py-3 bg-gray-900 border border-gray-800 rounded-xl focus:ring-2 focus:ring-white outline-none text-center font-bold text-white placeholder-gray-600">
+                <input type="password" id="login-senha" required placeholder="Digite sua senha" class="w-full px-4 py-3 bg-gray-900 border border-gray-800 rounded-xl focus:ring-2 focus:ring-white outline-none text-center font-bold text-white placeholder-gray-600">
                 <button type="submit" id="btn-login" class="w-full bg-white text-black font-black py-4 rounded-xl transition hover:bg-gray-200 shadow-md">
-                    ENTRAR
+                    Acessar sistema
                 </button>
             </form>
 
             <div class="mt-8 pt-8 border-t border-gray-800 relative z-10">
-                <p class="text-xs text-gray-500 mb-3 font-bold uppercase">Acesso Rápido Frente de Loja</p>
+                <p class="text-xs text-gray-500 mb-3 font-bold uppercase">Frente de Caixa</p>
                 <button onclick="entrarModoTotemDaTelaLogin()" class="w-full bg-gray-900 hover:bg-gray-800 text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 transition border border-gray-700">
-                    <i data-lucide="tablet" class="w-5 h-5"></i> ABRIR TOTEM
+                    <i data-lucide="tablet" class="w-5 h-5"></i> Abrir autoatendimento (Totem)
                 </button>
             </div>
         </div>
@@ -79,7 +79,7 @@
             <span>AMBIENTE DE SIMULAÇÃO ATIVO - DADOS REAIS BLINDADOS</span>
         </div>
         <button onclick="desativarSimulacao()" class="bg-white text-orange-600 px-4 py-1.5 rounded-lg text-sm hover:bg-orange-50 transition shadow-sm font-black">
-            Sair e Voltar ao Normal
+            Sair da simulação
         </button>
     </div>
 
@@ -103,7 +103,7 @@
                         <i data-lucide="tablet" class="w-4 h-4"></i> <span class="hidden sm:inline">Abrir Totem</span>
                     </button>
                     <div class="h-10 w-px bg-gray-700 mx-1"></div>
-                    <button onclick="fazerLogout()" title="Sair do Sistema" class="p-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition flex items-center justify-center">
+                    <button onclick="fazerLogout()" title="Sair do sistema" class="p-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition flex items-center justify-center">
                         <i data-lucide="power" class="w-5 h-5"></i>
                     </button>
                 </div>
@@ -117,44 +117,44 @@
                     <div>
                         <div class="flex items-center gap-2 mb-4 text-slate-900">
                             <i data-lucide="check-square" class="w-6 h-6"></i>
-                            <h2 class="text-xl font-bold">Contabilizar Almoço</h2>
+                            <h2 class="text-xl font-bold">Contabilizar almoço</h2>
                         </div>
-                        <p class="text-sm text-slate-500 mb-4 text-center">Insira o CPF do cliente para buscar o cadastro.</p>
+                        <p class="text-sm text-slate-500 mb-4 text-center">Digite o CPF do cliente para buscar ou iniciar o atendimento.</p>
                         <div class="mb-4">
-                            <label class="block text-xs font-semibold text-slate-600 uppercase mb-1 text-center">CPF do Cliente</label>
-                            <input type="tel" inputmode="numeric" id="busca-cpf" placeholder="000.000.000-00" maxlength="14" oninput="mascaraCPF(this)" onkeydown="if(event.key==='Enter') buscarEContabilizar()" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-800 font-mono text-lg text-center">
+                            <label class="block text-xs font-semibold text-slate-600 uppercase mb-1 text-center">CPF do cliente</label>
+                            <input type="tel" inputmode="numeric" id="busca-cpf" placeholder="Digite apenas os números do CPF" maxlength="14" oninput="mascaraCPF(this)" onkeydown="if(event.key==='Enter') buscarEContabilizar()" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-800 font-mono text-lg text-center">
                         </div>
                     </div>
                     <button id="btn-caixa-buscar" onclick="buscarEContabilizar()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 px-4 rounded-xl transition flex items-center justify-center gap-2 shadow-sm disabled:opacity-50">
-                        <i data-lucide="search" class="w-5 h-5"></i> Buscar e Avançar (Enter)
+                        <i data-lucide="search" class="w-5 h-5"></i> Buscar cliente (Enter)
                     </button>
                 </div>
 
                 <div class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
                     <div class="flex items-center gap-2 mb-4 text-slate-900">
                         <i data-lucide="user-plus" class="w-6 h-6"></i>
-                        <h2 class="text-xl font-bold">Primeiro Cadastro</h2>
+                        <h2 class="text-xl font-bold">Novo cadastro</h2>
                     </div>
                     <form id="form-cadastro" onsubmit="cadastrarCliente(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-semibold text-slate-600 uppercase mb-1 text-center">CPF (Obrigatório)</label>
-                            <input type="tel" inputmode="numeric" id="cad-cpf" required placeholder="000.000.000-00" maxlength="14" oninput="mascaraCPF(this)" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-800 font-mono text-center">
+                            <label class="block text-xs font-semibold text-slate-600 uppercase mb-1 text-center">CPF</label>
+                            <input type="tel" inputmode="numeric" id="cad-cpf" required placeholder="Digite apenas os números do CPF" maxlength="14" oninput="mascaraCPF(this)" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-800 font-mono text-center">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-slate-600 uppercase mb-1 text-center">Nome Completo</label>
-                            <input type="text" id="cad-nome" required placeholder="Ex: Patrick Martins" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-800 text-center">
+                            <label class="block text-xs font-semibold text-slate-600 uppercase mb-1 text-center">Nome completo</label>
+                            <input type="text" id="cad-nome" required placeholder="Digite o nome completo" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-800 text-center">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-slate-600 uppercase mb-1 text-center">Data de Nascimento (DD/MM/AAAA)</label>
-                            <input type="tel" inputmode="numeric" id="cad-nascimento" required placeholder="Ex: 30/04/1999" maxlength="10" oninput="mascaraData(this)" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-800 font-mono text-center">
+                            <label class="block text-xs font-semibold text-slate-600 uppercase mb-1 text-center">Data de nascimento</label>
+                            <input type="tel" inputmode="numeric" id="cad-nascimento" required placeholder="Digite a data (DD/MM/AAAA)" maxlength="10" oninput="mascaraData(this)" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-800 font-mono text-center">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-slate-600 uppercase mb-1 text-center">Telefone / WhatsApp</label>
-                            <input type="tel" inputmode="numeric" id="cad-telefone" required placeholder="(00) 90000-0000" maxlength="15" oninput="mascaraTelefone(this)" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-800 text-center">
+                            <label class="block text-xs font-semibold text-slate-600 uppercase mb-1 text-center">WhatsApp</label>
+                            <input type="tel" inputmode="numeric" id="cad-telefone" required placeholder="Digite o telefone com DDD" maxlength="15" oninput="mascaraTelefone(this)" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-800 text-center">
                         </div>
                         <div class="sm:col-span-2 mt-2">
                             <button type="submit" id="btn-caixa-salvar" class="w-full sm:w-auto bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 px-6 rounded-xl transition flex items-center justify-center gap-2 shadow-sm disabled:opacity-50">
-                                <i data-lucide="save" class="w-5 h-5"></i> Registrar Cliente (Enter)
+                                <i data-lucide="save" class="w-5 h-5"></i> Salvar cadastro (Enter)
                             </button>
                         </div>
                     </form>
@@ -167,13 +167,13 @@
                         <i data-lucide="settings-2" class="w-5 h-5 text-indigo-600"></i> Gestão
                     </div>
                     <button id="btn-gerenciar-acessos" onclick="abrirGerenciadorUsuarios()" class="hidden bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-lg font-bold flex items-center gap-2 transition text-sm">
-                        <i data-lucide="users" class="w-4 h-4"></i> Senhas de Acesso
+                        <i data-lucide="users" class="w-4 h-4"></i> Gerenciar acessos
                     </button>
                     <button id="btn-ativar-simulacao" onclick="ativarSimulacao()" class="hidden bg-orange-100 text-orange-700 hover:bg-orange-200 px-4 py-2 rounded-lg font-bold flex items-center gap-2 transition text-sm">
-                        <i data-lucide="flask-conical" class="w-4 h-4"></i> Modo Simulação
+                        <i data-lucide="flask-conical" class="w-4 h-4"></i> Testar sistema (Simulação)
                     </button>
                     <button id="btn-zerar-banco" onclick="resetarSistema()" class="hidden bg-red-50 text-red-600 hover:bg-red-100 px-4 py-2 rounded-lg font-bold flex items-center gap-2 transition text-sm">
-                        <i data-lucide="trash-2" class="w-4 h-4"></i> Resetar BD
+                        <i data-lucide="trash-2" class="w-4 h-4"></i> Zerar banco de dados
                     </button>
                 </div>
 
@@ -181,20 +181,20 @@
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div onclick="filtrarLista('todos')" class="bg-white p-4 rounded-xl shadow-sm border border-gray-300 cursor-pointer hover:border-black transition text-center">
-                        <p class="text-xs font-bold text-gray-500 uppercase">Total Clientes</p>
+                        <p class="text-xs font-bold text-gray-500 uppercase">Total de clientes</p>
                         <p id="card-total" class="text-2xl font-black text-black">0</p>
                     </div>
                     <div onclick="filtrarLista('premios')" class="bg-white p-4 rounded-xl shadow-sm border border-gray-300 cursor-pointer hover:border-black transition relative overflow-hidden text-center">
-                        <p class="text-xs font-bold text-gray-800 uppercase flex items-center justify-center gap-1"><i data-lucide="gift" class="w-4 h-4 text-gray-800"></i> Aguardando Resgate</p>
+                        <p class="text-xs font-bold text-gray-800 uppercase flex items-center justify-center gap-1"><i data-lucide="gift" class="w-4 h-4 text-gray-800"></i> Prêmios disponíveis</p>
                         <p id="card-premios" class="text-2xl font-black text-black">0</p>
                     </div>
                     <div onclick="filtrarLista('vips')" class="bg-white p-4 rounded-xl shadow-sm border border-gray-300 cursor-pointer hover:border-black transition text-center">
-                        <p class="text-xs font-bold text-gray-800 uppercase flex items-center justify-center gap-1"><i data-lucide="medal" class="w-4 h-4 text-gray-800"></i> Mais Fiéis (VIPs)</p>
+                        <p class="text-xs font-bold text-gray-800 uppercase flex items-center justify-center gap-1"><i data-lucide="medal" class="w-4 h-4 text-gray-800"></i> Clientes VIPs</p>
                         <p id="card-vips" class="text-2xl font-black text-black">0</p>
                     </div>
                     <div onclick="filtrarLista('niver_mes')" class="bg-white p-4 rounded-xl shadow-sm border border-black cursor-pointer hover:bg-gray-50 transition relative overflow-hidden text-center">
                         <div class="absolute top-0 right-0 w-2 h-full bg-black"></div>
-                        <p class="text-xs font-bold text-gray-800 uppercase flex items-center justify-center gap-1"><i data-lucide="cake" class="w-4 h-4 text-gray-800"></i> Central Aniversários</p>
+                        <p class="text-xs font-bold text-gray-800 uppercase flex items-center justify-center gap-1"><i data-lucide="cake" class="w-4 h-4 text-gray-800"></i> Aniversariantes do mês</p>
                         <p id="card-niver-central" class="text-2xl font-black text-black">0</p>
                     </div>
                 </div>
@@ -203,30 +203,30 @@
                     
                     <div id="sub-filtros-niver" class="hidden px-6 pt-6 pb-2">
                         <div class="bg-gray-50 p-3 rounded-xl flex flex-wrap gap-4 items-center justify-center border border-gray-200">
-                            <span class="text-xs font-bold text-gray-600 uppercase"><i data-lucide="filter" class="w-4 h-4 inline"></i> Filtro de Aniversários:</span>
-                            <button id="btn-niver-mes" onclick="filtrarLista('niver_mes')" class="px-4 py-2 bg-black text-white rounded-lg text-xs font-bold transition shadow-sm">Todo o Mês Atual</button>
-                            <span class="text-sm font-semibold text-gray-400">OU PERÍODO:</span>
+                            <span class="text-xs font-bold text-gray-600 uppercase"><i data-lucide="filter" class="w-4 h-4 inline"></i> Filtro de aniversários:</span>
+                            <button id="btn-niver-mes" onclick="filtrarLista('niver_mes')" class="px-4 py-2 bg-black text-white rounded-lg text-xs font-bold transition shadow-sm">Exibir mês atual</button>
+                            <span class="text-sm font-semibold text-gray-400">Ou filtre por período:</span>
                             <div class="flex items-center gap-2">
                                 <input type="date" id="filtro-data-inicio" class="px-3 py-1.5 border border-gray-300 rounded-lg text-sm text-gray-700 outline-none focus:border-black text-center">
                                 <span class="text-gray-400 text-sm">até</span>
                                 <input type="date" id="filtro-data-fim" class="px-3 py-1.5 border border-gray-300 rounded-lg text-sm text-gray-700 outline-none focus:border-black text-center">
-                                <button onclick="filtrarPorPeriodo()" class="px-4 py-2 bg-white border border-gray-300 hover:border-black text-black rounded-lg text-xs font-bold transition shadow-sm">Buscar</button>
+                                <button onclick="filtrarPorPeriodo()" class="px-4 py-2 bg-white border border-gray-300 hover:border-black text-black rounded-lg text-xs font-bold transition shadow-sm">Aplicar filtro</button>
                             </div>
                         </div>
                     </div>
 
                     <div class="p-6 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                         <div>
-                            <h2 class="text-xl font-bold text-slate-700 flex items-center gap-2">Painel de Clientes</h2>
+                            <h2 class="text-xl font-bold text-slate-700 flex items-center gap-2">Painel de clientes</h2>
                             <p class="text-xs text-slate-400 mt-0.5" id="filtro-atual-texto">Exibindo: Todos os clientes (Sincronizado na Nuvem)</p>
                         </div>
                         <div class="flex flex-col sm:flex-row w-full sm:w-auto gap-3">
-                            <input type="text" id="busca-admin" oninput="filtrarPorTexto(this.value)" placeholder="Pesquisar Nome/CPF..." class="px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-800 text-sm text-center w-full sm:w-64">
+                            <input type="text" id="busca-admin" oninput="filtrarPorTexto(this.value)" placeholder="Pesquise por nome ou CPF" class="px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-800 text-sm text-center w-full sm:w-64">
                             <button onclick="abrirCentralMarketing()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl font-bold flex items-center justify-center gap-2 transition text-sm shadow-sm">
-                                <i data-lucide="megaphone" class="w-4 h-4"></i> Marketing (Robô)
+                                <i data-lucide="megaphone" class="w-4 h-4"></i> Central de Marketing
                             </button>
                             <button onclick="exportarExcel()" class="bg-gray-800 hover:bg-black text-white px-4 py-2 rounded-xl font-bold flex items-center justify-center gap-2 transition text-sm shadow-sm">
-                                <i data-lucide="download" class="w-4 h-4"></i> Exportar
+                                <i data-lucide="download" class="w-4 h-4"></i> Exportar relatório
                             </button>
                         </div>
                     </div>
@@ -236,7 +236,7 @@
                             <thead>
                                 <tr class="bg-slate-50 text-slate-400 text-xs font-semibold uppercase border-b border-slate-100">
                                     <th class="py-3 px-6 text-center">Nome</th>
-                                    <th class="py-3 px-6 text-center">CPF / Whats</th>
+                                    <th class="py-3 px-6 text-center">CPF / WhatsApp</th>
                                     <th class="py-3 px-6 text-center">Acumulados</th>
                                     <th class="py-3 px-6 text-center">Resgates</th>
                                     <th class="py-3 px-6 text-right">Ações</th>
@@ -255,14 +255,14 @@
                 <div class="w-20 h-20 bg-gray-100 text-black rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce">
                     <i data-lucide="cake" class="w-10 h-10"></i>
                 </div>
-                <h3 class="text-2xl font-black text-black mb-2">Tem Aniversariante!</h3>
+                <h3 class="text-2xl font-black text-black mb-2">Aniversariante do dia!</h3>
                 <p class="text-gray-600 mb-6" id="texto-alerta-aniversario"></p>
                 <div class="flex flex-col gap-3">
                     <button onclick="confirmarCortesiaAniversario()" class="w-full bg-black hover:bg-gray-800 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 transition transform hover:scale-105 shadow-md">
-                        <i data-lucide="check-circle" class="w-5 h-5"></i> Confirmar Desconto (R$ 50,00)
+                        <i data-lucide="check-circle" class="w-5 h-5"></i> Aplicar desconto de R$ 50,00
                     </button>
                     <button onclick="continuarPosAniversario()" class="w-full px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-bold transition">
-                        Pular / Continuar no Caixa
+                        Continuar atendimento sem desconto
                     </button>
                 </div>
             </div>
@@ -271,10 +271,10 @@
         <div id="modal-whatsapp" tabindex="-1" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
             <div class="bg-white rounded-2xl p-6 max-w-md w-full shadow-xl border-t-4 border-green-500">
                 <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2"><i data-lucide="message-circle" class="w-5 h-5 text-green-500"></i> Enviar p/ Fila do Robô</h3>
+                    <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2"><i data-lucide="message-circle" class="w-5 h-5 text-green-500"></i> Enviar mensagem pelo WhatsApp</h3>
                     <button onclick="fecharModal('modal-whatsapp')" class="text-gray-400 hover:text-black"><i data-lucide="x" class="w-5 h-5"></i></button>
                 </div>
-                <p class="text-sm text-gray-500 mb-4 border-b border-gray-100 pb-2 text-center">Destinatário: <strong id="whats-cliente-nome" class="text-black text-base"></strong></p>
+                <p class="text-sm text-gray-500 mb-4 border-b border-gray-100 pb-2 text-center">Cliente: <strong id="whats-cliente-nome" class="text-black text-base"></strong></p>
                 <div class="flex flex-col gap-3" id="lista-opcoes-whats"></div>
             </div>
         </div>
@@ -285,40 +285,40 @@
                     <h3 class="text-xl font-black text-gray-800 flex items-center gap-2"><i data-lucide="megaphone" class="w-6 h-6 text-indigo-600"></i> Central de Marketing</h3>
                     <button onclick="fecharModal('modal-marketing')" class="text-gray-400 hover:text-black"><i data-lucide="x" class="w-6 h-6"></i></button>
                 </div>
-                <p class="text-sm text-gray-500 mb-4 bg-indigo-50 p-3 rounded-lg text-center"><strong>Dica:</strong> Use <strong>[Nome]</strong> para puxar o nome do cliente automaticamente e <strong>[Acumulados]</strong> para mostrar os almoços. O Robô Node.js fará o disparo de forma invisível.</p>
+                <p class="text-sm text-gray-500 mb-4 bg-indigo-50 p-3 rounded-lg text-center"><strong>Dica:</strong> Use <strong>[Nome]</strong> para o sistema preencher o nome do cliente automaticamente e <strong>[Acumulados]</strong> para mostrar a quantidade de almoços. As mensagens são enviadas de forma invisível.</p>
 
                 <div class="space-y-6">
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1 text-center">Aviso de Aniversário (Automático 7 dias antes)</label>
+                        <label class="block text-sm font-bold text-gray-700 mb-1 text-center">Mensagem de aniversário (Enviada 7 dias antes)</label>
                         <textarea id="mkt-msg-niver" rows="3" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black outline-none text-sm text-center"></textarea>
                     </div>
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1 text-center">Prêmio Alcançado (Aviso do 10º Almoço)</label>
+                        <label class="block text-sm font-bold text-gray-700 mb-1 text-center">Mensagem de prêmio (Enviada no 10º almoço)</label>
                         <textarea id="mkt-msg-premio" rows="3" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black outline-none text-sm text-center"></textarea>
                     </div>
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1 text-center">Recuperação de Inativos (No 16º Dia de Ausência)</label>
+                        <label class="block text-sm font-bold text-gray-700 mb-1 text-center">Mensagem de ausência (Enviada após 16 dias)</label>
                         <textarea id="mkt-msg-inativo" rows="3" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black outline-none text-sm text-center"></textarea>
                     </div>
 
                     <div class="pt-4 border-t border-gray-200 bg-indigo-50 p-4 rounded-xl">
                         <div class="flex items-center gap-2 mb-3 text-indigo-900 justify-center">
                             <i data-lucide="calendar-clock" class="w-5 h-5"></i>
-                            <h4 class="font-bold text-center">Agendar Disparo Automático (Massa)</h4>
+                            <h4 class="font-bold text-center">Agendar envio para todos os clientes</h4>
                         </div>
                         <div class="flex gap-2 mb-2">
                             <input type="date" id="mkt-agenda-data" class="p-2 border border-indigo-200 rounded-lg text-sm w-1/3 outline-none text-center">
-                            <input type="text" id="mkt-agenda-titulo" placeholder="Ex: Promoção Dia das Mães" class="p-2 border border-indigo-200 rounded-lg text-sm w-2/3 outline-none text-center">
+                            <input type="text" id="mkt-agenda-titulo" placeholder="Título da campanha (ex: Promoção Dia das Mães)" class="p-2 border border-indigo-200 rounded-lg text-sm w-2/3 outline-none text-center">
                         </div>
-                        <textarea id="mkt-agenda-texto" rows="2" placeholder="Digite a mensagem promocional. Use [Nome] para personalizar." class="w-full p-2 border border-indigo-200 rounded-lg text-sm mb-2 outline-none text-center"></textarea>
-                        <button onclick="adicionarAgendamento()" class="w-full bg-indigo-600 text-white px-3 py-2 rounded-lg font-bold hover:bg-indigo-700 transition text-sm mb-4">+ Agendar Disparo para Toda a Base</button>
+                        <textarea id="mkt-agenda-texto" rows="2" placeholder="Digite o texto da mensagem. Use [Nome] para incluir o nome do cliente." class="w-full p-2 border border-indigo-200 rounded-lg text-sm mb-2 outline-none text-center"></textarea>
+                        <button onclick="adicionarAgendamento()" class="w-full bg-indigo-600 text-white px-3 py-2 rounded-lg font-bold hover:bg-indigo-700 transition text-sm mb-4">+ Agendar envio da campanha</button>
                         <div id="area-agendamentos" class="space-y-3"></div>
                     </div>
                     
                     <div class="pt-4 border-t border-gray-200">
                         <div class="flex justify-between items-center mb-3">
-                            <h4 class="font-bold text-gray-800">Botões Customizados (Envio Individual)</h4>
-                            <button onclick="adicionarMsgCustom()" class="text-xs bg-black text-white px-3 py-1.5 rounded-lg font-bold hover:bg-gray-800">+ Novo Botão</button>
+                            <h4 class="font-bold text-gray-800">Mensagens personalizadas (Envio individual)</h4>
+                            <button onclick="adicionarMsgCustom()" class="text-xs bg-black text-white px-3 py-1.5 rounded-lg font-bold hover:bg-gray-800">+ Adicionar nova mensagem</button>
                         </div>
                         <div id="area-mensagens-custom" class="space-y-4"></div>
                     </div>
@@ -326,7 +326,7 @@
 
                 <div class="mt-8 flex justify-end gap-3 border-t border-gray-200 pt-4">
                     <button onclick="fecharModal('modal-marketing')" class="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-bold">Cancelar</button>
-                    <button onclick="salvarCentralMarketing()" class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold flex items-center gap-2"><i data-lucide="save" class="w-4 h-4"></i> Salvar e Integrar c/ Robô</button>
+                    <button onclick="salvarCentralMarketing()" class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold flex items-center gap-2"><i data-lucide="save" class="w-4 h-4"></i> Salvar configurações de marketing</button>
                 </div>
             </div>
         </div>
@@ -334,23 +334,23 @@
         <div id="modal-editar" tabindex="-1" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
             <div class="bg-white rounded-2xl p-6 max-w-md w-full shadow-xl border-t-4 border-gray-800">
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2"><i data-lucide="edit-3" class="w-5 h-5 text-gray-800"></i> Editar Cadastro</h3>
+                    <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2"><i data-lucide="edit-3" class="w-5 h-5 text-gray-800"></i> Editar dados do cliente</h3>
                     <button type="button" onclick="fecharModal('modal-editar')" class="text-gray-400 hover:text-black"><i data-lucide="x" class="w-5 h-5"></i></button>
                 </div>
                 <form id="form-editar" onsubmit="salvarEdicao(event)" class="space-y-4">
                     <input type="hidden" id="edit-cpf-raw">
                     <div>
-                        <label class="block text-xs font-semibold text-gray-500 uppercase mb-1 text-center">CPF (Não editável)</label>
+                        <label class="block text-xs font-semibold text-gray-500 uppercase mb-1 text-center">CPF</label>
                         <input type="text" id="edit-cpf-display" disabled class="w-full px-4 py-2 bg-gray-100 border border-gray-200 rounded-xl text-gray-500 font-mono cursor-not-allowed text-center">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-gray-600 uppercase mb-1 text-center">Nome Completo</label>
+                        <label class="block text-xs font-semibold text-gray-600 uppercase mb-1 text-center">Nome completo</label>
                         <input type="text" id="edit-nome" required class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-800 text-center">
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-semibold text-gray-600 uppercase mb-1 text-center">Nascimento</label>
-                            <input type="tel" inputmode="numeric" id="edit-nascimento" required maxlength="10" oninput="mascaraData(this)" placeholder="DD/MM/AAAA" class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-800 font-mono text-center">
+                            <label class="block text-xs font-semibold text-gray-600 uppercase mb-1 text-center">Data de nascimento</label>
+                            <input type="tel" inputmode="numeric" id="edit-nascimento" required maxlength="10" oninput="mascaraData(this)" placeholder="Digite a data (DD/MM/AAAA)" class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-800 font-mono text-center">
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-gray-600 uppercase mb-1 text-center">WhatsApp</label>
@@ -359,7 +359,7 @@
                     </div>
                     <div class="pt-2 flex gap-3">
                         <button type="button" onclick="fecharModal('modal-editar')" class="flex-1 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-bold">Cancelar</button>
-                        <button type="submit" class="flex-1 py-2.5 bg-black hover:bg-gray-800 text-white rounded-xl font-bold flex items-center justify-center gap-2"><i data-lucide="save" class="w-4 h-4"></i> Salvar</button>
+                        <button type="submit" class="flex-1 py-2.5 bg-black hover:bg-gray-800 text-white rounded-xl font-bold flex items-center justify-center gap-2"><i data-lucide="save" class="w-4 h-4"></i> Salvar alterações</button>
                     </div>
                 </form>
             </div>
@@ -368,34 +368,34 @@
         <div id="modal-usuarios" tabindex="-1" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-[150]">
             <div class="bg-white rounded-2xl p-6 max-w-md w-full shadow-xl border-t-4 border-indigo-600">
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2"><i data-lucide="users" class="w-5 h-5 text-indigo-600"></i> Gestão de Acessos</h3>
+                    <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2"><i data-lucide="users" class="w-5 h-5 text-indigo-600"></i> Gerenciar acessos ao sistema</h3>
                     <button type="button" onclick="fecharModal('modal-usuarios')" class="text-gray-400 hover:text-black"><i data-lucide="x" class="w-5 h-5"></i></button>
                 </div>
                 
                 <form onsubmit="criarUsuario(event)" class="bg-indigo-50 p-4 rounded-xl border border-indigo-100 mb-6 space-y-3">
-                    <h4 class="text-sm font-black text-indigo-900 uppercase tracking-widest text-center mb-2">Criar Nova Senha</h4>
-                    <input type="text" id="novo-user" required placeholder="Nome de usuário (Ex: caixa2)" class="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg outline-none focus:border-indigo-500 text-sm font-bold text-center">
-                    <input type="password" id="novo-senha" required placeholder="Senha (Mínimo 6 dígitos)" minlength="6" class="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg outline-none focus:border-indigo-500 text-sm font-bold text-center">
+                    <h4 class="text-sm font-black text-indigo-900 uppercase tracking-widest text-center mb-2">Cadastrar novo usuário</h4>
+                    <input type="text" id="novo-user" required placeholder="Digite o nome de usuário (ex: caixa2)" class="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg outline-none focus:border-indigo-500 text-sm font-bold text-center">
+                    <input type="password" id="novo-senha" required placeholder="Digite a senha (mínimo de 6 caracteres)" minlength="6" class="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg outline-none focus:border-indigo-500 text-sm font-bold text-center">
                     <select id="novo-cargo" class="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg outline-none focus:border-indigo-500 text-sm font-bold text-center text-gray-700">
-                        <option value="caixa">Permissão: CAIXA (Apenas Bipar/Cadastrar)</option>
-                        <option value="gerente">Permissão: GERENTE (Marketing e Edições)</option>
-                        <option value="admin">Permissão: ADMIN (Acesso Total)</option>
+                        <option value="caixa">Nível Caixa: Apenas registrar e buscar clientes</option>
+                        <option value="gerente">Nível Gerente: Editar dados e acessar Marketing</option>
+                        <option value="admin">Nível Administrador: Acesso total ao sistema</option>
                     </select>
-                    <button type="submit" class="w-full bg-indigo-600 text-white font-bold py-2 rounded-lg hover:bg-indigo-700 transition shadow-sm text-sm">CRIAR ACESSO</button>
+                    <button type="submit" class="w-full bg-indigo-600 text-white font-bold py-2 rounded-lg hover:bg-indigo-700 transition shadow-sm text-sm">Salvar novo usuário</button>
                 </form>
 
-                <h4 class="text-sm font-black text-gray-800 uppercase mb-2 border-b border-gray-100 pb-1">Usuários Cadastrados</h4>
+                <h4 class="text-sm font-black text-gray-800 uppercase mb-2 border-b border-gray-100 pb-1">Usuários cadastrados</h4>
                 <div id="lista-usuarios-cadastrados" class="space-y-2 max-h-48 overflow-y-auto text-sm pr-1"></div>
             </div>
         </div>
 
         <div id="modal-confirmacao" tabindex="-1" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
             <div class="bg-white rounded-2xl p-6 max-w-md w-full shadow-xl">
-                <h3 class="text-lg font-bold text-gray-800 mb-2 text-center">Contabilizar Refeição</h3>
-                <p class="text-gray-600 mb-6 text-center" id="texto-confirmacao">Deseja registrar +1 almoço?</p>
+                <h3 class="text-lg font-bold text-gray-800 mb-2 text-center">Confirmar almoço</h3>
+                <p class="text-gray-600 mb-6 text-center" id="texto-confirmacao">Deseja adicionar 1 almoço para este cliente?</p>
                 <div class="flex justify-end gap-3">
                     <button onclick="fecharModal('modal-confirmacao')" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-xl font-bold">Cancelar</button>
-                    <button id="btn-confirmar-almoco" class="px-5 py-2 bg-black hover:bg-gray-800 text-white rounded-xl font-bold disabled:opacity-50">Confirmar</button>
+                    <button id="btn-confirmar-almoco" class="px-5 py-2 bg-black hover:bg-gray-800 text-white rounded-xl font-bold disabled:opacity-50">Confirmar almoço</button>
                 </div>
             </div>
         </div>
@@ -404,58 +404,58 @@
             <div class="bg-white rounded-2xl p-6 max-w-md w-full shadow-xl border-t-4 border-black">
                 <div class="flex items-center justify-center gap-2 mb-2 text-black">
                     <i data-lucide="alert-triangle" class="w-6 h-6"></i>
-                    <h3 class="text-lg font-bold">Desconto Disponível!</h3>
+                    <h3 class="text-lg font-bold">Desconto liberado!</h3>
                 </div>
-                <p class="text-gray-600 mb-6 text-sm text-center">Este cliente já possui 10 almoços acumulados. Você deseja <strong>Aplicar R$ 50 de Desconto agora</strong> ou ele deseja <strong>Acumular</strong> este para o futuro?</p>
+                <p class="text-gray-600 mb-6 text-sm text-center">Este cliente atingiu 10 almoços acumulados. Você deseja <strong>aplicar o desconto de R$ 50,00 agora</strong> ou <strong>registrar o almoço para acumular</strong> o benefício?</p>
                 <div class="flex flex-col gap-2">
-                    <button id="btn-trava-resgatar" class="w-full px-5 py-3 bg-black hover:bg-gray-800 text-white rounded-xl font-bold flex items-center justify-center gap-2 disabled:opacity-50"><i data-lucide="printer" class="w-4 h-4"></i> Resgatar e Imprimir Cupom</button>
-                    <button id="btn-trava-acumular" class="w-full px-5 py-3 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-xl font-bold disabled:opacity-50">Apenas Acumular (+1 pago)</button>
-                    <button onclick="fecharModal('modal-trava')" class="text-xs text-gray-400 mt-2 underline font-medium text-center block">Cancelar operação</button>
+                    <button id="btn-trava-resgatar" class="w-full px-5 py-3 bg-black hover:bg-gray-800 text-white rounded-xl font-bold flex items-center justify-center gap-2 disabled:opacity-50"><i data-lucide="printer" class="w-4 h-4"></i> Aplicar desconto e imprimir cupom</button>
+                    <button id="btn-trava-acumular" class="w-full px-5 py-3 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-xl font-bold disabled:opacity-50">Apenas adicionar 1 almoço</button>
+                    <button onclick="fecharModal('modal-trava')" class="text-xs text-gray-400 mt-2 underline font-medium text-center block">Cancelar</button>
                 </div>
             </div>
         </div>
 
         <div id="modal-historico" tabindex="-1" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
             <div class="bg-white rounded-2xl p-6 max-w-lg w-full shadow-xl border-t-4 border-gray-800">
-                <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2"><i data-lucide="history" class="w-5 h-5"></i> Histórico de Resgates</h3>
+                <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2"><i data-lucide="history" class="w-5 h-5"></i> Histórico do cliente</h3>
                 <div id="lista-historico" class="max-h-80 overflow-y-auto space-y-3 mb-6"></div>
-                <button onclick="fecharModal('modal-historico')" class="w-full px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-xl font-bold">Fechar</button>
+                <button onclick="fecharModal('modal-historico')" class="w-full px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-xl font-bold">Fechar histórico</button>
             </div>
         </div>
 
         <div id="modal-simulacao" tabindex="-1" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-[150]">
             <div class="bg-white rounded-2xl p-6 max-w-md w-full shadow-xl border-t-4 border-orange-500">
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2"><i data-lucide="flask-conical" class="w-5 h-5 text-orange-500"></i> Ajustes de Depuração</h3>
+                    <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2"><i data-lucide="flask-conical" class="w-5 h-5 text-orange-500"></i> Modo de simulação</h3>
                     <button type="button" onclick="fecharModal('modal-simulacao')" class="text-gray-400 hover:text-black"><i data-lucide="x" class="w-5 h-5"></i></button>
                 </div>
-                <p class="text-sm text-gray-500 mb-4 border-b border-gray-100 pb-2 text-center">Cliente: <strong id="sim-cliente-nome" class="text-black text-base"></strong></p>
+                <p class="text-sm text-gray-500 mb-4 border-b border-gray-100 pb-2 text-center">Cliente selecionado: <strong id="sim-cliente-nome" class="text-black text-base"></strong></p>
                 
                 <div class="space-y-4">
                     <div class="bg-gray-50 p-3 rounded-xl border border-gray-200 flex justify-between items-center">
                         <div>
-                            <p class="text-sm font-bold text-gray-800">Saldo de Almoços</p>
-                            <p class="text-xs text-gray-500">Atual: <span id="sim-qtd-atual" class="font-bold"></span></p>
+                            <p class="text-sm font-bold text-gray-800">Saldo de almoços</p>
+                            <p class="text-xs text-gray-500">Saldo atual: <span id="sim-qtd-atual" class="font-bold"></span></p>
                         </div>
                         <div class="flex items-center gap-2">
                             <input type="number" id="sim-input-almocos" class="w-16 px-2 py-1 border border-gray-300 rounded text-center font-bold" min="0">
-                            <button onclick="salvarSimulacaoAlmocos()" class="bg-black hover:bg-gray-800 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition">Salvar</button>
+                            <button onclick="salvarSimulacaoAlmocos()" class="bg-black hover:bg-gray-800 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition">Salvar novo saldo</button>
                         </div>
                     </div>
 
                     <div class="bg-gray-50 p-3 rounded-xl border border-gray-200 text-center">
-                        <p class="text-sm font-bold text-gray-800 mb-1">Simulação de Data Festiva</p>
-                        <p class="text-xs text-gray-500 mb-3">Altera a data de nascimento para hoje e zera histórico de resgate no ano atual.</p>
+                        <p class="text-sm font-bold text-gray-800 mb-1">Simular data de aniversário</p>
+                        <p class="text-xs text-gray-500 mb-3">Altera a data de nascimento do cliente para hoje e reinicia o resgate deste ano.</p>
                         <button onclick="simularAniversarioHoje()" class="w-full bg-red-100 text-red-600 hover:bg-red-200 py-2.5 rounded-lg text-sm font-bold transition flex items-center justify-center gap-2">
-                            <i data-lucide="cake" class="w-4 h-4"></i> Fazer Aniversário Hoje
+                            <i data-lucide="cake" class="w-4 h-4"></i> Aplicar aniversário hoje
                         </button>
                     </div>
 
                     <div class="bg-gray-50 p-3 rounded-xl border border-gray-200 text-center">
-                        <p class="text-sm font-bold text-gray-800 mb-1">Manipulação de Última Visita</p>
-                        <p class="text-xs text-gray-500 mb-3">Retrocede a última visita em 16 dias para testar alertas da regra de inatividade.</p>
+                        <p class="text-sm font-bold text-gray-800 mb-1">Simular ausência do cliente</p>
+                        <p class="text-xs text-gray-500 mb-3">Altera a última visita para 16 dias atrás, ativando o alerta de cliente inativo.</p>
                         <button onclick="simularInatividade()" class="w-full bg-blue-100 text-blue-600 hover:bg-blue-200 py-2.5 rounded-lg text-sm font-bold transition flex items-center justify-center gap-2">
-                            <i data-lucide="calendar-clock" class="w-4 h-4"></i> Simular Ausência (16 dias)
+                            <i data-lucide="calendar-clock" class="w-4 h-4"></i> Aplicar ausência (16 dias)
                         </button>
                     </div>
                 </div>
@@ -472,7 +472,7 @@
                 <span class="text-white font-light text-3xl tracking-widest uppercase mb-12">Fidelidade</span>
 
                 <h3 class="text-3xl font-black text-amber-400 mb-6 tracking-wide uppercase flex items-center gap-3">
-                    <i data-lucide="star" class="w-8 h-8 fill-amber-400"></i> Avalie e Ganhe!
+                    <i data-lucide="star" class="w-8 h-8 fill-amber-400"></i> Avalie nosso atendimento!
                 </h3>
                 
                 <div class="bg-white p-4 rounded-3xl mb-6 shadow-[0_0_40px_rgba(255,255,255,0.15)]">
@@ -480,35 +480,35 @@
                 </div>
                 
                 <p class="text-gray-300 text-xl text-center leading-relaxed px-4">
-                    Avalie nosso atendimento e ganhe um <strong class="text-white">bombom especial</strong>.
+                    Avalie sua experiência e ganhe uma <strong class="text-white">sobremesa especial</strong>.
                 </p>
-                <p class="text-gray-500 text-sm mt-6 uppercase tracking-widest font-bold">Aponte a câmera do celular</p>
+                <p class="text-gray-500 text-sm mt-6 uppercase tracking-widest font-bold">Aponte a câmera do seu celular para o QR Code</p>
             </div>
 
             <div class="w-3/5 flex flex-col items-center justify-center p-12 relative overflow-y-auto" id="totem-dynamic-area">
                 
                 <div id="totem-tela-busca" class="w-full max-w-lg text-center transition-all">
-                    <h1 class="text-5xl font-black text-white mb-4">Bem-vindo!</h1>
-                    <p class="text-gray-400 mb-10 text-2xl">Digite seu CPF para registrar seu almoço:</p>
-                    <input type="tel" inputmode="numeric" id="totem-cpf" placeholder="000.000.000-00" maxlength="14" oninput="mascaraCPF(this)" onkeydown="if(event.key==='Enter') totemProcessarCPF()" class="w-full bg-white text-black text-center text-5xl py-6 rounded-2xl focus:outline-none focus:ring-8 focus:ring-gray-400 font-mono mb-8 shadow-2xl transition-all placeholder-gray-400">
+                    <h1 class="text-5xl font-black text-white mb-4">Seja bem-vindo(a)!</h1>
+                    <p class="text-gray-400 mb-10 text-2xl">Digite o seu CPF para registrar o seu almoço:</p>
+                    <input type="tel" inputmode="numeric" id="totem-cpf" placeholder="Digite apenas números" maxlength="14" oninput="mascaraCPF(this)" onkeydown="if(event.key==='Enter') totemProcessarCPF()" class="w-full bg-white text-black text-center text-5xl py-6 rounded-2xl focus:outline-none focus:ring-8 focus:ring-gray-400 font-mono mb-8 shadow-2xl transition-all placeholder-gray-400">
                     <button id="btn-totem-avancar" onclick="totemProcessarCPF()" class="w-full bg-white text-black font-black text-3xl py-6 rounded-2xl shadow-[0_0_25px_rgba(255,255,255,0.4)] active:scale-95 transition-transform disabled:opacity-50">
                         Avançar
                     </button>
                 </div>
 
                 <div id="totem-tela-cadastro" class="hidden w-full max-w-2xl text-center transition-all">
-                    <h2 class="text-5xl font-black text-white mb-2">Primeira vez aqui?</h2>
-                    <p class="text-gray-400 text-2xl mb-10">Preencha rapidamente para participar do clube.</p>
+                    <h2 class="text-5xl font-black text-white mb-2">Sua primeira vez aqui?</h2>
+                    <p class="text-gray-400 text-2xl mb-10">Faça seu cadastro para acumular almoços e ganhar descontos.</p>
                     <form id="totem-form" onsubmit="totemSalvarCadastro(event)" class="w-full space-y-6">
                         <input type="tel" inputmode="numeric" id="totem-cad-cpf" readonly class="w-full bg-gray-800 border-2 border-gray-700 text-gray-400 px-6 py-5 rounded-2xl font-mono text-2xl text-center cursor-not-allowed">
-                        <input type="text" id="totem-cad-nome" required placeholder="Nome Completo" class="w-full bg-white text-black px-6 py-5 rounded-2xl text-2xl text-center focus:outline-none focus:ring-8 focus:ring-gray-400 placeholder-gray-400 shadow-xl">
+                        <input type="text" id="totem-cad-nome" required placeholder="Digite seu nome completo" class="w-full bg-white text-black px-6 py-5 rounded-2xl text-2xl text-center focus:outline-none focus:ring-8 focus:ring-gray-400 placeholder-gray-400 shadow-xl">
                         <div class="grid grid-cols-2 gap-6">
-                            <input type="tel" inputmode="numeric" id="totem-cad-nasc" required placeholder="Nasc. (Ex: 30/04/1999)" maxlength="10" oninput="mascaraData(this)" class="w-full bg-white text-black px-6 py-5 rounded-2xl text-xl text-center focus:outline-none focus:ring-8 focus:ring-gray-400 placeholder-gray-400 shadow-xl font-mono">
-                            <input type="tel" inputmode="numeric" id="totem-cad-tel" required placeholder="WhatsApp" maxlength="15" oninput="mascaraTelefone(this)" class="w-full bg-white text-black px-6 py-5 rounded-2xl text-xl text-center focus:outline-none focus:ring-8 focus:ring-gray-400 placeholder-gray-400 shadow-xl font-mono">
+                            <input type="tel" inputmode="numeric" id="totem-cad-nasc" required placeholder="Data de nascimento" maxlength="10" oninput="mascaraData(this)" class="w-full bg-white text-black px-6 py-5 rounded-2xl text-xl text-center focus:outline-none focus:ring-8 focus:ring-gray-400 placeholder-gray-400 shadow-xl font-mono">
+                            <input type="tel" inputmode="numeric" id="totem-cad-tel" required placeholder="Telefone (WhatsApp)" maxlength="15" oninput="mascaraTelefone(this)" class="w-full bg-white text-black px-6 py-5 rounded-2xl text-xl text-center focus:outline-none focus:ring-8 focus:ring-gray-400 placeholder-gray-400 shadow-xl font-mono">
                         </div>
                         <div class="flex gap-6 mt-8">
-                            <button type="button" onclick="totemVoltarInicio()" class="w-1/3 bg-gray-800 text-white font-bold text-2xl py-6 rounded-2xl shadow-xl active:scale-95 transition-transform">Voltar</button>
-                            <button type="submit" id="btn-totem-salvar" class="w-2/3 bg-white text-black font-black text-3xl py-6 rounded-2xl shadow-[0_0_30px_rgba(255,255,255,0.3)] active:scale-95 transition-transform disabled:opacity-50">Salvar Dados</button>
+                            <button type="button" onclick="totemVoltarInicio()" class="w-1/3 bg-gray-800 text-white font-bold text-2xl py-6 rounded-2xl shadow-xl active:scale-95 transition-transform">Voltar ao início</button>
+                            <button type="submit" id="btn-totem-salvar" class="w-2/3 bg-white text-black font-black text-3xl py-6 rounded-2xl shadow-[0_0_30px_rgba(255,255,255,0.3)] active:scale-95 transition-transform disabled:opacity-50">Salvar meu cadastro</button>
                         </div>
                     </form>
                 </div>
@@ -518,14 +518,14 @@
                         <i data-lucide="gift" class="w-16 h-16"></i>
                     </div>
                     <h2 class="text-5xl font-black text-white mb-4">Parabéns!</h2>
-                    <p class="text-gray-300 text-2xl mb-2">Você possui um benefício de</p>
+                    <p class="text-gray-300 text-2xl mb-2">Você ganhou um benefício de</p>
                     <strong class="text-amber-400 text-5xl font-black mb-10 block">R$ 50,00 de Desconto</strong>
                     <div class="flex flex-col gap-6">
                         <button id="btn-totem-resgatar" onclick="totemMostrarMensagem('aviso_caixa')" class="w-full bg-white text-black font-black text-3xl py-8 rounded-2xl shadow-[0_0_40px_rgba(255,255,255,0.3)] active:scale-95 transition-transform disabled:opacity-50">
-                            Resgatar Agora
+                            Quero usar meu desconto hoje
                         </button>
                         <button id="btn-totem-acumular" onclick="totemExecutarAcumulo()" class="w-full bg-gray-800 border border-gray-600 text-white font-bold text-2xl py-8 rounded-2xl active:scale-95 transition-transform shadow-xl disabled:opacity-50">
-                            Continuar Acumulando
+                            Quero guardar para a próxima visita
                         </button>
                     </div>
                 </div>
@@ -537,7 +537,7 @@
                 </div>
                 
                 <div id="totem-bottom-bar" class="hidden absolute bottom-12 left-1/2 -translate-x-1/2 w-3/4 flex flex-col items-center">
-                    <button onclick="totemVoltarInicio()" class="mb-6 px-10 py-3 bg-gray-800 text-white text-lg font-bold rounded-2xl border border-gray-600 transition-all shadow-xl hover:bg-gray-700">Finalizar / Voltar</button>
+                    <button onclick="totemVoltarInicio()" class="mb-6 px-10 py-3 bg-gray-800 text-white text-lg font-bold rounded-2xl border border-gray-600 transition-all shadow-xl hover:bg-gray-700">Encerrar atendimento</button>
                     <div class="w-full bg-gray-900 h-3 rounded-full overflow-hidden border border-gray-800">
                         <div id="totem-loading-bar" class="bg-white h-full w-full"></div>
                     </div>
@@ -557,8 +557,4 @@
     <script type="module" src="./totem.js"></script>
     <script type="module" src="./dashboard.js"></script>
 </body>
-</html>
-
-	
-    </body>
 </html>
