@@ -1,365 +1,76 @@
-/* ==========================================================
-   TOP HAUS FIDELIDADE
-   STYLE.CSS - PREMIUM REFINEMENTS (UX/UI Upgraded)
-   ========================================================== */
-
-@import url('https://fonts.cdnfonts.com/css/helvetica-now-display');
-@import url('https://fonts.cdnfonts.com/css/helvetica-neue-5');
-
-:root {
-    /* Paleta Rigorosa */
-    --c-black: #0A0A0A;
-    --c-brown: #8D4925;
-    --c-brown-hover: #733B1E;
-    --c-yellow: #FCA100;
-    --c-yellow-hover: #E08F00;
-    
-    /* Superfícies */
-    --c-bg: #EAEAEF; /* Levemente escurecido para maior contraste com cards brancos */
-    --c-card: #FFFFFF;
-    --c-border: rgba(0,0,0,0.08); /* Borda sutilmente mais marcada */
-
-    /* Sombras Elevadas (Mais Profundidade) */
-    --shadow-subtle: 0 4px 16px -4px rgba(0,0,0,0.06), 0 0 1px rgba(0,0,0,0.1);
-    --shadow-float: 0 12px 32px -8px rgba(0,0,0,0.12), 0 0 1px rgba(0,0,0,0.15);
-    --shadow-modal: 0 24px 64px -16px rgba(0,0,0,0.25), 0 0 1px rgba(0,0,0,0.2);
-    --shadow-glow-yellow: 0 8px 32px rgba(252,161,0,0.25);
+/* ==========================================================================
+   ESTILOS GERAIS E IMPRESSÃO
+   ========================================================================== */
+@media screen { 
+    .print-area { display: none !important; } 
 }
 
-/* ==========================================================
-   RESET & UTILITÁRIOS
-   ========================================================== */
-body {
-    font-family: 'Helvetica Now', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-}
-
-.bg-th-bg { background-color: var(--c-bg); }
-.bg-th-black { background-color: var(--c-black); }
-.text-th-black { color: var(--c-black); }
-.bg-th-brown { background-color: var(--c-brown); }
-.text-th-brown { color: var(--c-brown); }
-.border-th-brown { border-color: var(--c-brown); }
-.bg-th-yellow { background-color: var(--c-yellow); }
-.text-th-yellow { color: var(--c-yellow); }
-.border-th-yellow { border-color: var(--c-yellow); }
-.border-th-border { border-color: var(--c-border); }
-.shadow-subtle { box-shadow: var(--shadow-subtle); }
-.shadow-float { box-shadow: var(--shadow-float); }
-.shadow-modal { box-shadow: var(--shadow-modal); }
-.shadow-glow-yellow { box-shadow: var(--shadow-glow-yellow); }
-
-/* Scrollbar Customizada Premium */
-.custom-scrollbar::-webkit-scrollbar { width: 8px; height: 8px; }
-.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-.custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 9999px; border: 2px solid transparent; background-clip: padding-box; }
-.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.3); border: 2px solid transparent; background-clip: padding-box; }
-
-/* ==========================================================
-   COMPONENTES ADMIN
-   ========================================================== */
-
-/* Dash Transitions - Acionadas quando .hidden é removido do app-dashboard */
-.dash-container:not(.hidden) .dash-animate-sidebar { animation: slide-in-left 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-.dash-container:not(.hidden) .dash-animate-header { animation: slide-in-down 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-.dash-container:not(.hidden) .dash-animate-card { animation: fade-in-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) both 0.1s; }
-.dash-container:not(.hidden) .dash-animate-stagger-1 { animation: fade-in-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) both 0.05s; }
-.dash-container:not(.hidden) .dash-animate-stagger-2 { animation: fade-in-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) both 0.10s; }
-.dash-container:not(.hidden) .dash-animate-stagger-3 { animation: fade-in-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) both 0.15s; }
-.dash-container:not(.hidden) .dash-animate-stagger-4 { animation: fade-in-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) both 0.20s; }
-.dash-container:not(.hidden) .dash-animate-stagger-5 { animation: fade-in-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) both 0.25s; }
-.dash-container:not(.hidden) .dash-animate-stagger-6 { animation: fade-in-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) both 0.30s; }
-
-/* Dinâmica Header (:has) */
-body:has(#aba-caixa:not(.hidden)) .th-dynamic-h2::after { content: "Registro de Visitas"; }
-body:has(#aba-caixa:not(.hidden)) .th-dynamic-p::after { content: "Lançamentos e cadastros"; }
-body:has(#aba-admin:not(.hidden)) .th-dynamic-h2::after { content: "Gestão Administrativa"; }
-body:has(#aba-admin:not(.hidden)) .th-dynamic-p::after { content: "Base de dados e Marketing"; }
-body:has(#aba-admin:not(.hidden)) .th-admin-only { display: block; }
-
-/* Prevenção Sobreposição Simulador */
-body:has(#banner-simulacao:not(.hidden)) #app-dashboard { padding-top: 32px; }
-body:has(#banner-simulacao:not(.hidden)) #tela-totem { padding-top: 32px; }
-
-/* Navegação Sidebar */
-.th-nav-item {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    height: 48px;
-    padding: 0 16px;
-    border-radius: 12px;
-    font-size: 14px;
-    font-weight: 500;
-    color: rgba(255,255,255,0.5);
-    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-    position: relative;
-}
-.th-nav-item:hover:not(.active) {
-    background-color: rgba(255,255,255,0.05);
-    color: rgba(255,255,255,0.8);
-}
-.th-nav-item.active {
-    background-color: var(--c-brown);
-    color: #FFFFFF;
-    box-shadow: 0 4px 15px rgba(141,73,37,0.4);
-    transform: translateX(4px);
-}
-.th-nav-item.active::before {
-    content: '';
-    position: absolute;
-    left: -24px;
-    top: 50%;
-    transform: translateY(-50%) scaleY(0);
-    height: 32px;
-    width: 6px; /* Borda mais grossa */
-    background-color: var(--c-yellow);
-    border-radius: 0 6px 6px 0;
-    animation: scale-y-in 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    transform-origin: top;
-}
-
-.th-nav-item-totem {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    height: 48px;
-    padding: 0 16px;
-    border-radius: 12px;
-    font-size: 14px;
-    font-weight: 700;
-    background-color: rgba(252,161,0,0.08);
-    color: var(--c-yellow);
-    border: 1px solid rgba(252,161,0,0.2);
-    transition: all 0.2s;
-}
-.th-nav-item-totem:hover { background-color: rgba(252,161,0,0.15); transform: translateY(-1px); }
-
-/* Inputs Admin (Mais amplos e visíveis) */
-.th-label {
-    display: block;
-    font-size: 11px;
-    font-weight: 800;
-    color: var(--c-black);
-    opacity: 0.6;
-    text-transform: uppercase;
-    letter-spacing: 0.10em;
-    margin-bottom: 8px;
-}
-.th-input {
-    background-color: var(--c-bg);
-    border: 1px solid transparent;
-    border-radius: 12px;
-    padding: 0 16px;
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--c-black);
-    outline: none;
-    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.th-input::placeholder { color: rgba(0,0,0,0.35); font-weight: 500; }
-.th-input:hover { border-color: rgba(0,0,0,0.15); }
-.th-input:focus {
-    background-color: var(--c-card);
-    border-color: var(--c-brown);
-    box-shadow: 0 0 0 4px rgba(141,73,37,0.12);
-    transform: translateY(-1px);
-}
-#busca-cpf:focus { box-shadow: 0 12px 32px rgba(141,73,37,0.15); border-color: var(--c-brown); background-color: white; }
-
-/* Botões */
-.th-btn-primary {
-    background-color: var(--c-brown);
-    color: #FFFFFF;
-    font-weight: 800;
-    border-radius: 14px; /* Mais arredondado */
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-    outline: none;
-}
-.th-btn-primary:hover:not(:disabled) { background-color: var(--c-brown-hover); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(141,73,37,0.3); }
-.th-btn-primary:active:not(:disabled) { transform: scale(0.97) translateY(0); }
-
-.th-btn-secondary {
-    background-color: transparent;
-    color: rgba(0,0,0,0.7);
-    font-weight: 800;
-    border-radius: 14px;
-    border: 2px solid rgba(0,0,0,0.1);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s;
-}
-.th-btn-secondary:hover:not(:disabled) { background-color: rgba(0,0,0,0.03); color: var(--c-black); border-color: rgba(0,0,0,0.25); transform: translateY(-1px); }
-
-/* KPIs */
-.th-kpi-card {
-    background-color: #FFFFFF;
-    padding: 24px;
-    border-radius: 20px;
-    border: 1px solid var(--c-border);
-    box-shadow: var(--shadow-subtle);
-    transition: all 0.2s ease-out;
-}
-.th-kpi-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-float); border-color: rgba(0,0,0,0.15); }
-
-/* Tabela Premium (Linhas mais altas) */
-#tabela-clientes tr { height: 72px; transition: background-color 0.2s, border-left 0.2s; border-left: 4px solid transparent; }
-#tabela-clientes tr:hover { background-color: rgba(252,161,0,0.04); border-left: 4px solid var(--c-yellow); }
-#tabela-clientes td { padding: 0 32px; font-weight: 600; }
-
-/* Modais Comportamento */
-.th-modal-scale { animation: scale-up-modal 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-
-/* ==========================================================
-   COMPONENTES TOTEM (Visual Massivo e Imersivo)
-   ========================================================== */
-
-.th-totem-screen { animation: slide-in-totem 0.4s 0.1s both cubic-bezier(0.16, 1, 0.3, 1); }
-
-.th-totem-input {
-    background-color: #FFFFFF;
-    color: var(--c-black);
-    border-radius: 20px;
-    padding: 0 40px;
-    font-size: 26px;
-    text-align: center;
-    font-weight: 800;
-    outline: none;
-    border: 4px solid transparent;
-    transition: all 0.2s;
-    animation: fade-in-up 0.2s both;
-}
-.th-totem-input:focus { border-color: var(--c-yellow); transform: scale(1.02); box-shadow: 0 12px 40px rgba(255,255,255,0.1); }
-
-/* Teclado Numérico Totem */
-.totem-key {
-    height: 88px; /* Teclas maiores */
-    border-radius: 20px;
-    background-color: #1A1A1A;
-    color: #FFFFFF;
-    font-size: 36px;
-    font-weight: 800;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.1s, transform 0.1s;
-    user-select: none;
-    touch-action: manipulation;
-}
-.totem-key:active { transform: scale(0.95); }
-.totem-key-backspace { background-color: #2A1515; }
-
-/* Icones Injetados Pelo JS No Totem (Tornando-os imensos) */
-.ui-massive-icon {
-    width: 140px;
-    height: 140px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.ui-massive-icon svg, .ui-massive-icon i {
-    width: 72px;
-    height: 72px;
-}
-/* Cores baseadas no ícone injetado pelo JS original (check ou alert) */
-.ui-massive-icon:has(.text-green-500), .ui-massive-icon:has([stroke="#22c55e"]), .ui-massive-icon:has([data-lucide="check"]) {
-    background-color: rgba(34, 197, 94, 0.15);
-    color: #4ade80;
-}
-.ui-massive-icon:has(.text-yellow-500), .ui-massive-icon:has([data-lucide="award"]), .ui-massive-icon:has([data-lucide="star"]) {
-    background-color: rgba(252, 161, 0, 0.15);
-    color: var(--c-yellow);
-}
-
-#totem-loading-bar { animation: shrink-progress 6s linear forwards; }
-
-/* ==========================================================
-   ANIMAÇÕES & KEYFRAMES
-   ========================================================== */
-
-@keyframes slide-in-left {
-    from { opacity: 0; transform: translateX(-40px); }
-    to { opacity: 1; transform: translateX(0); }
-}
-
-@keyframes slide-in-down {
-    from { opacity: 0; transform: translateY(-20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes scale-y-in {
-    from { transform: translateY(-50%) scaleY(0); }
-    to { transform: translateY(-50%) scaleY(1); }
-}
-
-@keyframes fade-in-up {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-.animate-fade-in-up { animation: fade-in-up 0.35s ease-out forwards; }
-.animate-scale-up { animation: scale-up-modal 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) both; }
-
-@keyframes fade-in {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-.animate-fade-in { animation: fade-in 0.3s ease-out forwards; }
-
-@keyframes slide-in-totem {
-    from { opacity: 0; transform: translateX(40px); }
-    to { opacity: 1; transform: translateX(0); }
-}
-
-@keyframes scale-up-modal {
-    from { opacity: 0; transform: scale(0.92); }
-    to { opacity: 1; transform: scale(1); }
-}
-
-@keyframes pulse-once {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.04); }
-    100% { transform: scale(1); }
-}
-.th-animate-pulse-once { animation: pulse-once 0.3s ease-in-out; }
-
-@keyframes bounce-in {
-    0% { transform: scale(0); opacity: 0; }
-    60% { transform: scale(1.15); opacity: 1; }
-    100% { transform: scale(1); opacity: 1; }
-}
-.th-animate-bounce-in { animation: bounce-in 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-
-@keyframes breathe {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.04); }
-}
-.th-animate-breathe { animation: breathe 4s ease-in-out infinite; }
-
-@keyframes float-anim {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-8px); }
-}
-.th-animate-float { animation: float-anim 3s ease-in-out infinite; }
-
-@keyframes shrink-progress {
-    from { transform: scaleX(1); }
-    to { transform: scaleX(0); }
-}
-
-/* ==========================================================
-   IMPRESSÃO
-   ========================================================== */
-@media screen { .print-area { display: none !important; } }
 @media print {
     @page { margin: 0; size: 80mm auto; }
-    body { background: white !important; padding: 0; margin: 0; font-family: 'Courier New', Courier, monospace; color: #000 !important; }
+    
+    body { 
+        background: white !important; 
+        padding: 0; 
+        margin: 0; 
+        font-family: 'Courier New', Courier, monospace; 
+        color: #000 !important; 
+    }
+    
     .no-print { display: none !important; }
-    .print-area { display: block !important; width: 72mm; margin: 0 auto; padding: 0; font-size: 13px; font-weight: bold !important; color: #000 !important; }
+    
+    .print-area { 
+        display: block !important; 
+        width: 72mm; 
+        margin: 0 auto; 
+        padding: 0; 
+        font-size: 13px; 
+        font-weight: bold !important; 
+        color: #000 !important; 
+    }
+    
+    .linha-tracejada { 
+        border-top: 2px dashed #000 !important; 
+        margin: 6px 0; 
+    }
+    
+    strong { font-weight: 900 !important; }
+}
+
+/* ==========================================================================
+   AJUSTES DE COMPONENTES
+   ========================================================================== */
+/* Remove setas dos inputs numéricos (Chrome, Safari, Edge, Opera) */
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+    -webkit-appearance: none; 
+    margin: 0; 
+}
+
+/* ==========================================================================
+   ANIMAÇÕES E TRANSIÇÕES
+   ========================================================================== */
+/* Animação da barra de tempo de inatividade do Totem */
+@keyframes shrinkBar { 
+    from { width: 100%; } 
+    to { width: 0%; } 
+}
+
+.animate-shrink { 
+    animation: shrinkBar linear forwards; 
+}
+
+/* Animação genérica de fade-in (Usada em elementos dinâmicos) */
+@keyframes fadeIn { 
+    from { 
+        opacity: 0; 
+        transform: translateY(10px); 
+    } 
+    to { 
+        opacity: 1; 
+        transform: translateY(0); 
+    } 
+}
+
+.animate-fade-in { 
+    animation: fadeIn 0.5s ease-out forwards; 
 }
