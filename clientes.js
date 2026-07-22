@@ -9,11 +9,11 @@ window.buscarEContabilizar = () => {
     if(!inputCpf) return;
     const cpf = inputCpf.value.replace(/\D/g, ''); 
     
-    if(!window.validarCPFReal(cpf)) return window.mostrarToast('CPF Inválido', 'erro');
+    if(!window.validarCPFReal(cpf)) return window.mostrarToast('O CPF informado não é válido.', 'erro');
     if(window.operacoesAtivas && window.operacoesAtivas[cpf]) return;
     
     const c = window.clientesMap[cpf]; 
-    if(!c) return window.mostrarToast('Não encontrado.', 'erro');
+    if(!c) return window.mostrarToast('Cliente não encontrado. Verifique o CPF digitado.', 'erro');
     
     if (window.diasParaAniversario(c.nascimento) === 0 && c.aniversarioResgatadoAno !== new Date().getFullYear()) { 
         window.acaoPendente = c; 
@@ -44,11 +44,11 @@ window.processarFluxoNormal = (c) => {
         
         const bA = document.getElementById('btn-trava-acumular');
         if(ja) { 
-            bA.innerText = "Já acumulou hoje"; 
+            bA.innerText = "Almoço já adicionado hoje"; 
             bA.disabled = true; 
             bA.classList.add('opacity-50'); 
         } else { 
-            bA.innerText = "Acumular (+1 pago)"; 
+            bA.innerText = "Apenas adicionar 1 almoço"; 
             bA.disabled = false; 
             bA.classList.remove('opacity-50'); 
             bA.onclick = () => { 
@@ -57,9 +57,9 @@ window.processarFluxoNormal = (c) => {
             }; 
         }
     } else {
-        if(ja) return window.mostrarToast('Bloqueado: Cliente já registrou hoje!', 'erro');
+        if(ja) return window.mostrarToast('Este cliente já teve um almoço adicionado hoje.', 'erro');
         
-        document.getElementById('texto-confirmacao').innerHTML = `Deseja registrar +1 almoço para ${window.escapeHTML(c.nome)}?`;
+        document.getElementById('texto-confirmacao').innerHTML = `Deseja adicionar 1 almoço para ${window.escapeHTML(c.nome)}?`;
         const m = document.getElementById('modal-confirmacao'); 
         m.classList.remove('hidden'); 
         if(window.prenderFocoModal) window.prenderFocoModal(m);
@@ -79,13 +79,13 @@ window.cadastrarCliente = (e) => {
     if(window.isProcessing) return;
     
     const cpf = document.getElementById('cad-cpf').value.replace(/\D/g, ''); 
-    if(!window.validarCPFReal(cpf)) return window.mostrarToast('CPF Inválido', 'erro');
-    if(window.clientesMap[cpf] || (window.operacoesAtivas && window.operacoesAtivas[cpf])) return window.mostrarToast('Erro ou já cadastrado', 'erro');
+    if(!window.validarCPFReal(cpf)) return window.mostrarToast('O CPF informado não é válido.', 'erro');
+    if(window.clientesMap[cpf] || (window.operacoesAtivas && window.operacoesAtivas[cpf])) return window.mostrarToast('Este CPF já está cadastrado ou ocorreu um erro.', 'erro');
     
     const tel = document.getElementById('cad-telefone').value.replace(/\D/g, ''); 
-    if(!window.telefoneValido(tel)) return window.mostrarToast('Telefone inválido', 'erro');
+    if(!window.telefoneValido(tel)) return window.mostrarToast('O número de telefone informado não é válido.', 'erro');
     const nasc = document.getElementById('cad-nascimento').value; 
-    if(!window.validarDataReal(nasc)) return window.mostrarToast('Data inválida', 'erro');
+    if(!window.validarDataReal(nasc)) return window.mostrarToast('A data de nascimento informada não é válida.', 'erro');
 
     window.isProcessing = true; 
     if(window.operacoesAtivas) window.operacoesAtivas[cpf] = true; 
@@ -110,7 +110,7 @@ window.cadastrarCliente = (e) => {
     
     window.firebaseSet(window.firebaseRef(window.db, window.PATH_CLIENTES + '/' + cpf), nc).then(() => {
         document.getElementById('form-cadastro').reset(); 
-        window.mostrarToast('Cadastrado com sucesso!'); 
+        window.mostrarToast('Cliente cadastrado com sucesso.'); 
         window.isProcessing = false; 
         if(window.operacoesAtivas) window.operacoesAtivas[cpf] = false; 
         if(btn) btn.disabled = false;
@@ -157,7 +157,7 @@ window.processarConfirmacao = (c) => {
         if(btn) btn.disabled = false; 
         const inp = document.getElementById('busca-cpf');
         if(inp) inp.value = ''; 
-        window.mostrarToast('Contabilizado!'); 
+        window.mostrarToast('Almoço adicionado com sucesso.'); 
         
         if(window.checarEAvisarAlmoco) window.checarEAvisarAlmoco(c); 
     });
@@ -191,7 +191,7 @@ window.efetuarResgateEImprimir = (c) => {
         const inp = document.getElementById('busca-cpf');
         if(inp) inp.value = ''; 
         if(btn) btn.disabled = false; 
-        window.mostrarToast('Resgate efetuado!'); 
+        window.mostrarToast('Desconto aplicado com sucesso.'); 
         window.dispararImpressao(c.nome, c.cpf, dts, hr); 
     });
 };
@@ -216,7 +216,7 @@ window.confirmarCortesiaAniversario = () => {
     window.firebaseSet(window.firebaseRef(window.db, window.PATH_CLIENTES + '/' + c.cpf), c).then(() => { 
         window.isProcessing = false; 
         if(window.operacoesAtivas) window.operacoesAtivas[c.cpf] = false; 
-        window.mostrarToast("Desconto Aniversário Baixado!"); 
+        window.mostrarToast("Desconto de aniversário aplicado com sucesso."); 
         window.continuarPosAniversario(); 
     });
 };
@@ -248,7 +248,7 @@ window.dispararImpressao = (nome, cpf, dts, hr) => {
         </div>
         <div class="linha-tracejada"></div>
         <div style="text-align:center;margin-bottom:5px;">
-            <strong style="font-size:14px;color:#000;">COMPROVANTE DE RESGATE</strong><br>
+            <strong style="font-size:14px;color:#000;">COMPROVANTE DE DESCONTO</strong><br>
             <span style="font-size:11px;">${hr}</span>
         </div>
         <div class="linha-tracejada"></div>
@@ -258,13 +258,13 @@ window.dispararImpressao = (nome, cpf, dts, hr) => {
         </div>
         <div class="linha-tracejada"></div>
         <div style="margin-bottom:5px;">
-            <p style="font-weight:bold;margin:2px 0;color:#000;">ALMOÇOS CONTABILIZADOS:</p>
+            <p style="font-weight:bold;margin:2px 0;color:#000;">ALMOÇOS ACUMULADOS:</p>
             <ol style="padding-left:15px;margin:0;font-size:11px;color:#000;">${l}</ol>
         </div>
         <div class="linha-tracejada"></div>
         <div style="text-align:center;margin-top:5px;">
             <p style="font-weight:900;margin:0;font-size:16px;color:#000;">DESCONTO LIBERADO</p>
-            <p style="font-size:11px;margin:2px 0;">Válido: R$ 50,00 de desconto na refeição.</p>
+            <p style="font-size:11px;margin:2px 0;">Válido para R$ 50,00 de desconto na refeição.</p>
         </div>`; 
     
     window.print();
@@ -297,16 +297,16 @@ window.salvarEdicao = (e) => {
     if(!c) return;
     
     const tel = document.getElementById('edit-telefone').value.replace(/\D/g, ''); 
-    if(!window.telefoneValido(tel)) return window.mostrarToast('Telefone inválido', 'erro');
+    if(!window.telefoneValido(tel)) return window.mostrarToast('O número de telefone informado não é válido.', 'erro');
     const nasc = document.getElementById('edit-nascimento').value; 
-    if(!window.validarDataReal(nasc)) return window.mostrarToast('Data inválida', 'erro');
+    if(!window.validarDataReal(nasc)) return window.mostrarToast('A data de nascimento informada não é válida.', 'erro');
     
     c.nome = document.getElementById('edit-nome').value; 
     c.telefone = tel; 
     c.nascimento = nasc.includes('/') ? `${nasc.split('/')[2]}-${nasc.split('/')[1]}-${nasc.split('/')[0]}` : nasc;
     
     window.firebaseSet(window.firebaseRef(window.db, window.PATH_CLIENTES + '/' + c.cpf), c).then(() => { 
-        window.mostrarToast("Atualizado com sucesso!"); 
+        window.mostrarToast("Dados do cliente atualizados com sucesso."); 
         if(window.fecharModal) window.fecharModal('modal-editar'); 
     });
 };
@@ -323,23 +323,23 @@ window.abrirHistorico = (cpf) => {
     if(!c) return;
     
     if(c.historicoResgates && c.historicoResgates.length > 0) { 
-        div.innerHTML += `<h4 class="font-bold text-sm mb-2 text-black border-b pb-1">Prêmios de 10 Almoços</h4>`; 
+        div.innerHTML += `<h4 class="font-bold text-sm mb-2 text-black border-b pb-1">Descontos resgatados (10 almoços)</h4>`; 
         c.historicoResgates.forEach((r, i) => { 
             div.innerHTML += `
                 <div class="bg-gray-50 p-3 rounded-lg border flex justify-between items-center mb-2">
                     <div><p class="text-xs font-bold">Resgate #${i+1}</p><p class="text-xs">${r.dataResgate}</p></div>
                     <button onclick="reimprimirCupomPorCpf('${c.cpf}', ${i})" class="bg-black text-white px-3 py-1.5 rounded-lg text-xs font-bold">
-                        <i data-lucide="printer" class="w-3.5 h-3.5 inline"></i> Reimprimir
+                        <i data-lucide="printer" class="w-3.5 h-3.5 inline"></i> Reimprimir cupom
                     </button>
                 </div>`; 
         }); 
     }
     if(c.historicoAniversarios && c.historicoAniversarios.length > 0) { 
-        div.innerHTML += `<h4 class="font-bold text-sm mb-2 mt-4 text-black border-b pb-1">Aniversários</h4>`; 
+        div.innerHTML += `<h4 class="font-bold text-sm mb-2 mt-4 text-black border-b pb-1">Descontos de aniversário</h4>`; 
         c.historicoAniversarios.forEach(r => { 
             div.innerHTML += `
                 <div class="bg-indigo-50 p-3 rounded-lg border flex justify-between items-center mb-2">
-                    <div><p class="text-xs font-bold">Aniv. ${r.ano}</p><p class="text-xs">${r.dataResgate}</p></div>
+                    <div><p class="text-xs font-bold">Aniversário ${r.ano}</p><p class="text-xs">${r.dataResgate}</p></div>
                 </div>`; 
         }); 
     }
@@ -353,6 +353,6 @@ window.reimprimirCupomPorCpf = (c, i) => {
     if(window.fecharModal) window.fecharModal('modal-historico'); 
     const cl = window.clientesMap[c]; 
     if(cl && cl.historicoResgates && cl.historicoResgates[i]) {
-        window.dispararImpressao(cl.nome, cl.cpf, cl.historicoResgates[i].datas, cl.historicoResgates[i].dataResgate + " (REIMPRESSÃO)"); 
+        window.dispararImpressao(cl.nome, cl.cpf, cl.historicoResgates[i].datas, cl.historicoResgates[i].dataResgate + " (Reimpressão)"); 
     }
 };
