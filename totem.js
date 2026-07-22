@@ -23,7 +23,7 @@ window.sairModoTotem = () => {
     
     if (window.usuarioLogado) { 
         document.getElementById('app-dashboard').classList.remove('hidden'); 
-        window.mostrarToast("Painel Liberado"); 
+        window.mostrarToast("Painel gerencial liberado."); 
     } else { 
         document.getElementById('tela-login').classList.remove('hidden'); 
         document.getElementById('tela-login').classList.add('flex'); 
@@ -68,7 +68,7 @@ window.totemProcessarCPF = () => {
     const cpfNum = document.getElementById('totem-cpf').value.replace(/\D/g, '');
     if(!window.validarCPFReal(cpfNum)) return window.totemMostrarMensagem('erro_cpf');
     
-    if(window.operacoesAtivas && window.operacoesAtivas[cpfNum]) return window.mostrarToast('Aguarde, processando.', 'erro');
+    if(window.operacoesAtivas && window.operacoesAtivas[cpfNum]) return window.mostrarToast('Processando informações. Por favor, aguarde.', 'erro');
     
     window.isProcessing = true; 
     if(window.operacoesAtivas) window.operacoesAtivas[cpfNum] = true; 
@@ -125,9 +125,9 @@ window.totemSalvarCadastro = (e) => {
     if(window.operacoesAtivas && window.operacoesAtivas[cpf]) return;
     
     const tel = document.getElementById('totem-cad-tel').value.replace(/\D/g, ''); 
-    if(!window.telefoneValido(tel)) return window.mostrarToast('Telefone inválido', 'erro');
+    if(!window.telefoneValido(tel)) return window.mostrarToast('O número de telefone informado não é válido.', 'erro');
     const nasc = document.getElementById('totem-cad-nasc').value; 
-    if(!window.validarDataReal(nasc)) return window.mostrarToast('Data inválida', 'erro');
+    if(!window.validarDataReal(nasc)) return window.mostrarToast('A data de nascimento informada não é válida.', 'erro');
 
     window.isProcessing = true; 
     if(window.operacoesAtivas) window.operacoesAtivas[cpf] = true; 
@@ -166,7 +166,7 @@ window.totemSalvarCadastro = (e) => {
             window.totemMostrarMensagem('cadastro_sucesso');
         }
     }).catch(() => { 
-        window.mostrarToast("Erro ao salvar.", "erro"); 
+        window.mostrarToast("Ocorreu um erro ao salvar o cadastro. Tente novamente.", "erro"); 
         window.isProcessing = false; 
         if(window.operacoesAtivas) window.operacoesAtivas[cpf] = false; 
     });
@@ -238,31 +238,31 @@ window.totemMostrarMensagem = (tipo) => {
 
     if(tipo === 'erro_cpf') { 
         if(ic) ic.innerHTML = `<i data-lucide="x" class="w-12 h-12"></i>`; 
-        if(ti) ti.innerText = "CPF Inválido"; 
-        if(te) te.innerText = "Por favor, digite 11 números."; 
+        if(ti) ti.innerText = "CPF inválido"; 
+        if(te) te.innerText = "Por favor, digite os 11 números do seu CPF."; 
         tempo = 5000; 
     } else if(tipo === 'ja_registrado') { 
         if(ic) ic.innerHTML = `<i data-lucide="check-check" class="w-12 h-12"></i>`; 
-        if(ti) ti.innerText = `Tudo Certo, ${nomeC}!`; 
-        if(te) te.innerText = "Seu almoço de hoje já está contabilizado!"; 
+        if(ti) ti.innerText = `Tudo certo, ${nomeC}!`; 
+        if(te) te.innerText = "O seu almoço de hoje já foi contabilizado."; 
     } else if(tipo === 'aviso_caixa') { 
         if(ic) ic.innerHTML = `<i data-lucide="info" class="w-12 h-12"></i>`; 
-        if(ti) ti.innerText = "Resgate Solicitado"; 
-        if(te) te.innerHTML = `Avise o operador de caixa para validar o seu desconto de <strong>R$ 50,00</strong>, <strong>${nomeC}</strong>!`;
+        if(ti) ti.innerText = "Desconto solicitado"; 
+        if(te) te.innerHTML = `Por favor, avise o caixa para aplicar o seu desconto de <strong>R$ 50,00</strong> na sua refeição, <strong>${nomeC}</strong>!`;
         tempo = 15000; 
     } else if(tipo === 'sucesso_acumulo' || tipo === 'cadastro_sucesso') { 
         if(ic) ic.innerHTML = `<i data-lucide="check" class="w-12 h-12"></i>`; 
-        if(ti) ti.innerText = `Registrado, ${nomeC}!`; 
-        if(te) te.innerHTML = `Você possui <strong>${window.totemClienteTemp.almocos||1}</strong> almoço(s) acumulado(s).`; 
+        if(ti) ti.innerText = `Almoço registrado, ${nomeC}!`; 
+        if(te) te.innerHTML = `Você já tem <strong>${window.totemClienteTemp.almocos||1}</strong> almoço(s) acumulado(s).`; 
     } else if(tipo === 'meta_atingida') { 
         if(ic) ic.innerHTML = `<i data-lucide="star" class="w-12 h-12"></i>`; 
         if(ti) ti.innerText = `Parabéns, ${nomeC}!`; 
-        if(te) te.innerHTML = "Você acaba de completar 10 almoços. No próximo o desconto de <strong>R$ 50,00</strong> é seu!"; 
+        if(te) te.innerHTML = "Você completou 10 almoços! Na sua próxima visita, você ganha <strong>R$ 50,00 de desconto</strong>."; 
         tempo = 15000; 
     } else if(tipo === 'aniversario_totem') { 
         if(ic) ic.innerHTML = `<i data-lucide="cake" class="w-12 h-12"></i>`; 
-        if(ti) ti.innerText = `Feliz Aniversário, ${nomeC}!`; 
-        if(te) te.innerHTML = `🎁 Hoje é seu aniversário e você tem <strong>R$ 50,00 de Desconto</strong> liberado!<br><br>Avise o caixa agora mesmo!`; 
+        if(ti) ti.innerText = `Feliz aniversário, ${nomeC}!`; 
+        if(te) te.innerHTML = `🎁 Como hoje é o seu aniversário, você ganhou <strong>R$ 50,00 de desconto</strong>!<br><br>Avise o caixa na hora do pagamento.`; 
         tempo = 15000; 
     }
 
