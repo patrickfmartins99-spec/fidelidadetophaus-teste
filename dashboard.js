@@ -28,9 +28,9 @@ window.isProcessing = false;
 window.clienteSimulacaoAtual = null;
 
 window.msgsMarketing = {
-    aniversario: "Olá, *[Nome]*! Vimos aqui que o *seu aniversário está chegando*! 🎉\nE a equipe Top Haus faz questão de comemorar com você.\nPreparamos um *Desconto de R$ 50,00* exclusivo para você usar no seu almoço.\nPara resgatar, é só apresentar esta mensagem no nosso caixa no dia exato do seu aniversário!\nTe esperamos para celebrar!",
-    premio: "🎉 Parabéns, *[Nome]*!\nVocê acaba de completar 10 almoços.\nNa sua próxima visita, você tem direito a *R$ 50,00 de desconto* na sua refeição!",
-    inativo: "Olá *[Nome]*, faz tempo que não te vemos por aqui! Que tal almoçar com a gente essa semana?",
+    aniversario: "Olá, *[Nome]*! Seu aniversário está chegando e a equipe Top Haus faz questão de comemorar com você! 🎉\n\nLiberamos um *desconto de R$ 50,00* exclusivo para você usar em nosso restaurante.\nPara aproveitar, basta apresentar esta mensagem no caixa no dia exato do seu aniversário.\n\nEsperamos você para celebrar!",
+    premio: "🎉 Parabéns, *[Nome]*!\nVocê acaba de completar 10 almoços conosco.\n\nComo recompensa, na sua próxima visita você tem direito a *R$ 50,00 de desconto* na sua refeição. Muito obrigado pela preferência!",
+    inativo: "Olá, *[Nome]*! Sentimos sua falta por aqui. Que tal vir almoçar com a gente nesta semana? Estamos esperando você!",
     agendadas: [],
     personalizadas: []
 };
@@ -143,21 +143,21 @@ window.calcularNotificacoesPainel = () => {
         p.innerHTML += `
             <div onclick="filtrarLista('alerta_niver')" class="bg-red-50 border border-red-200 p-4 rounded-xl cursor-pointer hover:bg-red-100 transition shadow-sm flex items-center gap-3">
                 <i data-lucide="cake" class="w-8 h-8 text-red-500"></i>
-                <div><p class="text-sm font-bold text-red-800">Aniversários!</p><p class="text-xs text-red-600"><strong>${nNiv}</strong> pendentes.</p></div>
+                <div><p class="text-sm font-bold text-red-800">Aniversariantes</p><p class="text-xs text-red-600"><strong>${nNiv}</strong> aguardando aviso.</p></div>
             </div>`;
     }
     if(nPre > 0) {
         p.innerHTML += `
             <div onclick="filtrarLista('alerta_premio')" class="bg-amber-50 border border-amber-200 p-4 rounded-xl cursor-pointer hover:bg-amber-100 transition shadow-sm flex items-center gap-3">
                 <i data-lucide="gift" class="w-8 h-8 text-amber-500"></i>
-                <div><p class="text-sm font-bold text-amber-800">Prêmios!</p><p class="text-xs text-amber-600"><strong>${nPre}</strong> pendentes.</p></div>
+                <div><p class="text-sm font-bold text-amber-800">Prêmios disponíveis</p><p class="text-xs text-amber-600"><strong>${nPre}</strong> aguardando aviso.</p></div>
             </div>`;
     }
     if(nIna > 0) {
         p.innerHTML += `
             <div onclick="filtrarLista('alerta_inativos')" class="bg-blue-50 border border-blue-200 p-4 rounded-xl cursor-pointer hover:bg-blue-100 transition shadow-sm flex items-center gap-3">
                 <i data-lucide="user-minus" class="w-8 h-8 text-blue-500"></i>
-                <div><p class="text-sm font-bold text-blue-800">Ausentes!</p><p class="text-xs text-blue-600"><strong>${nIna}</strong> (+15 dias).</p></div>
+                <div><p class="text-sm font-bold text-blue-800">Clientes ausentes</p><p class="text-xs text-blue-600"><strong>${nIna}</strong> há mais de 15 dias.</p></div>
             </div>`;
     }
     if(window.lucide) window.lucide.createIcons();
@@ -181,31 +181,31 @@ window.filtrarLista = (t, dI=null, dF=null) => {
     const a = new Date().getFullYear();
     
     if (t === 'todos') { 
-        tf.innerText = 'Exibindo: Todos'; 
+        tf.innerText = 'Exibindo: Todos os clientes'; 
         l = window.clientesArray; 
     } else if (t === 'premios') { 
-        tf.innerText = 'Aguardando Resgate'; 
+        tf.innerText = 'Exibindo: Prêmios aguardando resgate'; 
         l = window.clientesArray.filter(c => (c.almocos||0) >= 10); 
     } else if (t === 'vips') { 
-        tf.innerText = 'VIPs'; 
+        tf.innerText = 'Exibindo: Clientes VIPs'; 
         l = window.clientesArray.filter(c => (c.premiosResgatados||0) > 0).sort((x,y) => (y.premiosResgatados||0) - (x.premiosResgatados||0)); 
     } else if (t === 'niver_mes') { 
-        tf.innerText = 'Aniversários: Mês'; 
+        tf.innerText = 'Exibindo: Aniversariantes do mês'; 
         l = window.clientesArray.filter(c => window.isNiverMesCheck(c.nascimento)); 
     } else if (t === 'niver_periodo') { 
-        tf.innerText = `Aniversários: Período`; 
+        tf.innerText = `Exibindo: Aniversariantes por período`; 
         l = window.clientesArray.filter(c => window.isNiverInPeriod(c.nascimento, dI, dF)); 
     } else if (t === 'alerta_niver') { 
-        tf.innerText = 'Aniversários aguardando aviso'; 
+        tf.innerText = 'Exibindo: Aniversariantes aguardando aviso'; 
         l = window.clientesArray.filter(c => {
             const d = window.diasParaAniversario(c.nascimento);
             return d >= 0 && d <= 7 && c.notificadoAniversarioAno !== a;
         }); 
     } else if (t === 'alerta_premio') { 
-        tf.innerText = 'Prêmios aguardando aviso'; 
+        tf.innerText = 'Exibindo: Prêmios aguardando aviso'; 
         l = window.clientesArray.filter(c => (c.almocos||0) >= 10 && !c.notificadoPremio); 
     } else if (t === 'alerta_inativos') { 
-        tf.innerText = 'Inativos (+15 dias)'; 
+        tf.innerText = 'Exibindo: Clientes inativos (ausentes há mais de 15 dias)'; 
         l = window.clientesArray.filter(c => {
             const dSum = window.diasDesdeUltimaVisita(c);
             const dNot = c.notificadoInativoData ? Math.floor((Date.now() - c.notificadoInativoData)/86400000) : 999; 
@@ -237,7 +237,7 @@ window.renderizarTabela = (l) => {
     tb.innerHTML = '';
     
     if(!l || l.length === 0){ 
-        tb.innerHTML = `<tr><td colspan="5" class="text-center py-8 text-slate-400">Nenhum registro encontrado.</td></tr>`; 
+        tb.innerHTML = `<tr><td colspan="5" class="text-center py-8 text-slate-400">Nenhum cliente encontrado com estes filtros.</td></tr>`; 
         return; 
     }
     
@@ -267,7 +267,7 @@ window.renderizarTabela = (l) => {
 // ==========================================================================
 window.exportarExcel = () => { 
     // Nova trava
-    if(!window.permissoesLogado || !window.permissoesLogado.clientes) return window.mostrarToast("Acesso Negado", "erro");
+    if(!window.permissoesLogado || !window.permissoesLogado.clientes) return window.mostrarToast("Acesso negado. Você não tem permissão para esta ação.", "erro");
 
     let c = "\ufeffNome;CPF;Nascimento;WhatsApp;Acumulados;Resgates\n"; 
     // ... restante do código original
@@ -275,11 +275,11 @@ window.exportarExcel = () => {
 
 window.resetarSistema = () => { 
     // Nova trava
-    if(!window.permissoesLogado || !window.permissoesLogado.reset) return window.mostrarToast("Acesso Negado", "erro");
+    if(!window.permissoesLogado || !window.permissoesLogado.reset) return window.mostrarToast("Acesso negado. Você não tem permissão para esta ação.", "erro");
 
     const msgAlerta = window.isSimulationMode 
-        ? "Resetar SIMULAÇÃO? Digite APAGAR:" 
-        : "ALERTA! Digite APAGAR para excluir clientes REAIS:";
+        ? "Deseja zerar os dados da simulação? Digite APAGAR para confirmar:" 
+        : "ALERTA! Você está prestes a excluir todos os clientes REAIS. Digite APAGAR para confirmar:";
     // ... restante do código original
 };
 
@@ -304,7 +304,7 @@ window.salvarSimulacaoAlmocos = () => {
     if(!window.clienteSimulacaoAtual) return;
     window.clienteSimulacaoAtual.almocos = parseInt(document.getElementById('sim-input-almocos').value) || 0;
     window.firebaseSet(window.firebaseRef(window.db, window.PATH_CLIENTES + '/' + window.clienteSimulacaoAtual.cpf), window.clienteSimulacaoAtual).then(() => { 
-        window.mostrarToast("Saldo de almoços ajustado!", "sucesso"); 
+        window.mostrarToast("Saldo de almoços atualizado com sucesso.", "sucesso"); 
         if(window.fecharModal) window.fecharModal('modal-simulacao'); 
     });
 };
@@ -318,7 +318,7 @@ window.simularAniversarioHoje = () => {
         window.clienteSimulacaoAtual.historicoAniversarios = window.clienteSimulacaoAtual.historicoAniversarios.filter(h => h.ano !== hoje.getFullYear());
     }
     window.firebaseSet(window.firebaseRef(window.db, window.PATH_CLIENTES + '/' + window.clienteSimulacaoAtual.cpf), window.clienteSimulacaoAtual).then(() => { 
-        window.mostrarToast("Data Festiva configurada!", "sucesso"); 
+        window.mostrarToast("Data de aniversário simulada com sucesso.", "sucesso"); 
         if(window.fecharModal) window.fecharModal('modal-simulacao'); 
     });
 };
@@ -328,7 +328,7 @@ window.simularInatividade = () => {
     window.clienteSimulacaoAtual.ultimaVisitaTimestamp = Date.now() - (16 * 24 * 60 * 60 * 1000); 
     window.clienteSimulacaoAtual.notificadoInativoData = null;
     window.firebaseSet(window.firebaseRef(window.db, window.PATH_CLIENTES + '/' + window.clienteSimulacaoAtual.cpf), window.clienteSimulacaoAtual).then(() => { 
-        window.mostrarToast("Ausência retrocedida!", "sucesso"); 
+        window.mostrarToast("Período de ausência simulado com sucesso.", "sucesso"); 
         if(window.fecharModal) window.fecharModal('modal-simulacao'); 
     });
 };
@@ -349,14 +349,14 @@ window.desativarSimulacao = () => {
 window.resetarSistema = () => { 
     // Adapta o alerta dependendo do ambiente em que o Admin está operando
     const msgAlerta = window.isSimulationMode 
-        ? "Resetar SIMULAÇÃO? Digite APAGAR:" 
-        : "ALERTA! Digite APAGAR para excluir clientes REAIS:";
+        ? "Deseja zerar os dados da simulação? Digite APAGAR para confirmar:" 
+        : "ALERTA! Você está prestes a excluir todos os clientes REAIS. Digite APAGAR para confirmar:";
 
     if(prompt(msgAlerta) === "APAGAR") {
         window.firebaseSet(window.firebaseRef(window.db, window.PATH_CLIENTES), null).then(() => {
-            window.mostrarToast("Banco de Dados Resetado");
+            window.mostrarToast("Banco de dados zerado com sucesso.");
         }); 
     } else {
-        window.mostrarToast("Ação Cancelada", "erro");
+        window.mostrarToast("Ação cancelada pelo usuário.", "erro");
     }
 };
