@@ -28,9 +28,9 @@ window.isProcessing = false;
 window.clienteSimulacaoAtual = null;
 
 window.msgsMarketing = {
-    aniversario: "Olá, *[Nome]*! Seu aniversário está chegando e a equipe Top Haus faz questão de comemorar com você! 🎉\n\nLiberamos um *desconto de R$ 50,00* exclusivo para você usar em nosso restaurante.\nPara aproveitar, basta apresentar esta mensagem no caixa no dia exato do seu aniversário.\n\nEsperamos você para celebrar!",
-    premio: "🎉 Parabéns, *[Nome]*!\nVocê acaba de completar 10 almoços conosco.\n\nComo recompensa, na sua próxima visita você tem direito a *R$ 50,00 de desconto* na sua refeição. Muito obrigado pela preferência!",
-    inativo: "Olá, *[Nome]*! Sentimos sua falta por aqui. Que tal vir almoçar com a gente nesta semana? Estamos esperando você!",
+    aniversario: "Olá, *[Nome]*! Vimos aqui que o *seu aniversário está chegando*! 🎉\nE a equipe Top Haus faz questão de comemorar com você.\nPreparamos um *Desconto de R$ 50,00* exclusivo para você usar no seu almoço.\nPara resgatar, é só apresentar esta mensagem no nosso caixa no dia exato do seu aniversário!\nTe esperamos para celebrar!",
+    premio: "🎉 Parabéns, *[Nome]*!\nVocê acaba de completar 10 almoços.\nNa sua próxima visita, você tem direito a *R$ 50,00 de desconto* na sua refeição!",
+    inativo: "Olá *[Nome]*, faz tempo que não te vemos por aqui! Que tal almoçar com a gente essa semana?",
     agendadas: [],
     personalizadas: []
 };
@@ -74,6 +74,12 @@ window.addEventListener('DOMContentLoaded', () => {
         window.atualizarIndicadores(); 
         window.calcularNotificacoesPainel(); 
         window.filtrarLista(window.filtroAtual);
+        
+        // Atualiza a lixeira se estiver aberta
+        const modalLixeira = document.getElementById('modal-lixeira');
+        if(modalLixeira && !modalLixeira.classList.contains('hidden') && window.abrirLixeira) {
+            window.abrirLixeira();
+        }
     });
 
     // Listener do Totem (Inatividade)
@@ -99,6 +105,9 @@ window.alternarAba = (a) => {
         bc.classList.remove('bg-black'); 
         ba.classList.remove('bg-gray-800'); 
         ba.classList.add('bg-black'); 
+        
+        const bCpf = document.getElementById('busca-cpf');
+        if(bCpf) setTimeout(() => bCpf.focus(), 50);
     } else { 
         document.getElementById('aba-caixa').classList.add('hidden'); 
         document.getElementById('aba-admin').classList.remove('hidden'); 
@@ -111,13 +120,14 @@ window.alternarAba = (a) => {
 };
 
 // ==========================================================================
-// RENDERIZAÇÃO DO PAINEL E INDICADORES ESTÁTICOS
+// RENDERIZAÇÃO DO PAINEL E INDICADORES ESTÁTICOS (Filtrando Arquivados)
 // ==========================================================================
 window.atualizarIndicadores = () => { 
-    document.getElementById('card-total').innerText = window.clientesArray.length; 
-    document.getElementById('card-premios').innerText = window.clientesArray.filter(c => (c.almocos||0) >= 10).length; 
-    document.getElementById('card-vips').innerText = window.clientesArray.filter(c => (c.premiosResgatados||0) > 0).length; 
-    document.getElementById('card-niver-central').innerText = window.clientesArray.filter(c => window.isNiverMesCheck(c.nascimento)).length; 
+    const ativos = window.clientesArray.filter(c => !c.arquivado);
+    document.getElementById('card-total').innerText = ativos.length; 
+    document.getElementById('card-premios').innerText = ativos.filter(c => (c.almocos||0) >= 10).length; 
+    document.getElementById('card-vips').innerText = ativos.filter(c => (c.premiosResgatados||0) > 0).length; 
+    document.getElementById('card-niver-central').innerText = ativos.filter(c => window.isNiverMesCheck(c.nascimento)).length; 
 };
 
 window.calcularNotificacoesPainel = () => {
@@ -126,8 +136,9 @@ window.calcularNotificacoesPainel = () => {
     
     let nNiv = 0, nPre = 0, nIna = 0; 
     const a = new Date().getFullYear();
+    const ativos = window.clientesArray.filter(c => !c.arquivado);
     
-    window.clientesArray.forEach(c => {
+    ativos.forEach(c => {
         const dNiv = window.diasParaAniversario(c.nascimento); 
         if (dNiv >= 0 && dNiv <= 7 && c.notificadoAniversarioAno !== a) nNiv++;
         
@@ -143,21 +154,21 @@ window.calcularNotificacoesPainel = () => {
         p.innerHTML += `
             <div onclick="filtrarLista('alerta_niver')" class="bg-red-50 border border-red-200 p-4 rounded-xl cursor-pointer hover:bg-red-100 transition shadow-sm flex items-center gap-3">
                 <i data-lucide="cake" class="w-8 h-8 text-red-500"></i>
-                <div><p class="text-sm font-bold text-red-800">Aniversariantes</p><p class="text-xs text-red-600"><strong>${nNiv}</strong> aguardando aviso.</p></div>
+                <div><p class="text-sm font-bold text-red-800">Aniversários!</p><p class="text-xs text-red-600"><strong>${nNiv}</strong> pendentes.</p></div>
             </div>`;
     }
     if(nPre > 0) {
         p.innerHTML += `
             <div onclick="filtrarLista('alerta_premio')" class="bg-amber-50 border border-amber-200 p-4 rounded-xl cursor-pointer hover:bg-amber-100 transition shadow-sm flex items-center gap-3">
                 <i data-lucide="gift" class="w-8 h-8 text-amber-500"></i>
-                <div><p class="text-sm font-bold text-amber-800">Prêmios disponíveis</p><p class="text-xs text-amber-600"><strong>${nPre}</strong> aguardando aviso.</p></div>
+                <div><p class="text-sm font-bold text-amber-800">Prêmios!</p><p class="text-xs text-amber-600"><strong>${nPre}</strong> pendentes.</p></div>
             </div>`;
     }
     if(nIna > 0) {
         p.innerHTML += `
             <div onclick="filtrarLista('alerta_inativos')" class="bg-blue-50 border border-blue-200 p-4 rounded-xl cursor-pointer hover:bg-blue-100 transition shadow-sm flex items-center gap-3">
                 <i data-lucide="user-minus" class="w-8 h-8 text-blue-500"></i>
-                <div><p class="text-sm font-bold text-blue-800">Clientes ausentes</p><p class="text-xs text-blue-600"><strong>${nIna}</strong> há mais de 15 dias.</p></div>
+                <div><p class="text-sm font-bold text-blue-800">Ausentes!</p><p class="text-xs text-blue-600"><strong>${nIna}</strong> (+15 dias).</p></div>
             </div>`;
     }
     if(window.lucide) window.lucide.createIcons();
@@ -179,34 +190,35 @@ window.filtrarLista = (t, dI=null, dF=null) => {
     }
     
     const a = new Date().getFullYear();
+    const ativos = window.clientesArray.filter(c => !c.arquivado);
     
     if (t === 'todos') { 
         tf.innerText = 'Exibindo: Todos os clientes'; 
-        l = window.clientesArray; 
+        l = ativos; 
     } else if (t === 'premios') { 
-        tf.innerText = 'Exibindo: Prêmios aguardando resgate'; 
-        l = window.clientesArray.filter(c => (c.almocos||0) >= 10); 
+        tf.innerText = 'Exibindo: Prêmios a resgatar'; 
+        l = ativos.filter(c => (c.almocos||0) >= 10); 
     } else if (t === 'vips') { 
-        tf.innerText = 'Exibindo: Clientes VIPs'; 
-        l = window.clientesArray.filter(c => (c.premiosResgatados||0) > 0).sort((x,y) => (y.premiosResgatados||0) - (x.premiosResgatados||0)); 
+        tf.innerText = 'Exibindo: Clientes VIP'; 
+        l = ativos.filter(c => (c.premiosResgatados||0) > 0).sort((x,y) => (y.premiosResgatados||0) - (x.premiosResgatados||0)); 
     } else if (t === 'niver_mes') { 
         tf.innerText = 'Exibindo: Aniversariantes do mês'; 
-        l = window.clientesArray.filter(c => window.isNiverMesCheck(c.nascimento)); 
+        l = ativos.filter(c => window.isNiverMesCheck(c.nascimento)); 
     } else if (t === 'niver_periodo') { 
-        tf.innerText = `Exibindo: Aniversariantes por período`; 
-        l = window.clientesArray.filter(c => window.isNiverInPeriod(c.nascimento, dI, dF)); 
+        tf.innerText = `Exibindo: Aniversariantes no período`; 
+        l = ativos.filter(c => window.isNiverInPeriod(c.nascimento, dI, dF)); 
     } else if (t === 'alerta_niver') { 
-        tf.innerText = 'Exibindo: Aniversariantes aguardando aviso'; 
-        l = window.clientesArray.filter(c => {
+        tf.innerText = 'Exibindo: Aniversários aguardando aviso'; 
+        l = ativos.filter(c => {
             const d = window.diasParaAniversario(c.nascimento);
             return d >= 0 && d <= 7 && c.notificadoAniversarioAno !== a;
         }); 
     } else if (t === 'alerta_premio') { 
         tf.innerText = 'Exibindo: Prêmios aguardando aviso'; 
-        l = window.clientesArray.filter(c => (c.almocos||0) >= 10 && !c.notificadoPremio); 
+        l = ativos.filter(c => (c.almocos||0) >= 10 && !c.notificadoPremio); 
     } else if (t === 'alerta_inativos') { 
-        tf.innerText = 'Exibindo: Clientes inativos (ausentes há mais de 15 dias)'; 
-        l = window.clientesArray.filter(c => {
+        tf.innerText = 'Exibindo: Inativos (+15 dias)'; 
+        l = ativos.filter(c => {
             const dSum = window.diasDesdeUltimaVisita(c);
             const dNot = c.notificadoInativoData ? Math.floor((Date.now() - c.notificadoInativoData)/86400000) : 999; 
             return dSum > 15 && dNot > 15;
@@ -225,7 +237,8 @@ window.filtrarPorPeriodo = () => {
 
 window.filtrarPorTexto = (v) => { 
     const b = v.toLowerCase(); 
-    window.renderizarTabela(window.clientesArray.filter(c => 
+    const ativos = window.clientesArray.filter(c => !c.arquivado);
+    window.renderizarTabela(ativos.filter(c => 
         (c.nome||'').toLowerCase().includes(b) || 
         (c.cpf||'').includes(b) || 
         (c.telefone||'').includes(b)
@@ -236,18 +249,24 @@ window.renderizarTabela = (l) => {
     const tb = document.getElementById('tabela-clientes'); 
     tb.innerHTML = '';
     
+    const termoInput = document.getElementById('busca-admin');
+    const termo = termoInput ? termoInput.value.trim() : '';
+
     if(!l || l.length === 0){ 
-        tb.innerHTML = `<tr><td colspan="5" class="text-center py-8 text-slate-400">Nenhum cliente encontrado com estes filtros.</td></tr>`; 
+        const msgVazio = termo ? `Nenhum cliente encontrado para "${window.escapeHTML(termo)}".` : "Nenhum resultado para o filtro atual.";
+        tb.innerHTML = `<tr><td colspan="5" class="text-center py-8 text-slate-400 font-medium">${msgVazio}</td></tr>`; 
         return; 
     }
     
     l.forEach(c => {
         const bHist = ((c.premiosResgatados||0) > 0 || (c.historicoAniversarios && c.historicoAniversarios.length > 0)) ? 
-            `<button onclick="abrirHistorico('${c.cpf}')" class="text-gray-500 hover:text-black p-1.5"><i data-lucide="history" class="w-4 h-4"></i></button>` : ``;
-        const bEdit = `<button onclick="abrirEditar('${c.cpf}')" class="text-gray-500 hover:text-black p-1.5"><i data-lucide="edit-3" class="w-4 h-4"></i></button>`;
-        const bZap = `<button onclick="abrirModalWhatsApp('${c.cpf}')" class="text-green-600 p-1.5"><i data-lucide="message-circle" class="w-4 h-4"></i></button>`;
+            `<button onclick="abrirHistorico('${c.cpf}')" class="text-gray-500 hover:text-black p-1.5 transition" title="Ver histórico"><i data-lucide="history" class="w-4 h-4"></i></button>` : ``;
+        const bEdit = `<button onclick="abrirEditar('${c.cpf}')" class="text-gray-500 hover:text-indigo-600 p-1.5 transition" title="Editar cadastro"><i data-lucide="edit-3" class="w-4 h-4"></i></button>`;
+        const bZap = `<button onclick="abrirModalWhatsApp('${c.cpf}')" class="text-green-600 hover:text-green-700 p-1.5 transition" title="Enviar WhatsApp"><i data-lucide="message-circle" class="w-4 h-4"></i></button>`;
         const bSim = (window.isSimulationMode && window.permissoesLogado && window.permissoesLogado.simulacao) ? 
-            `<button onclick="abrirSimulador('${c.cpf}')" class="text-orange-600 p-1.5"><i data-lucide="flask-conical" class="w-4 h-4"></i></button>` : ``;
+            `<button onclick="abrirSimulador('${c.cpf}')" class="text-orange-600 hover:text-orange-700 p-1.5 transition" title="Simular dados"><i data-lucide="flask-conical" class="w-4 h-4"></i></button>` : ``;
+        const bArq = (window.permissoesLogado && window.permissoesLogado.clientes) ? 
+            `<button onclick="arquivarCliente('${c.cpf}')" class="text-red-400 hover:text-red-600 p-1.5 transition" title="Arquivar cliente"><i data-lucide="archive-x" class="w-4 h-4"></i></button>` : ``;
         
         const tr = document.createElement('tr'); 
         tr.className = 'border-b hover:bg-gray-50 transition';
@@ -256,7 +275,7 @@ window.renderizarTabela = (l) => {
             <td class="py-3 px-6 text-center text-xs font-mono text-gray-500">${window.formatarCPF(c.cpf)}<br>${window.formatarTel(c.telefone)}</td>
             <td class="py-3 px-6 text-center font-bold text-base ${(c.almocos||0) >= 10 ? 'text-black' : 'text-gray-500'}">${c.almocos||0}</td>
             <td class="py-3 px-6 text-center font-bold text-gray-500">${c.premiosResgatados||0}</td>
-            <td class="py-3 px-6 text-right"><div class="flex justify-end items-center">${bSim}${bZap}${bEdit}${bHist}</div></td>`;
+            <td class="py-3 px-6 text-right"><div class="flex justify-end items-center gap-1">${bSim}${bZap}${bEdit}${bHist}${bArq}</div></td>`;
         tb.appendChild(tr);
     }); 
     if(window.lucide) window.lucide.createIcons();
@@ -266,29 +285,53 @@ window.renderizarTabela = (l) => {
 // EXPORTAÇÃO E RESET DO SISTEMA
 // ==========================================================================
 window.exportarExcel = () => { 
-    // Nova trava
-    if(!window.permissoesLogado || !window.permissoesLogado.clientes) return window.mostrarToast("Acesso negado. Você não tem permissão para esta ação.", "erro");
+    if(!window.permissoesLogado || !window.permissoesLogado.clientes) {
+        return window.mostrarToast("Seu perfil não tem acesso a esta ação.", "erro");
+    }
 
-    let c = "\ufeffNome;CPF;Nascimento;WhatsApp;Acumulados;Resgates\n"; 
-    // ... restante do código original
+    let csvContent = "\ufeffNome;CPF;Nascimento;WhatsApp;Acumulados;Resgates\n"; 
+    const ativos = window.clientesArray.filter(c => !c.arquivado);
+    
+    ativos.forEach(c => {
+        csvContent += `${c.nome};${c.cpf};${c.nascimento};${c.telefone};${c.almocos || 0};${c.premiosResgatados || 0}\n`;
+    });
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `TopHaus_Clientes_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    if(window.logAuditoria) window.logAuditoria('Exportação', 'Base de clientes exportada para Excel/CSV.');
 };
 
 window.resetarSistema = () => { 
-    // Nova trava
-    if(!window.permissoesLogado || !window.permissoesLogado.reset) return window.mostrarToast("Acesso negado. Você não tem permissão para esta ação.", "erro");
+    if(!window.permissoesLogado || !window.permissoesLogado.reset) {
+        return window.mostrarToast("Seu perfil não tem acesso a esta ação.", "erro");
+    }
 
     const msgAlerta = window.isSimulationMode 
-        ? "Deseja zerar os dados da simulação? Digite APAGAR para confirmar:" 
-        : "ALERTA! Você está prestes a excluir todos os clientes REAIS. Digite APAGAR para confirmar:";
-    // ... restante do código original
+        ? "Resetar SIMULAÇÃO? Digite APAGAR:" 
+        : "ALERTA CRÍTICO! Digite APAGAR para excluir TODA a base de clientes:";
+
+    if(prompt(msgAlerta) === "APAGAR") {
+        window.firebaseSet(window.firebaseRef(window.db, window.PATH_CLIENTES), null).then(() => {
+            window.mostrarToast("Banco de dados resetado com sucesso.");
+            if(window.logAuditoria) window.logAuditoria('Reset', 'A base de dados de clientes foi completamente apagada.');
+        }).catch(() => {
+            window.mostrarToast("Não foi possível concluir a ação. Tente novamente.", "erro");
+        }); 
+    } else {
+        window.mostrarToast("Ação cancelada pelo usuário.", "erro");
+    }
 };
 
 // ==========================================================================
 // FUNÇÕES DE AMBIENTE DE SIMULAÇÃO (LABORATÓRIO)
 // ==========================================================================
-window.ativarSimulacao = () => { localStorage.setItem('modoSimulacao', 'true'); window.location.reload(); };
-window.desativarSimulacao = () => { localStorage.setItem('modoSimulacao', 'false'); window.location.reload(); };
-
 window.abrirSimulador = (cpf) => {
     window.clienteSimulacaoAtual = window.clientesMap[cpf];
     if(!window.clienteSimulacaoAtual) return;
@@ -300,63 +343,85 @@ window.abrirSimulador = (cpf) => {
     if(window.prenderFocoModal) window.prenderFocoModal(modal);
 };
 
-window.salvarSimulacaoAlmocos = () => {
+window.salvarSimulacaoAlmocos = (event) => {
     if(!window.clienteSimulacaoAtual) return;
+    
+    let btn = null;
+    let textoOriginal = "Salvar";
+    if(event && event.target) {
+        btn = event.target;
+        textoOriginal = btn.innerText;
+        btn.disabled = true;
+        btn.innerText = 'Salvando...';
+    }
+
     window.clienteSimulacaoAtual.almocos = parseInt(document.getElementById('sim-input-almocos').value) || 0;
     window.firebaseSet(window.firebaseRef(window.db, window.PATH_CLIENTES + '/' + window.clienteSimulacaoAtual.cpf), window.clienteSimulacaoAtual).then(() => { 
-        window.mostrarToast("Saldo de almoços atualizado com sucesso.", "sucesso"); 
+        window.mostrarToast("Cliente atualizado com sucesso."); 
         if(window.fecharModal) window.fecharModal('modal-simulacao'); 
+    }).finally(() => {
+        if(btn) {
+            btn.disabled = false;
+            btn.innerText = textoOriginal;
+        }
     });
 };
 
-window.simularAniversarioHoje = () => {
+window.simularAniversarioHoje = (event) => {
     if(!window.clienteSimulacaoAtual) return;
-    const hoje = new Date(); const dia = String(hoje.getDate()).padStart(2, '0'); const mes = String(hoje.getMonth() + 1).padStart(2, '0');
+    
+    let btn = null;
+    let textoOriginal = "";
+    if(event && event.currentTarget) {
+        btn = event.currentTarget;
+        textoOriginal = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = 'Atualizando...';
+    }
+
+    const hoje = new Date(); 
+    const dia = String(hoje.getDate()).padStart(2, '0'); 
+    const mes = String(hoje.getMonth() + 1).padStart(2, '0');
+    
     window.clienteSimulacaoAtual.nascimento = `${hoje.getFullYear() - 30}-${mes}-${dia}`;
     window.clienteSimulacaoAtual.aniversarioResgatadoAno = null;
     if(window.clienteSimulacaoAtual.historicoAniversarios) {
         window.clienteSimulacaoAtual.historicoAniversarios = window.clienteSimulacaoAtual.historicoAniversarios.filter(h => h.ano !== hoje.getFullYear());
     }
+    
     window.firebaseSet(window.firebaseRef(window.db, window.PATH_CLIENTES + '/' + window.clienteSimulacaoAtual.cpf), window.clienteSimulacaoAtual).then(() => { 
-        window.mostrarToast("Data de aniversário simulada com sucesso.", "sucesso"); 
+        window.mostrarToast("Cliente atualizado com sucesso."); 
         if(window.fecharModal) window.fecharModal('modal-simulacao'); 
+    }).finally(() => {
+        if(btn) {
+            btn.disabled = false;
+            btn.innerHTML = textoOriginal;
+        }
     });
 };
 
-window.simularInatividade = () => {
+window.simularInatividade = (event) => {
     if(!window.clienteSimulacaoAtual) return;
+
+    let btn = null;
+    let textoOriginal = "";
+    if(event && event.currentTarget) {
+        btn = event.currentTarget;
+        textoOriginal = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = 'Atualizando...';
+    }
+
     window.clienteSimulacaoAtual.ultimaVisitaTimestamp = Date.now() - (16 * 24 * 60 * 60 * 1000); 
     window.clienteSimulacaoAtual.notificadoInativoData = null;
+    
     window.firebaseSet(window.firebaseRef(window.db, window.PATH_CLIENTES + '/' + window.clienteSimulacaoAtual.cpf), window.clienteSimulacaoAtual).then(() => { 
-        window.mostrarToast("Período de ausência simulado com sucesso.", "sucesso"); 
+        window.mostrarToast("Cliente atualizado com sucesso."); 
         if(window.fecharModal) window.fecharModal('modal-simulacao'); 
+    }).finally(() => {
+        if(btn) {
+            btn.disabled = false;
+            btn.innerHTML = textoOriginal;
+        }
     });
-};
-
-// ==========================================================================
-// CONTROLES GLOBAIS DE AMBIENTE E DADOS
-// ==========================================================================
-window.ativarSimulacao = () => { 
-    localStorage.setItem('modoSimulacao', 'true'); 
-    window.location.reload(); 
-};
-
-window.desativarSimulacao = () => { 
-    localStorage.setItem('modoSimulacao', 'false'); 
-    window.location.reload(); 
-};
-
-window.resetarSistema = () => { 
-    // Adapta o alerta dependendo do ambiente em que o Admin está operando
-    const msgAlerta = window.isSimulationMode 
-        ? "Deseja zerar os dados da simulação? Digite APAGAR para confirmar:" 
-        : "ALERTA! Você está prestes a excluir todos os clientes REAIS. Digite APAGAR para confirmar:";
-
-    if(prompt(msgAlerta) === "APAGAR") {
-        window.firebaseSet(window.firebaseRef(window.db, window.PATH_CLIENTES), null).then(() => {
-            window.mostrarToast("Banco de dados zerado com sucesso.");
-        }); 
-    } else {
-        window.mostrarToast("Ação cancelada pelo usuário.", "erro");
-    }
 };
