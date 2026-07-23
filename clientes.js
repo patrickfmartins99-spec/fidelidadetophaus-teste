@@ -9,11 +9,13 @@ window.buscarEContabilizar = () => {
     if(!inputCpf) return;
     const cpf = inputCpf.value.replace(/\D/g, ''); 
     
-    if(!window.validarCPFReal(cpf)) return window.mostrarToast('O CPF informado não é válido.', 'erro');
+    if(!window.validarCPFReal(cpf)) return window.mostrarToast('CPF inválido. Verifique e tente novamente.', 'erro');
     if(window.operacoesAtivas && window.operacoesAtivas[cpf]) return;
     
     const c = window.clientesMap[cpf]; 
-    if(!c) return window.mostrarToast('Cliente não encontrado. Verifique o CPF digitado.', 'erro');
+    
+    // Ignora clientes arquivados na busca do caixa
+    if(!c || c.arquivado) return window.mostrarToast(`Nenhum cliente encontrado para "${window.formatarCPF(cpf)}".`, 'erro');
     
     if (window.diasParaAniversario(c.nascimento) === 0 && c.aniversarioResgatadoAno !== new Date().getFullYear()) { 
         window.acaoPendente = c; 
@@ -43,12 +45,16 @@ window.processarFluxoNormal = (c) => {
         };
         
         const bA = document.getElementById('btn-trava-acumular');
+        const spanAcumular = document.getElementById('btn-trava-acumular-text');
+        
         if(ja) { 
-            bA.innerText = "Almoço já adicionado hoje"; 
+            if(spanAcumular) spanAcumular.innerText = "Já acumulou hoje";
+            else bA.innerText = "Já acumulou hoje"; 
             bA.disabled = true; 
             bA.classList.add('opacity-50'); 
         } else { 
-            bA.innerText = "Apenas adicionar 1 almoço"; 
+            if(spanAcumular) spanAcumular.innerText = "Guardar para a próxima visita (+1 pago)";
+            else bA.innerText = "Guardar para a próxima visita (+1 pago)"; 
             bA.disabled = false; 
             bA.classList.remove('opacity-50'); 
             bA.onclick = () => { 
@@ -57,9 +63,9 @@ window.processarFluxoNormal = (c) => {
             }; 
         }
     } else {
-        if(ja) return window.mostrarToast('Este cliente já teve um almoço adicionado hoje.', 'erro');
+        if(ja) return window.mostrarToast('Este cliente já registrou um almoço hoje.', 'erro');
         
-        document.getElementById('texto-confirmacao').innerHTML = `Deseja adicionar 1 almoço para ${window.escapeHTML(c.nome)}?`;
+        document.getElementById('texto-confirmacao').innerHTML = `Deseja registrar +1 almoço para <strong>${window.escapeHTML(c.nome)}</strong>?`;
         const m = document.getElementById('modal-confirmacao'); 
         m.classList.remove('hidden'); 
         if(window.prenderFocoModal) window.prenderFocoModal(m);
@@ -79,23 +85,28 @@ window.cadastrarCliente = (e) => {
     if(window.isProcessing) return;
     
     const cpf = document.getElementById('cad-cpf').value.replace(/\D/g, ''); 
-    if(!window.validarCPFReal(cpf)) return window.mostrarToast('O CPF informado não é válido.', 'erro');
-    if(window.clientesMap[cpf] || (window.operacoesAtivas && window.operacoesAtivas[cpf])) return window.mostrarToast('Este CPF já está cadastrado ou ocorreu um erro.', 'erro');
+    if(!window.validarCPFReal(cpf)) return window.mostrarToast('CPF inválido. Verifique e tente novamente.', 'erro');
+    if(window.clientesMap[cpf] || (window.operacoesAtivas && window.operacoesAtivas[cpf])) return window.mostrarToast('Cliente já cadastrado no sistema.', 'erro');
     
     const tel = document.getElementById('cad-telefone').value.replace(/\D/g, ''); 
-    if(!window.telefoneValido(tel)) return window.mostrarToast('O número de telefone informado não é válido.', 'erro');
+    if(!window.telefoneValido(tel)) return window.mostrarToast('Telefone inválido. Verifique e tente novamente.', 'erro');
     const nasc = document.getElementById('cad-nascimento').value; 
-    if(!window.validarDataReal(nasc)) return window.mostrarToast('A data de nascimento informada não é válida.', 'erro');
+    if(!window.validarDataReal(nasc)) return window.mostrarToast('Data de nascimento inválida.', 'erro');
 
     window.isProcessing = true; 
     if(window.operacoesAtivas) window.operacoesAtivas[cpf] = true; 
+    
     const btn = document.getElementById('btn-caixa-salvar');
+    const span = document.getElementById('btn-caixa-salvar-text');
+    
     if(btn) btn.disabled = true;
+    if(span) span.innerText = 'Salvando...';
     
     setTimeout(() => { 
         window.isProcessing = false; 
         if(window.operacoesAtivas) window.operacoesAtivas[cpf] = false; 
         if(btn) btn.disabled = false; 
+        if(span) span.innerText = 'Salvar cadastro';
     }, 8000);
 
     const nf = nasc.includes('/') ? `${nasc.split('/')[2]}-${nasc.split('/')[1]}-${nasc.split('/')[0]}` : nasc;
@@ -105,15 +116,21 @@ window.cadastrarCliente = (e) => {
         almocos: 0, premiosResgatados: 0, historico: [], 
         origemCadastro: 'Caixa', 
         dataCadastro: new Date().toLocaleDateString('pt-BR'), 
-        ultimaVisitaTimestamp: null 
+        ultimaVisitaTimestamp: null,
+        arquivado: false
     };
     
     window.firebaseSet(window.firebaseRef(window.db, window.PATH_CLIENTES + '/' + cpf), nc).then(() => {
         document.getElementById('form-cadastro').reset(); 
-        window.mostrarToast('Cliente cadastrado com sucesso.'); 
+        window.mostrarToast('Cliente cadastrado com sucesso!'); 
+        
+        if(window.logAuditoria) window.logAuditoria('Cadastro (Caixa)', `Cliente ${nc.nome} cadastrado via painel.`);
+        
         window.isProcessing = false; 
         if(window.operacoesAtivas) window.operacoesAtivas[cpf] = false; 
+        
         if(btn) btn.disabled = false;
+        if(span) span.innerText = 'Salvar cadastro';
         
         if(window.diasParaAniversario(nc.nascimento) === 0) { 
             window.acaoPendente = nc; 
@@ -129,6 +146,9 @@ window.cadastrarCliente = (e) => {
     }).catch(() => { 
         window.isProcessing = false; 
         if(window.operacoesAtivas) window.operacoesAtivas[cpf] = false; 
+        window.mostrarToast('Não foi possível salvar. Tente novamente.', 'erro');
+        if(btn) btn.disabled = false;
+        if(span) span.innerText = 'Salvar cadastro';
     });
 };
 
@@ -136,13 +156,17 @@ window.processarConfirmacao = (c) => {
     if(window.isProcessing) return; 
     window.isProcessing = true; 
     if(window.operacoesAtivas) window.operacoesAtivas[c.cpf] = true; 
+    
     const btn = document.getElementById('btn-confirmar-almoco');
+    const span = document.getElementById('btn-confirmar-almoco-text');
     if(btn) btn.disabled = true; 
+    if(span) span.innerText = 'Salvando...';
     
     setTimeout(()=>{ 
         window.isProcessing = false; 
         if(window.operacoesAtivas) window.operacoesAtivas[c.cpf] = false; 
         if(btn) btn.disabled = false; 
+        if(span) span.innerText = 'Confirmar';
     }, 8000);
     
     c.almocos = (c.almocos||0) + 1; 
@@ -154,12 +178,23 @@ window.processarConfirmacao = (c) => {
     window.firebaseSet(window.firebaseRef(window.db, window.PATH_CLIENTES + '/' + c.cpf), c).then(() => { 
         window.isProcessing = false; 
         if(window.operacoesAtivas) window.operacoesAtivas[c.cpf] = false; 
+        
         if(btn) btn.disabled = false; 
+        if(span) span.innerText = 'Confirmar';
+        
         const inp = document.getElementById('busca-cpf');
         if(inp) inp.value = ''; 
-        window.mostrarToast('Almoço adicionado com sucesso.'); 
+        
+        window.mostrarToast('Almoço contabilizado com sucesso!'); 
+        if(window.logAuditoria) window.logAuditoria('Almoço', `+1 almoço registrado para ${c.nome}. Saldo: ${c.almocos}.`);
         
         if(window.checarEAvisarAlmoco) window.checarEAvisarAlmoco(c); 
+    }).catch(() => {
+        window.mostrarToast('Não foi possível concluir a ação. Tente novamente.', 'erro');
+        window.isProcessing = false; 
+        if(window.operacoesAtivas) window.operacoesAtivas[c.cpf] = false; 
+        if(btn) btn.disabled = false; 
+        if(span) span.innerText = 'Confirmar';
     });
 };
 
@@ -167,12 +202,17 @@ window.efetuarResgateEImprimir = (c) => {
     if(window.isProcessing) return; 
     window.isProcessing = true; 
     if(window.operacoesAtivas) window.operacoesAtivas[c.cpf] = true; 
+    
     const btn = document.getElementById('btn-trava-resgatar');
+    const span = document.getElementById('btn-trava-resgatar-text');
     if(btn) btn.disabled = true; 
+    if(span) span.innerText = 'Atualizando...';
     
     setTimeout(()=>{ 
         window.isProcessing = false; 
         if(window.operacoesAtivas) window.operacoesAtivas[c.cpf] = false; 
+        if(btn) btn.disabled = false;
+        if(span) span.innerText = 'Resgatar e imprimir cupom';
     }, 8000);
     
     const dts = (c.historico||[]).slice(0,10); 
@@ -191,7 +231,10 @@ window.efetuarResgateEImprimir = (c) => {
         const inp = document.getElementById('busca-cpf');
         if(inp) inp.value = ''; 
         if(btn) btn.disabled = false; 
-        window.mostrarToast('Desconto aplicado com sucesso.'); 
+        if(span) span.innerText = 'Resgatar e imprimir cupom';
+        
+        window.mostrarToast('Resgate realizado com sucesso!'); 
+        if(window.logAuditoria) window.logAuditoria('Resgate Prêmio', `Desconto de R$ 50 resgatado por ${c.nome}.`);
         window.dispararImpressao(c.nome, c.cpf, dts, hr); 
     });
 };
@@ -202,10 +245,21 @@ window.efetuarResgateEImprimir = (c) => {
 window.confirmarCortesiaAniversario = () => {
     if(!window.acaoPendente || window.isProcessing) return; 
     
+    const btn = document.getElementById('btn-alerta-aniversario-confirmar');
+    const span = document.getElementById('btn-alerta-aniversario-confirmar-text');
+    if(btn) btn.disabled = true;
+    if(span) span.innerText = 'Atualizando...';
+    
     const c = window.acaoPendente; 
     window.isProcessing = true; 
     if(window.operacoesAtivas) window.operacoesAtivas[c.cpf] = true; 
-    setTimeout(()=>{ window.isProcessing = false; if(window.operacoesAtivas) window.operacoesAtivas[c.cpf] = false; }, 8000);
+    
+    setTimeout(()=>{ 
+        window.isProcessing = false; 
+        if(window.operacoesAtivas) window.operacoesAtivas[c.cpf] = false; 
+        if(btn) btn.disabled = false;
+        if(span) span.innerText = 'Confirmar resgate';
+    }, 8000);
     
     const a = new Date().getFullYear(); 
     c.aniversarioResgatadoAno = a; 
@@ -216,7 +270,12 @@ window.confirmarCortesiaAniversario = () => {
     window.firebaseSet(window.firebaseRef(window.db, window.PATH_CLIENTES + '/' + c.cpf), c).then(() => { 
         window.isProcessing = false; 
         if(window.operacoesAtivas) window.operacoesAtivas[c.cpf] = false; 
-        window.mostrarToast("Desconto de aniversário aplicado com sucesso."); 
+        
+        if(btn) btn.disabled = false;
+        if(span) span.innerText = 'Confirmar resgate';
+        
+        window.mostrarToast("Resgate de aniversário realizado com sucesso."); 
+        if(window.logAuditoria) window.logAuditoria('Resgate Aniversário', `Desconto de aniversário validado para ${c.nome}.`);
         window.continuarPosAniversario(); 
     });
 };
@@ -248,7 +307,7 @@ window.dispararImpressao = (nome, cpf, dts, hr) => {
         </div>
         <div class="linha-tracejada"></div>
         <div style="text-align:center;margin-bottom:5px;">
-            <strong style="font-size:14px;color:#000;">COMPROVANTE DE DESCONTO</strong><br>
+            <strong style="font-size:14px;color:#000;">COMPROVANTE DE RESGATE</strong><br>
             <span style="font-size:11px;">${hr}</span>
         </div>
         <div class="linha-tracejada"></div>
@@ -258,13 +317,13 @@ window.dispararImpressao = (nome, cpf, dts, hr) => {
         </div>
         <div class="linha-tracejada"></div>
         <div style="margin-bottom:5px;">
-            <p style="font-weight:bold;margin:2px 0;color:#000;">ALMOÇOS ACUMULADOS:</p>
+            <p style="font-weight:bold;margin:2px 0;color:#000;">ALMOÇOS CONTABILIZADOS:</p>
             <ol style="padding-left:15px;margin:0;font-size:11px;color:#000;">${l}</ol>
         </div>
         <div class="linha-tracejada"></div>
         <div style="text-align:center;margin-top:5px;">
             <p style="font-weight:900;margin:0;font-size:16px;color:#000;">DESCONTO LIBERADO</p>
-            <p style="font-size:11px;margin:2px 0;">Válido para R$ 50,00 de desconto na refeição.</p>
+            <p style="font-size:11px;margin:2px 0;">Válido: R$ 50,00 de desconto na refeição.</p>
         </div>`; 
     
     window.print();
@@ -297,17 +356,30 @@ window.salvarEdicao = (e) => {
     if(!c) return;
     
     const tel = document.getElementById('edit-telefone').value.replace(/\D/g, ''); 
-    if(!window.telefoneValido(tel)) return window.mostrarToast('O número de telefone informado não é válido.', 'erro');
+    if(!window.telefoneValido(tel)) return window.mostrarToast('Telefone inválido. Verifique e tente novamente.', 'erro');
     const nasc = document.getElementById('edit-nascimento').value; 
-    if(!window.validarDataReal(nasc)) return window.mostrarToast('A data de nascimento informada não é válida.', 'erro');
+    if(!window.validarDataReal(nasc)) return window.mostrarToast('Data de nascimento inválida.', 'erro');
+    
+    const btn = document.getElementById('btn-editar-salvar');
+    const span = document.getElementById('btn-editar-salvar-text');
+    if(btn) btn.disabled = true;
+    if(span) span.innerText = 'Atualizando...';
     
     c.nome = document.getElementById('edit-nome').value; 
     c.telefone = tel; 
     c.nascimento = nasc.includes('/') ? `${nasc.split('/')[2]}-${nasc.split('/')[1]}-${nasc.split('/')[0]}` : nasc;
     
     window.firebaseSet(window.firebaseRef(window.db, window.PATH_CLIENTES + '/' + c.cpf), c).then(() => { 
-        window.mostrarToast("Dados do cliente atualizados com sucesso."); 
+        window.mostrarToast("Cliente atualizado com sucesso."); 
+        if(window.logAuditoria) window.logAuditoria('Edição', `Cadastro de ${c.nome} atualizado.`);
+        
+        if(btn) btn.disabled = false;
+        if(span) span.innerText = 'Salvar alterações';
         if(window.fecharModal) window.fecharModal('modal-editar'); 
+    }).catch(() => {
+        window.mostrarToast('Não foi possível salvar. Tente novamente.', 'erro');
+        if(btn) btn.disabled = false;
+        if(span) span.innerText = 'Salvar alterações';
     });
 };
 
@@ -323,26 +395,31 @@ window.abrirHistorico = (cpf) => {
     if(!c) return;
     
     if(c.historicoResgates && c.historicoResgates.length > 0) { 
-        div.innerHTML += `<h4 class="font-bold text-sm mb-2 text-black border-b pb-1">Descontos resgatados (10 almoços)</h4>`; 
+        div.innerHTML += `<h4 class="font-bold text-sm mb-2 text-black border-b pb-1">Prêmios de 10 Almoços</h4>`; 
         c.historicoResgates.forEach((r, i) => { 
             div.innerHTML += `
                 <div class="bg-gray-50 p-3 rounded-lg border flex justify-between items-center mb-2">
                     <div><p class="text-xs font-bold">Resgate #${i+1}</p><p class="text-xs">${r.dataResgate}</p></div>
-                    <button onclick="reimprimirCupomPorCpf('${c.cpf}', ${i})" class="bg-black text-white px-3 py-1.5 rounded-lg text-xs font-bold">
-                        <i data-lucide="printer" class="w-3.5 h-3.5 inline"></i> Reimprimir cupom
+                    <button onclick="reimprimirCupomPorCpf('${c.cpf}', ${i})" class="bg-black text-white px-3 py-1.5 rounded-lg text-xs font-bold transition hover:bg-gray-800">
+                        <i data-lucide="printer" class="w-3.5 h-3.5 inline"></i> Reimprimir
                     </button>
                 </div>`; 
         }); 
     }
     if(c.historicoAniversarios && c.historicoAniversarios.length > 0) { 
-        div.innerHTML += `<h4 class="font-bold text-sm mb-2 mt-4 text-black border-b pb-1">Descontos de aniversário</h4>`; 
+        div.innerHTML += `<h4 class="font-bold text-sm mb-2 mt-4 text-black border-b pb-1">Aniversários</h4>`; 
         c.historicoAniversarios.forEach(r => { 
             div.innerHTML += `
                 <div class="bg-indigo-50 p-3 rounded-lg border flex justify-between items-center mb-2">
-                    <div><p class="text-xs font-bold">Aniversário ${r.ano}</p><p class="text-xs">${r.dataResgate}</p></div>
+                    <div><p class="text-xs font-bold">Aniv. ${r.ano}</p><p class="text-xs">${r.dataResgate}</p></div>
                 </div>`; 
         }); 
     }
+    
+    if(div.innerHTML === '') {
+        div.innerHTML = '<p class="text-sm text-gray-500 text-center py-4">Nenhum histórico de resgate encontrado.</p>';
+    }
+    
     const m = document.getElementById('modal-historico'); 
     m.classList.remove('hidden'); 
     if(window.prenderFocoModal) window.prenderFocoModal(m); 
@@ -353,6 +430,146 @@ window.reimprimirCupomPorCpf = (c, i) => {
     if(window.fecharModal) window.fecharModal('modal-historico'); 
     const cl = window.clientesMap[c]; 
     if(cl && cl.historicoResgates && cl.historicoResgates[i]) {
-        window.dispararImpressao(cl.nome, cl.cpf, cl.historicoResgates[i].datas, cl.historicoResgates[i].dataResgate + " (Reimpressão)"); 
+        if(window.logAuditoria) window.logAuditoria('Reimpressão', `Cupom de resgate reimpresso para ${cl.nome}.`);
+        window.dispararImpressao(cl.nome, cl.cpf, cl.historicoResgates[i].datas, cl.historicoResgates[i].dataResgate + " (REIMPRESSÃO)"); 
     }
+};
+
+// ==========================================================================
+// SEGURANÇA E AUDITORIA (NOVAS FUNCIONALIDADES)
+// ==========================================================================
+window.logAuditoria = (acao, detalhes) => {
+    const user = window.usuarioLogado ? window.usuarioLogado.email.split('@')[0] : 'sistema';
+    const log = {
+        dataHora: new Date().toLocaleString('pt-BR'),
+        timestamp: Date.now(),
+        usuario: user,
+        acao: acao,
+        detalhes: detalhes
+    };
+    window.firebasePush(window.firebaseRef(window.db, 'auditoria'), log);
+};
+
+window.abrirAuditoria = () => {
+    if(!window.permissoesLogado || !window.permissoesLogado.auditoria) {
+        return window.mostrarToast("Seu perfil não tem acesso a esta ação. Fale com o administrador.", "erro");
+    }
+    const tb = document.getElementById('tabela-auditoria');
+    if(!tb) return;
+    tb.innerHTML = '<tr><td colspan="3" class="text-center py-4 text-gray-500">Carregando logs...</td></tr>';
+    
+    const modal = document.getElementById('modal-auditoria');
+    modal.classList.remove('hidden');
+    
+    window.firebaseGet(window.firebaseRef(window.db, 'auditoria')).then(snap => {
+        tb.innerHTML = '';
+        if(snap.exists()) {
+            const logs = Object.values(snap.val()).sort((a,b) => b.timestamp - a.timestamp).slice(0, 50); // Últimos 50 eventos
+            logs.forEach(l => {
+                tb.innerHTML += `
+                    <tr class="border-b border-gray-100 hover:bg-gray-50 transition">
+                        <td class="py-3 px-4 text-xs whitespace-nowrap">${l.dataHora}<br><span class="text-indigo-600 font-bold uppercase">@${l.usuario}</span></td>
+                        <td class="py-3 px-4 text-xs font-bold text-gray-800">${l.acao}</td>
+                        <td class="py-3 px-4 text-xs text-gray-600">${window.escapeHTML(l.detalhes)}</td>
+                    </tr>
+                `;
+            });
+        } else {
+            tb.innerHTML = '<tr><td colspan="3" class="text-center py-6 text-gray-500">Nenhum registro de auditoria encontrado.</td></tr>';
+        }
+    });
+};
+
+window.confirmacaoDupla = (titulo, texto, callbackConfirma) => {
+    document.getElementById('alerta-generico-titulo').innerText = titulo;
+    document.getElementById('alerta-generico-texto').innerText = texto;
+    const modal = document.getElementById('modal-alerta-generico');
+    modal.classList.remove('hidden');
+    if(window.prenderFocoModal) window.prenderFocoModal(modal);
+    
+    const btn = document.getElementById('btn-alerta-generico-confirmar');
+    const newBtn = btn.cloneNode(true);
+    btn.parentNode.replaceChild(newBtn, btn);
+    
+    newBtn.onclick = () => {
+        window.fecharModal('modal-alerta-generico');
+        callbackConfirma();
+    };
+};
+
+window.arquivarCliente = (cpf) => {
+    if(!window.permissoesLogado || !window.permissoesLogado.clientes) {
+        return window.mostrarToast("Seu perfil não tem acesso a esta ação.", "erro");
+    }
+
+    const c = window.clientesMap[cpf];
+    if(!c) return;
+
+    window.confirmacaoDupla(
+        "Arquivar Cliente", 
+        `Deseja arquivar o cliente ${c.nome}? Ele deixará de aparecer no painel e no caixa.`,
+        () => {
+            c.arquivado = true;
+            c.dataArquivamento = Date.now();
+            window.firebaseSet(window.firebaseRef(window.db, window.PATH_CLIENTES + '/' + cpf), c).then(() => {
+                window.mostrarToast("Cliente arquivado com sucesso.");
+                if(window.logAuditoria) window.logAuditoria('Arquivamento', `Cliente ${c.nome} (${window.formatarCPF(cpf)}) foi movido para a lixeira.`);
+                if(window.filtrarLista) window.filtrarLista(window.filtroAtual);
+            }).catch(() => {
+                window.mostrarToast("Não foi possível salvar. Tente novamente.", "erro");
+            });
+        }
+    );
+};
+
+window.abrirLixeira = () => {
+    if(!window.permissoesLogado || !window.permissoesLogado.clientes) {
+        return window.mostrarToast("Seu perfil não tem acesso a esta ação.", "erro");
+    }
+    
+    const tb = document.getElementById('tabela-lixeira');
+    if(!tb) return;
+    
+    const arquivados = window.clientesArray.filter(c => c.arquivado);
+    tb.innerHTML = '';
+    
+    if(arquivados.length === 0) {
+        tb.innerHTML = '<tr><td colspan="3" class="text-center py-6 text-gray-500">Nenhum cliente arquivado no momento.</td></tr>';
+    } else {
+        arquivados.forEach(c => {
+            tb.innerHTML += `
+                <tr class="border-b border-gray-100 hover:bg-gray-50 transition">
+                    <td class="py-3 px-4 text-xs font-bold text-gray-800">${window.escapeHTML(c.nome)}</td>
+                    <td class="py-3 px-4 text-xs text-center text-gray-500 font-mono">${window.formatarCPF(c.cpf)}</td>
+                    <td class="py-3 px-4 text-right">
+                        <button onclick="restaurarCliente('${c.cpf}')" class="bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-indigo-100 transition shadow-sm">
+                            <i data-lucide="refresh-cw" class="w-3.5 h-3.5 inline"></i> Restaurar
+                        </button>
+                    </td>
+                </tr>
+            `;
+        });
+    }
+    
+    const modal = document.getElementById('modal-lixeira');
+    modal.classList.remove('hidden');
+    if(window.prenderFocoModal) window.prenderFocoModal(modal);
+    if(window.lucide) window.lucide.createIcons();
+};
+
+window.restaurarCliente = (cpf) => {
+    const c = window.clientesMap[cpf];
+    if(!c) return;
+    
+    c.arquivado = false;
+    c.dataArquivamento = null;
+    
+    window.firebaseSet(window.firebaseRef(window.db, window.PATH_CLIENTES + '/' + cpf), c).then(() => {
+        window.mostrarToast("Cliente restaurado com sucesso.");
+        if(window.logAuditoria) window.logAuditoria('Restauração', `Cliente ${c.nome} (${window.formatarCPF(cpf)}) foi restaurado da lixeira.`);
+        window.abrirLixeira(); 
+        if(window.filtrarLista) window.filtrarLista(window.filtroAtual);
+    }).catch(() => {
+        window.mostrarToast("Não foi possível salvar. Tente novamente.", "erro");
+    });
 };
