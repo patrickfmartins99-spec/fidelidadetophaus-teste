@@ -15,17 +15,17 @@ window.enviarParaFilaRobo = (cpf, telefone, textoMensagem) => {
         texto: textoMensagem,
         timestamp: Date.now()
     }).then(() => {
-        console.log("Mensagem enviada para a fila de envio do WhatsApp.");
+        console.log("Ordem despachada para o Robô Node.js");
     });
 };
 
 window.checarEAvisarAlmoco = (c) => {
     const faltam = 10 - (c.almocos || 0);
     if(faltam > 0 && faltam < 10) {
-        const msg = `Olá *${(c.nome||'').split(' ')[0]}*, seu almoço de hoje foi registrado no Top Haus! 🍽️\nVocê tem *${c.almocos} almoço(s)* acumulados.\nFaltam apenas *${faltam}* para você ganhar seus *R$ 50,00 de desconto*!`;
+        const msg = `Olá *${(c.nome||'').split(' ')[0]}*, seu almoço de hoje foi contabilizado no Top Haus! 🍽️\nVocê tem *${c.almocos} almoço(s)* acumulados.\nFaltam apenas *${faltam}* para você ganhar seus *R$ 50,00 de desconto*!`;
         window.enviarParaFilaRobo(c.cpf, c.telefone, msg);
     } else if (c.almocos === 10) {
-        const txtPremio = window.msgsMarketing.premio || "Parabéns [Nome]! Você completou 10 almoços. Na próxima visita você ganha R$ 50,00 de desconto!";
+        const txtPremio = window.msgsMarketing.premio || "Parabéns [Nome]! Você completou 10 almoços. No próximo você ganha R$ 50 de desconto!";
         const msg = txtPremio.replace(/\[Nome\]/g, (c.nome||'').split(' ')[0]).replace(/\[Acumulados\]/g, c.almocos);
         window.enviarParaFilaRobo(c.cpf, c.telefone, msg);
         window.firebaseSet(window.firebaseRef(window.db, window.PATH_CLIENTES+`/${c.cpf}/notificadoPremio`), true);
@@ -45,10 +45,10 @@ window.injetarUICampanhas = () => {
     painel.innerHTML = `
         <div class="flex gap-2">
             <select id="mkt-novo-tipo" onchange="alternarTipoCampanha()" class="p-2 bg-gray-50 border border-indigo-200 rounded-lg text-sm font-bold w-1/3 outline-none focus:ring-2 focus:ring-indigo-500">
-                <option value="unica">Envio único</option>
-                <option value="recorrente">Envio recorrente</option>
+                <option value="unica">Disparo único</option>
+                <option value="recorrente">Campanha recorrente</option>
             </select>
-            <input type="text" id="mkt-novo-titulo" placeholder="Nome da campanha (Ex: Promoção de Terça)" class="p-2 border border-indigo-200 rounded-lg text-sm w-2/3 outline-none focus:ring-2 focus:ring-indigo-500">
+            <input type="text" id="mkt-novo-titulo" placeholder="Título interno (Ex: Promoção Terça)" class="p-2 border border-indigo-200 rounded-lg text-sm w-2/3 outline-none focus:ring-2 focus:ring-indigo-500">
         </div>
         
         <!-- PAINEL DE DISPARO ÚNICO -->
@@ -79,12 +79,12 @@ window.injetarUICampanhas = () => {
             </div>
             
             <div id="freq-mensal" class="hidden gap-2 items-center text-sm font-bold text-indigo-900">
-                <span>Enviar todo dia:</span>
+                <span>Executar todo dia:</span>
                 <input type="number" id="mkt-dia-mes" min="1" max="31" class="p-1 border border-indigo-200 rounded w-16 text-center bg-white" placeholder="Ex: 5">
             </div>
             
             <div id="freq-anual" class="hidden gap-2 items-center text-sm font-bold text-indigo-900">
-                <span>Enviar anualmente em:</span>
+                <span>Todo ano em:</span>
                 <input type="text" id="mkt-dia-ano" class="p-1 border border-indigo-200 rounded w-20 text-center bg-white" placeholder="DD/MM" maxlength="5" oninput="this.value = this.value.replace(/[^0-9/]/g, '').replace(/^(\\d{2})(\\d)/, '$1/$2').substring(0,5)">
             </div>
         </div>
@@ -142,8 +142,8 @@ window.renderizarMensagensCustomizadas = () => {
             if (tipoC === 'unica') {
                 const dataFormatada = m.data ? m.data.split('-').reverse().join('/') : 'S/D';
                 const horarioFormatado = m.horario ? ` às ${m.horario}` : '';
-                labelTipo = `<span class="bg-gray-200 text-gray-800 px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider">Envio único</span>`;
-                info = `<i data-lucide="calendar" class="w-3.5 h-3.5"></i> Envio em: ${dataFormatada}${horarioFormatado}`;
+                labelTipo = `<span class="bg-gray-200 text-gray-800 px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider">Disparo Único</span>`;
+                info = `<i data-lucide="calendar" class="w-3.5 h-3.5"></i> Execução em: ${dataFormatada}${horarioFormatado}`;
             } else {
                 const c = m.configRecorrencia || {};
                 const hor = c.horario ? ` às ${c.horario}` : '';
@@ -151,7 +151,7 @@ window.renderizarMensagensCustomizadas = () => {
                 if(m.frequencia === 'semanal') {
                     const diasMapa = {0:'Dom', 1:'Seg', 2:'Ter', 3:'Qua', 4:'Qui', 5:'Sex', 6:'Sáb'};
                     const nmDias = (c.diasSemana||[]).map(d => diasMapa[d]).join(', ');
-                    det = `Toda semana (${nmDias})`;
+                    det = `Toda Semana (${nmDias})`;
                 } else if(m.frequencia === 'mensal') {
                     det = `Todo dia ${c.diaMes} do mês`;
                 } else if(m.frequencia === 'anual') {
@@ -166,14 +166,14 @@ window.renderizarMensagensCustomizadas = () => {
             
             areaAg.innerHTML += `
                 <div class="bg-white border border-gray-200 p-4 rounded-xl shadow-sm relative mb-3">
-                    <button onclick="removerAgendamento(${idx})" class="absolute top-4 right-3 text-red-400 hover:text-red-600" title="Excluir campanha"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                    <button onclick="removerAgendamento(${idx})" class="absolute top-4 right-3 text-red-400 hover:text-red-600 transition" title="Excluir campanha"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                     
                     <div class="flex flex-wrap items-center gap-2 mb-3 pr-6">
                         ${labelTipo}
                         <select onchange="alterarStatusCampanha(${idx}, this.value)" class="text-[10px] font-black px-2 py-1 rounded-lg border outline-none cursor-pointer uppercase shadow-sm transition ${bgStatus}">
-                            <option value="ativa" class="bg-white text-black" ${statusC === 'ativa' ? 'selected' : ''}>🟢 ATIVA</option>
-                            <option value="pausada" class="bg-white text-black" ${statusC === 'pausada' ? 'selected' : ''}>🟡 PAUSADA</option>
-                            <option value="encerrada" class="bg-white text-black" ${statusC === 'encerrada' ? 'selected' : ''}>🔴 ENCERRADA</option>
+                            <option value="ativa" class="bg-white text-black" ${statusC === 'ativa' ? 'selected' : ''}>🟢 Ativa</option>
+                            <option value="pausada" class="bg-white text-black" ${statusC === 'pausada' ? 'selected' : ''}>🟡 Pausada</option>
+                            <option value="encerrada" class="bg-white text-black" ${statusC === 'encerrada' ? 'selected' : ''}>🔴 Encerrada</option>
                         </select>
                     </div>
                     
@@ -193,9 +193,9 @@ window.renderizarMensagensCustomizadas = () => {
         listaCs.forEach((m, idx) => {
             areaCs.innerHTML += `
                 <div class="bg-white border border-gray-200 p-4 rounded-xl shadow-sm relative mb-3">
-                    <button onclick="removerMsgCustom(${idx})" class="absolute top-2 right-2 text-red-400 hover:text-red-600"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-                    <input type="text" id="mkt-custom-titulo-${idx}" value="${window.escapeHTML(m.titulo)}" placeholder="Título do botão" class="font-bold text-sm mb-2 w-3/4 outline-none border-b border-gray-200 text-center">
-                    <textarea id="mkt-custom-texto-${idx}" rows="2" class="w-full bg-gray-50 border border-gray-100 rounded-lg p-2 text-sm outline-none text-center">${window.escapeHTML(m.texto)}</textarea>
+                    <button onclick="removerMsgCustom(${idx})" class="absolute top-2 right-2 text-red-400 hover:text-red-600 transition" title="Remover botão"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                    <input type="text" id="mkt-custom-titulo-${idx}" value="${window.escapeHTML(m.titulo)}" placeholder="Nome do botão" class="font-bold text-sm mb-2 w-3/4 outline-none border-b border-gray-200 text-center">
+                    <textarea id="mkt-custom-texto-${idx}" rows="2" placeholder="Texto da mensagem" class="w-full bg-gray-50 border border-gray-100 rounded-lg p-2 text-sm outline-none text-center">${window.escapeHTML(m.texto)}</textarea>
                 </div>`;
         });
     }
@@ -212,7 +212,7 @@ window.adicionarAgendamento = () => {
         const tipo = document.getElementById('mkt-novo-tipo').value;
         const titulo = document.getElementById('mkt-novo-titulo').value;
         
-        if(!titulo || !texto) return window.mostrarToast("Por favor, preencha o título e o texto da campanha.", "erro");
+        if(!titulo || !texto) return window.mostrarToast("Preencha o título e o texto da campanha para continuar.", "erro");
         
         // Estrutura Base Escalável
         novaCampanha = {
@@ -225,7 +225,7 @@ window.adicionarAgendamento = () => {
         if (tipo === 'unica') {
             const data = document.getElementById('mkt-nova-data').value;
             const horario = document.getElementById('mkt-novo-horario-unica').value;
-            if(!data) return window.mostrarToast("Por favor, selecione uma data para o envio.", "erro");
+            if(!data) return window.mostrarToast("Selecione a data do disparo.", "erro");
             
             novaCampanha.data = data;
             novaCampanha.horario = horario || "09:00";
@@ -242,11 +242,11 @@ window.adicionarAgendamento = () => {
                 novaCampanha.configRecorrencia.diasSemana = Array.from(chks).map(c => parseInt(c.value));
             } else if (freq === 'mensal') {
                 const diaM = document.getElementById('mkt-dia-mes').value;
-                if(!diaM || diaM < 1 || diaM > 31) return window.mostrarToast("O dia do mês informado é inválido. Use um número de 1 a 31.", "erro");
+                if(!diaM || diaM < 1 || diaM > 31) return window.mostrarToast("Informe um dia do mês válido (entre 1 e 31).", "erro");
                 novaCampanha.configRecorrencia.diaMes = parseInt(diaM);
             } else if (freq === 'anual') {
                 const diaA = document.getElementById('mkt-dia-ano').value;
-                if(!diaA || diaA.length !== 5) return window.mostrarToast("A data informada é inválida. Use o formato DD/MM.", "erro");
+                if(!diaA || diaA.length !== 5) return window.mostrarToast("Informe uma data anual válida no formato DD/MM.", "erro");
                 novaCampanha.configRecorrencia.diaAno = diaA;
             }
         }
@@ -254,7 +254,7 @@ window.adicionarAgendamento = () => {
         // Fallback de retrocompatibilidade para o HTML original cego
         const data = document.getElementById('mkt-agenda-data').value;
         const titulo = document.getElementById('mkt-agenda-titulo').value;
-        if(!data || !titulo || !texto) return window.mostrarToast("Por favor, preencha todos os campos obrigatórios.", "erro");
+        if(!data || !titulo || !texto) return window.mostrarToast("Preencha todos os campos para continuar.", "erro");
         novaCampanha = { data: data, titulo: titulo, texto: texto, tipo: 'unica', status: 'ativa' };
     }
     
@@ -279,7 +279,7 @@ window.alterarStatusCampanha = (idx, novoStatus) => {
     if(Array.isArray(window.msgsMarketing.agendadas) && window.msgsMarketing.agendadas[idx]) {
         window.msgsMarketing.agendadas[idx].status = novoStatus;
         window.renderizarMensagensCustomizadas();
-        window.mostrarToast("Status alterado. Lembre-se de salvar as configurações de marketing.", "sucesso");
+        window.mostrarToast("Status alterado. Salve as alterações para confirmar.", "sucesso");
     }
 };
 
@@ -300,6 +300,12 @@ window.removerMsgCustom = (idx) => {
 };
 
 window.salvarCentralMarketing = () => {
+    const btn = document.getElementById('btn-marketing-salvar');
+    const span = document.getElementById('btn-marketing-salvar-text');
+    
+    if(btn) btn.disabled = true;
+    if(span) span.innerText = 'Salvando...';
+
     window.msgsMarketing.aniversario = document.getElementById('mkt-msg-niver').value;
     window.msgsMarketing.premio = document.getElementById('mkt-msg-premio').value;
     window.msgsMarketing.inativo = document.getElementById('mkt-msg-inativo').value;
@@ -314,8 +320,17 @@ window.salvarCentralMarketing = () => {
     window.msgsMarketing.personalizadas = lista;
     
     window.firebaseSet(window.firebaseRef(window.db, window.PATH_MENSAGENS), window.msgsMarketing).then(() => { 
-        window.mostrarToast("Configurações de marketing salvas com sucesso."); 
+        window.mostrarToast("Campanha agendada com sucesso."); 
+        
+        if(window.logAuditoria) window.logAuditoria('Marketing', 'As configurações da Central de Marketing foram atualizadas.');
+        
+        if(btn) btn.disabled = false;
+        if(span) span.innerText = 'Salvar alterações';
         if(window.fecharModal) window.fecharModal('modal-marketing'); 
+    }).catch(() => {
+        window.mostrarToast("Não foi possível salvar. Tente novamente.", "erro");
+        if(btn) btn.disabled = false;
+        if(span) span.innerText = 'Salvar alterações';
     });
 };
 
@@ -334,13 +349,17 @@ window.abrirModalWhatsApp = (cpf) => {
     const ehNiverSemana = window.diasParaAniversario(cliente.nascimento) >= 0 && window.diasParaAniversario(cliente.nascimento) <= 7;
 
     if(ehNiverSemana) {
-        area.innerHTML += `<button onclick="dispararWhatsApp('${cpf}', 'aniversario')" class="flex items-center gap-3 p-3 rounded-xl border border-green-200 bg-green-50 hover:bg-green-100 w-full text-left"><div class="bg-red-500 text-white p-2 rounded-lg"><i data-lucide="cake" class="w-4 h-4"></i></div><div class="flex-1"><p class="text-sm font-bold text-gray-800">Enviar mensagem de aniversário</p><p class="text-xs text-gray-600">Enviar agora</p></div></button>`;
+        area.innerHTML += `<button onclick="dispararWhatsApp('${cpf}', 'aniversario')" class="flex items-center gap-3 p-3 rounded-xl border border-green-200 bg-green-50 hover:bg-green-100 w-full text-left transition"><div class="bg-red-500 text-white p-2 rounded-lg"><i data-lucide="cake" class="w-4 h-4"></i></div><div class="flex-1"><p class="text-sm font-bold text-gray-800">Forçar aviso de aniversário</p><p class="text-xs text-gray-600">Disparar agora</p></div></button>`;
     } 
 
     const listaMkt = Array.isArray(window.msgsMarketing.personalizadas) ? window.msgsMarketing.personalizadas : Object.values(window.msgsMarketing.personalizadas || {});
     listaMkt.forEach((m, idx) => { 
-        if(m.titulo) area.innerHTML += `<button onclick="dispararWhatsApp('${cpf}', 'custom', ${idx})" class="flex items-center gap-3 p-3 rounded-xl border border-indigo-200 bg-indigo-50 hover:bg-indigo-100 w-full text-left mt-2"><div class="bg-indigo-500 text-white p-2 rounded-lg"><i data-lucide="send" class="w-4 h-4"></i></div><div class="flex-1"><p class="text-sm font-bold text-gray-800">${window.escapeHTML(m.titulo)}</p></div></button>`; 
+        if(m.titulo) area.innerHTML += `<button onclick="dispararWhatsApp('${cpf}', 'custom', ${idx})" class="flex items-center gap-3 p-3 rounded-xl border border-indigo-200 bg-indigo-50 hover:bg-indigo-100 w-full text-left mt-2 transition"><div class="bg-indigo-500 text-white p-2 rounded-lg"><i data-lucide="send" class="w-4 h-4"></i></div><div class="flex-1"><p class="text-sm font-bold text-gray-800">${window.escapeHTML(m.titulo)}</p></div></button>`; 
     });
+
+    if(area.innerHTML === '') {
+        area.innerHTML = '<p class="text-sm text-gray-500 text-center py-2">Nenhum botão de disparo rápido configurado na Central de Marketing.</p>';
+    }
 
     const modal = document.getElementById('modal-whatsapp'); 
     modal.classList.remove('hidden'); 
@@ -350,7 +369,9 @@ window.abrirModalWhatsApp = (cpf) => {
 
 window.dispararWhatsApp = (cpf, tipo, idx = -1) => {
     const cliente = window.clientesMap[cpf]; 
-    if(!cliente || !cliente.telefone) return window.mostrarToast("O cliente não possui um número de telefone válido.", "erro");
+    if(!cliente || !cliente.telefone) {
+        return window.mostrarToast("O cliente não possui um número de telefone válido cadastrado.", "erro");
+    }
     
     let t = ""; 
     
@@ -366,6 +387,8 @@ window.dispararWhatsApp = (cpf, tipo, idx = -1) => {
     
     window.enviarParaFilaRobo(cliente.cpf, cliente.telefone, t);
     
-    window.mostrarToast("Mensagem adicionada à fila de envio.");
+    window.mostrarToast("Mensagem adicionada à fila.");
+    if(window.logAuditoria) window.logAuditoria('Disparo Manual', `Mensagem manual enviada para ${cliente.nome}.`);
+    
     if(window.fecharModal) window.fecharModal('modal-whatsapp'); 
 };
