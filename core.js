@@ -48,10 +48,11 @@ window.prenderFocoModal = (modalElement) => {
 
 window.mostrarToast = (msg, tipo = 'sucesso') => {
     const container = document.getElementById('toast-container');
+    if(!container) return;
     const toast = document.createElement('div');
     
     const bg = tipo === 'sucesso' ? 'bg-black' : 'bg-gray-800 border-l-4 border-red-500';
-    const icone = tipo === 'sucesso' ? 'check-circle' : 'alert-circle';
+    const icone = tipo === 'sucesso' ? 'check-circle' : 'alert-triangle';
     
     toast.className = `${bg} text-white px-5 py-3 rounded-xl shadow-xl transform transition-all duration-300 translate-x-full flex items-center gap-3 font-bold z-[10000]`;
     toast.innerHTML = `<i data-lucide="${icone}" class="w-5 h-5"></i> <span>${window.escapeHTML(msg)}</span>`;
@@ -67,13 +68,50 @@ window.mostrarToast = (msg, tipo = 'sucesso') => {
 };
 
 window.fecharModal = (id) => { 
-    document.getElementById(id).classList.add('hidden'); 
-    const modaisParaNaoFocarCPF = ['modal-historico', 'modal-editar', 'modal-marketing', 'modal-whatsapp', 'modal-simulacao', 'modal-usuarios'];
+    const modal = document.getElementById(id);
+    if(!modal) return;
+    
+    modal.classList.add('hidden'); 
+    
+    // Libera a trava de teclado para evitar memory leaks
+    if (modal._focusTrapListener) {
+        modal.removeEventListener('keydown', modal._focusTrapListener);
+    }
+
+    // Modais que não devem devolver o foco automaticamente para o input de CPF do caixa
+    const modaisParaNaoFocarCPF = ['modal-historico', 'modal-editar', 'modal-marketing', 'modal-whatsapp', 'modal-simulacao', 'modal-usuarios', 'modal-lixeira', 'modal-auditoria', 'modal-totem-saida', 'modal-alerta-generico'];
+    
     if(!modaisParaNaoFocarCPF.includes(id)){ 
         const b = document.getElementById('busca-cpf'); 
-        if(b) b.focus(); 
+        const telaTotem = document.getElementById('tela-totem');
+        
+        // Retorna o foco apenas se o operador de caixa estiver no painel (não no Totem)
+        if(b && telaTotem && telaTotem.classList.contains('hidden')) {
+            b.focus(); 
+        } 
     } 
 };
+
+// ==========================================================================
+// LISTENER GLOBAL (Melhoria de Acessibilidade: ESC para fechar Modais)
+// ==========================================================================
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        const modaisAtivos = Array.from(document.querySelectorAll('div[id^="modal-"]:not(.hidden)'));
+        if(modaisAtivos.length > 0) {
+            // Pega o modal mais recente / de maior hierarquia
+            const ultimoModal = modaisAtivos[modaisAtivos.length - 1];
+            const id = ultimoModal.id;
+            
+            // Tratamento especial para fluxos onde o ESC atua como "Pular" ou "Cancelar" explícito
+            if(id === 'modal-alerta-aniversario') {
+                if(window.continuarPosAniversario) window.continuarPosAniversario();
+            } else {
+                window.fecharModal(id);
+            }
+        }
+    }
+});
 
 // ==========================================================================
 // MÁSCARAS E FORMATAÇÕES (Inputs e Display)
