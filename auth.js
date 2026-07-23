@@ -41,7 +41,7 @@ window.firebaseOnAuthStateChanged(window.auth, async (user) => {
             window.aplicarRegrasNaInterface(window.cargoLogado, username, window.permissoesLogado);
         }
         
-        if(window.logAuditoria) window.logAuditoria('Login', `Acesso ao sistema. Nível primário: ${window.cargoLogado}`);
+        if(window.logAuditoria) window.logAuditoria('Login', `Acesso ao sistema. Perfil: ${window.cargoLogado}`);
     } else {
         // Reset global
         window.usuarioLogado = null; 
@@ -52,6 +52,12 @@ window.firebaseOnAuthStateChanged(window.auth, async (user) => {
         if (document.getElementById('tela-totem') && document.getElementById('tela-totem').classList.contains('hidden')) {
             document.getElementById('tela-login').classList.remove('hidden');
             document.getElementById('tela-login').classList.add('flex');
+            
+            // Restaura estado visual do botão caso tenha travado no refresh
+            const btn = document.getElementById('btn-login');
+            const span = document.getElementById('btn-login-text');
+            if(btn) btn.disabled = false;
+            if(span) span.innerText = 'Acessar sistema';
         }
     }
 });
@@ -62,8 +68,11 @@ window.firebaseOnAuthStateChanged(window.auth, async (user) => {
 window.fazerLogin = (e) => {
     e.preventDefault();
     const btn = document.getElementById('btn-login'); 
-    btn.disabled = true; 
-    btn.innerText = 'Autenticando...';
+    const span = document.getElementById('btn-login-text');
+    
+    if(btn) btn.disabled = true; 
+    if(span) span.innerText = 'Entrando...';
+    else if(btn) btn.innerText = 'Entrando...';
     
     const user = document.getElementById('login-user').value.trim().toLowerCase();
     const pass = document.getElementById('login-senha').value;
@@ -74,9 +83,10 @@ window.fazerLogin = (e) => {
             return window.firebaseSignIn(window.auth, `${user}@tophaus.com.br`, pass);
         })
         .catch((error) => {
-            if(window.mostrarToast) window.mostrarToast("Usuário ou senha incorretos!", "erro"); 
-            btn.disabled = false; 
-            btn.innerText = 'ENTRAR';
+            if(window.mostrarToast) window.mostrarToast("Usuário ou senha incorretos. Verifique e tente novamente.", "erro"); 
+            if(btn) btn.disabled = false; 
+            if(span) span.innerText = 'Acessar sistema';
+            else if(btn) btn.innerText = 'Acessar sistema';
         });
 };
 
@@ -89,22 +99,24 @@ window.fazerLogout = () => {
 // GESTÃO DE USUÁRIOS E ACESSOS (HÍBRIDO: CARGO + PERMISSÕES)
 // ==========================================================================
 window.abrirGerenciadorUsuarios = () => {
-    // Nova Trava: Em vez de checar se é 'admin', checa se possui a permissão de gestão de usuários
-    if(!window.permissoesLogado || !window.permissoesLogado.usuarios) return;
+    // Trava de permissão para gestão de usuários
+    if(!window.permissoesLogado || !window.permissoesLogado.usuarios) {
+        return window.mostrarToast("Seu perfil não tem acesso a esta ação.", "erro");
+    }
     
     window.injetarCheckboxesPermissoes(); // Chama injeção visual para não quebrar o HTML
     
     const lista = document.getElementById('lista-usuarios-cadastrados');
     if(!lista) return;
     
-    lista.innerHTML = '<p class="text-center text-gray-400">Carregando...</p>';
+    lista.innerHTML = '<p class="text-center text-gray-500 py-4">Carregando usuários...</p>';
     
     window.firebaseGet(window.firebaseRef(window.db, 'usuarios')).then(snap => {
         lista.innerHTML = '';
         if(snap.exists()) {
             Object.entries(snap.val()).forEach(([user, data]) => {
-                // Checa quantas permissões extras o usuário tem
-                const isCustom = data.permissoes ? '⭐ CUSTOM' : 'PADRÃO';
+                // Checa se o usuário tem permissões customizadas
+                const isCustom = data.permissoes ? '⭐ Custom' : 'Padrão';
                 
                 lista.innerHTML += `
                     <div class="flex justify-between items-center p-3 bg-gray-50 rounded border border-gray-100">
@@ -114,8 +126,8 @@ window.abrirGerenciadorUsuarios = () => {
                             <span class="px-2 py-0.5 ml-1 bg-indigo-100 text-indigo-700 rounded text-[10px] font-black uppercase">${isCustom}</span>
                         </div>
                         <div class="flex gap-2">
-                            <button type="button" onclick="alterarCargo('${user}', '${data.cargo}')" class="text-blue-600 hover:bg-blue-50 p-1.5 rounded transition" title="Mudar Cargo (Reseta Permissões)"><i data-lucide="edit" class="w-4 h-4"></i></button>
-                            <button type="button" onclick="removerAcesso('${user}')" class="text-red-600 hover:bg-red-50 p-1.5 rounded transition" title="Remover Acesso"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                            <button type="button" onclick="alterarCargo('${user}', '${data.cargo}')" class="text-blue-600 hover:bg-blue-50 p-1.5 rounded transition" title="Editar perfil"><i data-lucide="edit" class="w-4 h-4"></i></button>
+                            <button type="button" onclick="removerAcesso('${user}')" class="text-red-600 hover:bg-red-50 p-1.5 rounded transition" title="Remover acesso"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                         </div>
                     </div>`;
             });
@@ -141,7 +153,7 @@ window.injetarCheckboxesPermissoes = () => {
     
     const chaves = ['dashboard', 'caixa', 'clientes', 'marketing', 'auditoria', 'simulacao', 'reset', 'usuarios', 'totem', 'configuracoes'];
     
-    let html = `<div class="col-span-full text-center text-indigo-900 font-bold mb-2 border-b border-indigo-50 pb-2">Permissões Individuais (Opcional)</div>`;
+    let html = `<div class="col-span-full text-center text-indigo-900 font-bold mb-2 border-b border-indigo-50 pb-2">Permissões individuais (opcional)</div>`;
     
     chaves.forEach(p => {
         html += `
@@ -171,6 +183,12 @@ window.injetarCheckboxesPermissoes = () => {
 
 window.criarUsuario = (e) => {
     e.preventDefault();
+    const btn = document.getElementById('btn-usuarios-salvar');
+    const span = document.getElementById('btn-usuarios-salvar-text');
+    
+    if(btn) btn.disabled = true;
+    if(span) span.innerText = 'Salvando...';
+
     const user = document.getElementById('novo-user').value.trim().toLowerCase();
     const pass = document.getElementById('novo-senha').value;
     const cargo = document.getElementById('novo-cargo').value;
@@ -186,43 +204,51 @@ window.criarUsuario = (e) => {
     window.firebaseCreateUser(window.authSecundario, email, pass).then(() => {
         // Salva o modelo híbrido (Cargo + Permissões Livres)
         window.firebaseSet(window.firebaseRef(window.db, `usuarios/${user}`), { cargo: cargo, permissoes: objPermissoes }).then(() => {
-            window.mostrarToast("Usuário criado com regras específicas!", "sucesso");
+            window.mostrarToast("Usuário cadastrado com sucesso.", "sucesso");
             document.getElementById('novo-user').value = ''; 
             document.getElementById('novo-senha').value = '';
+            
+            if(btn) btn.disabled = false;
+            if(span) span.innerText = 'Salvar cadastro';
+            
             window.abrirGerenciadorUsuarios();
         });
     }).catch(err => {
-        if(err.code === 'auth/email-already-in-use') return window.mostrarToast("Esse usuário já existe!", "erro");
-        if(err.code === 'auth/weak-password') return window.mostrarToast("A senha precisa ter 6 números/letras", "erro");
-        window.mostrarToast("Erro ao criar: " + err.message, "erro");
+        if(btn) btn.disabled = false;
+        if(span) span.innerText = 'Salvar cadastro';
+        
+        if(err.code === 'auth/email-already-in-use') return window.mostrarToast("Este usuário já existe. Tente outro nome.", "erro");
+        if(err.code === 'auth/weak-password') return window.mostrarToast("A senha deve ter no mínimo 6 caracteres.", "erro");
+        
+        window.mostrarToast("Não foi possível concluir a ação. Tente novamente.", "erro");
     });
 };
 
 window.removerAcesso = (username) => {
-    if(username === 'admin') return window.mostrarToast("Você não pode remover o administrador principal.", "erro");
+    if(username === 'admin') return window.mostrarToast("Não é possível remover o administrador principal.", "erro");
     
-    if(confirm(`Tem certeza que deseja remover o acesso de "${username}"?\nA conta será deslogada imediatamente.`)) {
+    if(confirm(`Deseja remover o acesso de "${username}"?\n\nEsta ação não poderá ser desfeita e a conta será desconectada imediatamente.`)) {
         window.firebaseSet(window.firebaseRef(window.db, `usuarios/${username}`), null).then(() => {
-            window.mostrarToast("Acesso removido com sucesso!", "sucesso");
+            window.mostrarToast("Acesso removido com sucesso.", "sucesso");
             window.abrirGerenciadorUsuarios();
         });
     }
 };
 
 window.alterarCargo = (username, cargoAtual) => {
-    if(username === 'admin') return window.mostrarToast("Você não pode alterar o administrador.", "erro");
+    if(username === 'admin') return window.mostrarToast("Não é possível alterar o perfil do administrador principal.", "erro");
     
-    const novoCargo = prompt(`Modificar o Cargo Base de "${username}".\nCargos válidos: caixa, gerente, admin\n⚠️ ATENÇÃO: Isso irá redefinir as permissões customizadas do usuário para as do novo cargo.`, cargoAtual);
+    const novoCargo = prompt(`Modificar o perfil de acesso de "${username}".\nOpções válidas: caixa, gerente, admin\n\nAtenção: As permissões individuais serão redefinidas para o padrão do perfil.`, cargoAtual);
     
     if(novoCargo && ['caixa', 'gerente', 'admin'].includes(novoCargo.trim().toLowerCase())) {
         const cargoFinal = novoCargo.trim().toLowerCase();
         // Substitui a ramificação inteira resgatando as permissões padrão do novo cargo
         window.firebaseSet(window.firebaseRef(window.db, `usuarios/${username}`), { cargo: cargoFinal, permissoes: window.permissoesPadrao[cargoFinal] }).then(() => {
-            window.mostrarToast("Cargo e Permissões atualizados!", "sucesso");
+            window.mostrarToast("Perfil atualizado com sucesso.", "sucesso");
             window.abrirGerenciadorUsuarios();
         });
     } else if (novoCargo) {
-        window.mostrarToast("Cargo inválido! Operação cancelada.", "erro");
+        window.mostrarToast("Perfil inválido. Operação cancelada.", "erro");
     }
 };
 
@@ -236,6 +262,8 @@ window.aplicarRegrasNaInterface = (cargo, username, permissoes) => {
     document.getElementById('tela-login').classList.add('hidden');
     document.getElementById('tela-login').classList.remove('flex');
     document.getElementById('app-dashboard').classList.remove('hidden');
+    
+    // Deixa o nome mais amigável na interface
     document.getElementById('nome-usuario-logado').innerText = `(${cargo}) ${username}`;
 
     // Leitura dos nós de interface principais
@@ -244,6 +272,8 @@ window.aplicarRegrasNaInterface = (cargo, username, permissoes) => {
     const btnSimulacao = document.getElementById('btn-ativar-simulacao');
     const btnZerar = document.getElementById('btn-zerar-banco');
     const btnAcessos = document.getElementById('btn-gerenciar-acessos');
+    const btnAuditoria = document.getElementById('btn-auditoria');
+    const btnLixeira = document.getElementById('btn-lixeira');
     
     // Leitura por atributos CSS/Query (Mapeamento invisível para botões sem ID)
     const botoesTotem = document.querySelectorAll('button[onclick="entrarModoTotemDaTelaLogin()"]');
@@ -255,6 +285,10 @@ window.aplicarRegrasNaInterface = (cargo, username, permissoes) => {
     if (btnSimulacao) permissoes.simulacao ? btnSimulacao.classList.remove('hidden') : btnSimulacao.classList.add('hidden');
     if (btnZerar) permissoes.reset ? btnZerar.classList.remove('hidden') : btnZerar.classList.add('hidden');
     if (btnAcessos) permissoes.usuarios ? btnAcessos.classList.remove('hidden') : btnAcessos.classList.add('hidden');
+    
+    // Se a interface tiver os botões novos de auditoria/lixeira, aplica a permissão administrativa
+    if (btnAuditoria) permissoes.auditoria ? btnAuditoria.classList.remove('hidden') : btnAuditoria.classList.add('hidden');
+    if (btnLixeira) permissoes.clientes ? btnLixeira.classList.remove('hidden') : btnLixeira.classList.add('hidden'); // Exige permissão de clientes
     
     if (btnMarketing) permissoes.marketing ? btnMarketing.classList.remove('hidden') : btnMarketing.classList.add('hidden');
     
@@ -269,6 +303,6 @@ window.aplicarRegrasNaInterface = (cargo, username, permissoes) => {
         window.alternarAba('caixa');
     } else {
         // Caso a pessoa não tenha permissão de dashboard nem de caixa, o sistema não faz nada (tela limpa)
-        window.mostrarToast("Sua conta possui acessos severamente restritos.", "erro");
+        window.mostrarToast("Seu perfil não tem acesso a esta ação. Fale com o administrador.", "erro");
     }
 };
